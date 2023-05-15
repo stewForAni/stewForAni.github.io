@@ -14,7 +14,7 @@
 <meta property="og:description" content="LiveData 是一种可观察的数据存储器类。与常规的可观察类不同，LiveData 具有生命周期感知能力，意指它遵循其他应用组件（如 Activity&#x2F;Fragment）的生命周期。这种感知能力可确保 LiveData 仅更新处于活跃生命周期状态的应用组件观察者。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-13T12:39:19.000Z">
-<meta property="article:modified_time" content="2022-07-21T13:19:34.584Z">
+<meta property="article:modified_time" content="2023-05-15T07:33:26.465Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Jetpack">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="LiveData-是一种可观察的数据存储器类。与常规的可观察类不同，LiveData-具有生命周期感知能力，意指它遵循其他应用组件（如-Activity-x2F-Fragment）的生命周期。这种感知能力可确保-LiveData-仅更新处于活跃生命周期状态的应用组件观察者。"><a href="#LiveData-是一种可观察的数据存储器类。与常规的可观察类不同，LiveData-具有生命周期感知能力，意指它遵循其他应用组件（如-Activity-x2F-Fragment）的生命周期。这种感知能力可确保-LiveData-仅更新处于活跃生命周期状态的应用组件观察者。" class="headerlink" title="LiveData 是一种可观察的数据存储器类。与常规的可观察类不同，LiveData 具有生命周期感知能力，意指它遵循其他应用组件（如 Activity&#x2F;Fragment）的生命周期。这种感知能力可确保 LiveData 仅更新处于活跃生命周期状态的应用组件观察者。"></a>LiveData 是一种可观察的数据存储器类。与常规的可观察类不同，LiveData 具有生命周期感知能力，意指它遵循其他应用组件（如 Activity&#x2F;Fragment）的生命周期。这种感知能力可确保 LiveData 仅更新处于活跃生命周期状态的应用组件观察者。<br><span id="more"></span></h2><ol>
+        <p>LiveData 是一种可观察的数据存储器类。与常规的可观察类不同，LiveData 具有生命周期感知能力，意指它遵循其他应用组件（如 Activity&#x2F;Fragment）的生命周期。这种感知能力可确保 LiveData 仅更新处于活跃生命周期状态的应用组件观察者。</p>
+<span id="more"></span>
+
+<hr>
+<ol>
 <li>LiveData是一个数据持有者，给源数据包装一层。</li>
 <li>源数据使用LiveData包装后，可以被observer观察，数据有更新时observer可感知。</li>
 <li>但 observer的感知，只发生在（Activity&#x2F;Fragment）活跃生命周期状态（STARTED、RESUMED）。</li>

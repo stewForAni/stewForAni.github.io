@@ -15,7 +15,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://stewforani.github.io/images/rb1.png">
 <meta property="article:published_time" content="2022-06-19T14:04:05.000Z">
-<meta property="article:modified_time" content="2022-11-29T09:49:07.636Z">
+<meta property="article:modified_time" content="2023-05-15T07:39:11.846Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="algorithm">
 <meta name="twitter:card" content="summary">
@@ -104,7 +104,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="红黑树的英文是“Red-Black-Tree”，简称-R-B-Tree。它是一种不严格的平衡二叉查找树"><a href="#红黑树的英文是“Red-Black-Tree”，简称-R-B-Tree。它是一种不严格的平衡二叉查找树" class="headerlink" title="红黑树的英文是“Red-Black Tree”，简称 R-B Tree。它是一种不严格的平衡二叉查找树"></a>红黑树的英文是“Red-Black Tree”，简称 R-B Tree。它是一种不严格的平衡二叉查找树<br><span id="more"></span></h2><h3 id="平衡二叉查找树"><a href="#平衡二叉查找树" class="headerlink" title="平衡二叉查找树"></a>平衡二叉查找树</h3><p>二叉树中任意一个节点的左右子树的高度相差不能大于 1。从这个定义来看，上一节我们讲的完全二叉树、满二叉树其实都是平衡二叉树，但是非完全二叉树也有可能是平衡二叉树。</p>
+        <p>红黑树的英文是“Red-Black Tree”，简称 R-B Tree。它是一种不严格的平衡二叉查找树</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="平衡二叉查找树"><a href="#平衡二叉查找树" class="headerlink" title="平衡二叉查找树"></a>平衡二叉查找树</h3><p>二叉树中任意一个节点的左右子树的高度相差不能大于 1。从这个定义来看，上一节我们讲的完全二叉树、满二叉树其实都是平衡二叉树，但是非完全二叉树也有可能是平衡二叉树。</p>
 <p>红黑树并没有严格遵循平衡二叉树的定义。</p>
 <p>平衡二叉查找树中“平衡”的意思，其实就是让整棵树左右看起来比较“对称”、比较“平衡”，不要出现左子树很高、右子树很矮的情况。这样就能让整棵树的高度相对来说低一些，相应的插入、删除、查找等操作的效率高一些。</p>
 <p>所以，如果我们现在设计一个新的平衡二叉查找树，只要树的高度不比 log2n 大很多（比如树的高度仍然是对数量级的），尽管它不符合我们前面讲的严格的平衡二叉查找树的定义，但我们仍然可以说，这是一个合格的平衡二叉查找树。</p>

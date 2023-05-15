@@ -14,7 +14,7 @@
 <meta property="og:description" content="java和android都遵循双亲委派">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-09-02T15:02:39.000Z">
-<meta property="article:modified_time" content="2023-04-17T08:40:39.635Z">
+<meta property="article:modified_time" content="2023-05-15T07:35:32.500Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="framework">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="java和android都遵循双亲委派"><a href="#java和android都遵循双亲委派" class="headerlink" title="java和android都遵循双亲委派"></a>java和android都遵循双亲委派<br><span id="more"></span></h2><h3 id="ClassLoader的核心功能机制："><a href="#ClassLoader的核心功能机制：" class="headerlink" title="ClassLoader的核心功能机制："></a>ClassLoader的核心功能机制：</h3><ol>
+        <p>java和android都遵循双亲委派</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="ClassLoader的核心功能机制："><a href="#ClassLoader的核心功能机制：" class="headerlink" title="ClassLoader的核心功能机制："></a>ClassLoader的核心功能机制：</h3><ol>
 <li>IO读取Class文件，解析，分配栈、堆，加载到永久代(Perm区)</li>
 <li>双亲委托寻找 &amp; 加载</li>
 </ol>
@@ -110,7 +114,7 @@
 <h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><ol>
 <li>BootstrapclassLoader:主要负责加载核心的类库(java.lang.*等)，构造ExtClassLoader和APPClassLoader。</li>
 <li>ExtClassLoader：主要负责加载jre&#x2F;lib&#x2F;ext目录下的一些扩展的jar。</li>
-<li>AppClassLoader：主要负责加载应用程序的主函数类 4.通过继承 java.lang.ClassLoader 实现自定义的类加载器</li>
+<li>AppClassLoader：主要负责加载应用程序的主函数类4.通过继承 java.lang.ClassLoader 实现自定义的类加载器</li>
 </ol>
 <p>双亲委派是一个孩子向父亲方向，然后父亲向孩子方向的双亲委派过程<br>总结：自下（从App开始）而上进行检查，自上而下进行加载</p>
 <hr>

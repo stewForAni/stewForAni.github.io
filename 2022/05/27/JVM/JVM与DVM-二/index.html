@@ -14,7 +14,7 @@
 <meta property="og:description" content="GC主要关注堆和方法区">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-26T17:03:52.000Z">
-<meta property="article:modified_time" content="2022-06-05T14:50:01.656Z">
+<meta property="article:modified_time" content="2023-05-15T07:32:06.419Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="GC主要关注堆和方法区"><a href="#GC主要关注堆和方法区" class="headerlink" title="GC主要关注堆和方法区"></a>GC主要关注堆和方法区<br><span id="more"></span></h2><p>Java 内存运行时区域的各个部分，其中程序计数器、虚拟机栈、本地方法栈 3 个区域随线程而生，随线程而灭；栈中的栈帧随着方法的进入和退出而有条不紊地执行着出栈和入栈操作，这几个区域内不需要过多考虑回收的问题。而堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的就是这部分内存。</p>
+        <p>GC主要关注堆和方法区</p>
+<span id="more"></span>
+
+<hr>
+<p>Java 内存运行时区域的各个部分，其中程序计数器、虚拟机栈、本地方法栈 3 个区域随线程而生，随线程而灭；栈中的栈帧随着方法的进入和退出而有条不紊地执行着出栈和入栈操作，这几个区域内不需要过多考虑回收的问题。而堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的就是这部分内存。</p>
 <p><code>GC Root 也是一组引用而并非对象。</code></p>
 <h5 id="在-Java-中，有以下几种对象可以作为-GC-Root："><a href="#在-Java-中，有以下几种对象可以作为-GC-Root：" class="headerlink" title="在 Java 中，有以下几种对象可以作为 GC Root："></a>在 Java 中，有以下几种对象可以作为 GC Root：</h5><ul>
 <li>Java 虚拟机栈（局部变量表）中的引用的对象。（方法结束后，局部变量系统会回收的）</li>

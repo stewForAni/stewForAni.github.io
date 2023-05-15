@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://stewforani.github.io/images/dgtree2.png">
 <meta property="og:image" content="https://stewforani.github.io/images/dgtree3.png">
 <meta property="article:published_time" content="2022-06-21T13:29:07.000Z">
-<meta property="article:modified_time" content="2022-06-22T06:44:45.020Z">
+<meta property="article:modified_time" content="2023-05-15T07:39:19.219Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="algorithm">
 <meta name="twitter:card" content="summary">
@@ -106,7 +106,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="递归的思想就是，将大问题分解为小问题来求解-直到问题的数据规模被分解得足够小，不用继续递归分解为止。如果我们把这个一层一层的分解过程画成图，它其实就是一棵树-叫作递归树。"><a href="#递归的思想就是，将大问题分解为小问题来求解-直到问题的数据规模被分解得足够小，不用继续递归分解为止。如果我们把这个一层一层的分解过程画成图，它其实就是一棵树-叫作递归树。" class="headerlink" title="递归的思想就是，将大问题分解为小问题来求解,直到问题的数据规模被分解得足够小，不用继续递归分解为止。如果我们把这个一层一层的分解过程画成图，它其实就是一棵树,叫作递归树。"></a>递归的思想就是，将大问题分解为小问题来求解,直到问题的数据规模被分解得足够小，不用继续递归分解为止。如果我们把这个一层一层的分解过程画成图，它其实就是一棵树,叫作递归树。<br><span id="more"></span></h2><p>把归并排序画成递归树，就是下面这个样子：</p>
+        <p>递归的思想就是，将大问题分解为小问题来求解,直到问题的数据规模被分解得足够小，不用继续递归分解为止。如果我们把这个一层一层的分解过程画成图，它其实就是一棵树,叫作递归树。</p>
+<span id="more"></span>
+
+<hr>
+<p>把归并排序画成递归树，就是下面这个样子：</p>
 <img src="/images/dgtree1.png" width=512 height=292>
 
 <p>归并算法中比较耗时的是归并操作，也就是把两个子数组合并为大数组。从图中我们可以看出，每一层归并操作消耗的时间总和是一样的，跟要排序的数据规模有关。我们把每一层归并操作消耗的时间记作 n。</p>

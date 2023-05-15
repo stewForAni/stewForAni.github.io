@@ -14,7 +14,7 @@
 <meta property="og:description" content="包体积优化 ReDex 分析">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-09-06T15:02:39.000Z">
-<meta property="article:modified_time" content="2023-04-27T12:43:18.358Z">
+<meta property="article:modified_time" content="2023-05-15T07:31:50.044Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="包体积优化-ReDex-分析"><a href="#包体积优化-ReDex-分析" class="headerlink" title="包体积优化 ReDex 分析"></a>包体积优化 ReDex 分析<br><span id="more"></span></h2><p><a target="_blank" rel="noopener" href="https://github.com/facebook/redex">https://github.com/facebook/redex</a></p>
+        <p>包体积优化 ReDex 分析</p>
+<span id="more"></span>
+
+<hr>
+<p><a target="_blank" rel="noopener" href="https://github.com/facebook/redex">https://github.com/facebook/redex</a></p>
 <h3 id="通用字节码优化"><a href="#通用字节码优化" class="headerlink" title="通用字节码优化"></a>通用字节码优化</h3><ul>
 <li><p>ConstantPropagationPass<br>对方法进行数据流分析，可能会产生一些死代码，这也为后续的死代码删除创造了条件。<br>1 int x &#x3D; 14;<br>2 int y &#x3D; 7 - x &#x2F; 2;<br>3 return y * (28 &#x2F; x + 2);<br>4 —&gt;<br>5 int x &#x3D; 14;<br>6 int y &#x3D; 7 - 14 &#x2F; 2;<br>7 return (7 - 14 &#x2F; 2) * (28 &#x2F; 14 + 2);<br>上面的例子经过 常量折叠 + 常量传播优化后就会简化为<br>1 int x &#x3D; 14;<br>2 int y &#x3D; 0;<br>3 return 0;</p>
 </li>

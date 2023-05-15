@@ -14,7 +14,7 @@
 <meta property="og:description" content="记录File的常规操作">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-09-10T15:25:53.000Z">
-<meta property="article:modified_time" content="2023-05-14T08:15:11.646Z">
+<meta property="article:modified_time" content="2023-05-15T07:12:00.854Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Expansion">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,26 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="记录File的常规操作"><a href="#记录File的常规操作" class="headerlink" title="记录File的常规操作"></a>记录File的常规操作<br><span id="more"></span></h2>
+        <p>记录File的常规操作</p>
+<span id="more"></span>
+
+<hr>
+<p><code>File既包括文件也包括文件夹</code></p>
+<h3 id="file类的创建（类！！！）"><a href="#file类的创建（类！！！）" class="headerlink" title="file类的创建（类！！！）"></a>file类的创建（类！！！）</h3><p><code>File fileFirst=new  File（String  DiectoryPath）</code><br>参数用于指明文件夹的路径或文件的路径，用于创建文件夹或文件<br><code>File  fileSecond=new File（String DiectoryPath，String FileName）</code><br>DiectoryPath文件所在文件夹的位置，FileName为文件名，用于创建文件</p>
+<p>以上只是创建了File类并没有创建文件或者文件夹</p>
+<hr>
+<h3 id="真正文件的创建"><a href="#真正文件的创建" class="headerlink" title="真正文件的创建"></a>真正文件的创建</h3><p><code>fileSecond.creatNewFile()</code><br>创建成功会返回True，如果已存在返回false<br>一般在创建前会进行父目录存在判断与本文件存在判断</p>
+<hr>
+<h3 id="文件夹的创建"><a href="#文件夹的创建" class="headerlink" title="文件夹的创建"></a>文件夹的创建</h3><p><code>fileFirst.mkDir()</code><br>文件夹的创建，父目录一定纯在，否者会报错<br><code>fileFirst.mdDirs()</code><br>文件夹的创建，如果父目录不存在，一并创建；</p>
+<hr>
+<h3 id="文件或文件夹的删除"><a href="#文件或文件夹的删除" class="headerlink" title="文件或文件夹的删除"></a>文件或文件夹的删除</h3><p><code>file.delete()</code><br>方法可以删除一个文件或者一个整个文件夹（整个目录），返回结果是布尔类型</p>
+<hr>
+<h3 id="文件或文件夹的纯在判断"><a href="#文件或文件夹的纯在判断" class="headerlink" title="文件或文件夹的纯在判断"></a>文件或文件夹的纯在判断</h3><p><code>file.exist()</code><br>根据返回值进行判断，true为存在</p>
+<hr>
+<h3 id="文件或文件夹的绝对路径"><a href="#文件或文件夹的绝对路径" class="headerlink" title="文件或文件夹的绝对路径"></a>文件或文件夹的绝对路径</h3><p><code>file.getAbsolutePath()</code><br>返回字符串类型</p>
+<hr>
+<h3 id="是文件或文件夹的判断"><a href="#是文件或文件夹的判断" class="headerlink" title="是文件或文件夹的判断"></a>是文件或文件夹的判断</h3><p><code>file.isFile()</code><br><code>file.isDirectory()</code></p>
+
       
     </div>
     <footer class="article-footer">

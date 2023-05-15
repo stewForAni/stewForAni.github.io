@@ -14,7 +14,7 @@
 <meta property="og:description" content="这个suspend关键字，并不是真正实现挂起，它其实是一个提醒。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-22T06:23:22.000Z">
-<meta property="article:modified_time" content="2022-05-22T06:50:29.925Z">
+<meta property="article:modified_time" content="2023-05-15T07:33:14.216Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="kotlin">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="这个suspend关键字，并不是真正实现挂起，它其实是一个提醒。"><a href="#这个suspend关键字，并不是真正实现挂起，它其实是一个提醒。" class="headerlink" title="这个suspend关键字，并不是真正实现挂起，它其实是一个提醒。"></a>这个suspend关键字，并不是真正实现挂起，它其实是一个提醒。<br><span id="more"></span></h2><p>先随便写一个自定义的 suspend 函数：</p>
+        <p>这个suspend关键字，并不是真正实现挂起，它其实是一个提醒。</p>
+<span id="more"></span>
+
+<hr>
+<p>先随便写一个自定义的 suspend 函数：</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">suspendingPrint</span><span class="params">()</span></span> &#123;</span><br><span class="line">  println(&amp;quot;Thread: $&#123;Thread.currentThread().name&#125;&amp;quot;)</span><br><span class="line">&#125;</span><br><span class="line">I/System.<span class="keyword">out</span>: Thread: main</span><br></pre></td></tr></table></figure>
 
 <p>输出的结果还是在主线程。</p>

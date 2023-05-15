@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://stewforani.github.io/images/jvm3.png">
 <meta property="og:image" content="https://stewforani.github.io/images/jvm4.png">
 <meta property="article:published_time" content="2022-05-26T16:25:03.000Z">
-<meta property="article:modified_time" content="2022-05-28T15:32:24.808Z">
+<meta property="article:modified_time" content="2023-05-15T07:31:54.687Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
@@ -108,7 +108,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Java-虚拟机在执行-Java-程序的过程中，会把它所管理的内存划分为不同的数据区域。"><a href="#Java-虚拟机在执行-Java-程序的过程中，会把它所管理的内存划分为不同的数据区域。" class="headerlink" title="Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为不同的数据区域。"></a>Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为不同的数据区域。<br><span id="more"></span></h2><ul>
+        <p>Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为不同的数据区域。</p>
+<span id="more"></span>
+
+<hr>
+<ul>
 <li>HelloWorld.java 文件首先需要经过编译器编译，生成 HelloWorld.class 字节码文件。</li>
 <li>Java 程序中访问HelloWorld这个类时，需要通过 ClassLoader(类加载器)将HelloWorld.class 加载到 JVM 的内存中。</li>
 <li>JVM 中的内存可以划分为若干个不同的数据区域，主要分为：程序计数器、虚拟机栈、本地方法栈、堆、方法区。</li>

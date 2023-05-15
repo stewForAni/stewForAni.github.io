@@ -14,7 +14,7 @@
 <meta property="og:description" content="AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-08-10T15:25:53.000Z">
-<meta property="article:modified_time" content="2023-04-08T08:31:34.067Z">
+<meta property="article:modified_time" content="2023-05-15T07:35:58.972Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="framework">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作"><a href="#AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作" class="headerlink" title="AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作"></a>AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作<br><span id="more"></span></h2><p>ActivityManagerService 主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作，AMS的注册启动可以参考Binder之系统服务注册一文</p>
+        <p>AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作</p>
+<span id="more"></span>
+
+<hr>
+<p>ActivityManagerService 主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作，AMS的注册启动可以参考Binder之系统服务注册一文</p>
 <h3 id="Activity跳转逻辑"><a href="#Activity跳转逻辑" class="headerlink" title="Activity跳转逻辑"></a>Activity跳转逻辑</h3><p><code>举例：AActivity#onPause -&gt; BActivity#onCreate -&gt; BActivity#onStart -&gt; BActivity#onResume -&gt; AActivity#onStop</code></p>
 <p><code>mStackSupervisor.resumeFocusedStackTopActivityLocked</code><br><code>startPausingLocked</code><br>将当前未Pause的Activity进行Pause</p>
 <p>暂停完又会回到<br><code>mStackSupervisor.resumeFocusedStackTopActivityLocked</code><br>进行<code>mStackSupervisor.startSpecificActivityLocked</code></p>

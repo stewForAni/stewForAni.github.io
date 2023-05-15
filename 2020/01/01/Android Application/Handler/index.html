@@ -14,7 +14,7 @@
 <meta property="og:description" content="Android消息传递机制,主要用于线程间通信">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-01T06:42:00.000Z">
-<meta property="article:modified_time" content="2023-03-04T09:21:10.019Z">
+<meta property="article:modified_time" content="2023-05-15T07:36:28.514Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Android消息传递机制-主要用于线程间通信"><a href="#Android消息传递机制-主要用于线程间通信" class="headerlink" title="Android消息传递机制,主要用于线程间通信"></a>Android消息传递机制,主要用于线程间通信<br><span id="more"></span></h2><p><code>Looper.java</code><br><code>MessageQueue.java</code><br><code>Message.java</code></p>
+        <p>Android消息传递机制,主要用于线程间通信</p>
+<span id="more"></span>
+
+<hr>
+<p><code>Looper.java</code><br><code>MessageQueue.java</code><br><code>Message.java</code></p>
 <h3 id="Message"><a href="#Message" class="headerlink" title="Message"></a>Message</h3><p>Message类是个final类，不能被继承，同时Message类实现了Parcelable接口，链表结构，内部维护了一个链表缓存池，避免重复创建对象，以sPool作为链表头。</p>
 <p>尽管Message的构造器是公开的，但 是获取Message对象的最好方法是调用Message.obtain()或者Handler.obtainMessage(), 这样是从一个 可回收对象池中获取Message对象。</p>
 <h3 id="Obtain方法"><a href="#Obtain方法" class="headerlink" title="Obtain方法"></a>Obtain方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//避免分配新的对象,静态方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Message <span class="title function_">obtain</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (sPoolSync) &#123;</span><br><span class="line">            <span class="keyword">if</span> (sPool != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="type">Message</span> <span class="variable">m</span> <span class="operator">=</span> sPool;</span><br><span class="line">                sPool = m.next;</span><br><span class="line">                m.next = <span class="literal">null</span>;</span><br><span class="line">                m.flags = <span class="number">0</span>; <span class="comment">// clear in-use flag</span></span><br><span class="line">                sPoolSize--;</span><br><span class="line">                <span class="keyword">return</span> m;</span><br><span class="line">        &#125; &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Message</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>

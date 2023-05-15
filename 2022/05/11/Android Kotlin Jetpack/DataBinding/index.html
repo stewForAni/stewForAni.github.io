@@ -15,7 +15,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://stewforani.github.io/images/databinding.jpeg">
 <meta property="article:published_time" content="2022-05-11T14:36:07.000Z">
-<meta property="article:modified_time" content="2022-05-11T15:17:49.562Z">
+<meta property="article:modified_time" content="2023-05-15T07:33:55.983Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Jetpack">
 <meta name="twitter:card" content="summary">
@@ -104,7 +104,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="DataBinding：数据绑定，即布局中的控件与可观察的数据进行绑定。"><a href="#DataBinding：数据绑定，即布局中的控件与可观察的数据进行绑定。" class="headerlink" title="DataBinding：数据绑定，即布局中的控件与可观察的数据进行绑定。"></a>DataBinding：数据绑定，即布局中的控件与可观察的数据进行绑定。<br><span id="more"></span></h2><p>DataBinding并非是将UI逻辑搬到XML中写导致而难以调试 ，只负责绑定数据，UI控件与其需要的终态数据进行绑定。 终态数据是指UI控件直接需要的数据（UI数据），string值、int值等，而不是一段逻辑（不然就叫 LogicBinding了 ，虽然DataBinding支持逻辑表达式）。</p>
+        <p>DataBinding：数据绑定，即布局中的控件与可观察的数据进行绑定。</p>
+<span id="more"></span>
+
+<hr>
+<p>DataBinding并非是将UI逻辑搬到XML中写导致而难以调试 ，只负责绑定数据，UI控件与其需要的终态数据进行绑定。 终态数据是指UI控件直接需要的数据（UI数据），string值、int值等，而不是一段逻辑（不然就叫 LogicBinding了 ，虽然DataBinding支持逻辑表达式）。</p>
 <p>明确了 DataBinding 的 职责边界后 应该知道了：原本的逻辑代码 该怎么写还是怎么写，只不过不再需要 textView.setText(user.name)，而是直接 user.setName()。</p>
 <p>所以 DataBinding 的本质就是 “终态数据” 与 “UI控件” 的绑定，具有以下优势：</p>
 <ul>

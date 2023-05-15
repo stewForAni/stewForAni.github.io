@@ -14,7 +14,7 @@
 <meta property="og:description" content="ViewModel 以注重生命周期的方式存储和管理界面相关的数据。ViewModel 类让数据可在发生屏幕旋转等配置更改后继续留存。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-14T06:05:42.000Z">
-<meta property="article:modified_time" content="2022-07-25T06:24:36.169Z">
+<meta property="article:modified_time" content="2023-05-15T07:33:10.962Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Jetpack">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="ViewModel-以注重生命周期的方式存储和管理界面相关的数据。ViewModel-类让数据可在发生屏幕旋转等配置更改后继续留存。"><a href="#ViewModel-以注重生命周期的方式存储和管理界面相关的数据。ViewModel-类让数据可在发生屏幕旋转等配置更改后继续留存。" class="headerlink" title="ViewModel 以注重生命周期的方式存储和管理界面相关的数据。ViewModel 类让数据可在发生屏幕旋转等配置更改后继续留存。"></a>ViewModel 以注重生命周期的方式存储和管理界面相关的数据。<br>ViewModel 类让数据可在发生屏幕旋转等配置更改后继续留存。<br><span id="more"></span></h2><h3 id="问题："><a href="#问题：" class="headerlink" title="问题："></a>问题：</h3><p>1.旋转界面，配置更改，导致数据丢失，onSaveInstanceState() 方法保存 然后从 onCreate() 中的Bundle 或者 onRestoreInstanceState 恢复数据，但IPC对Bundle有1M的限制，如何做到大数据恢复</p>
+        <p>ViewModel 以注重生命周期的方式存储和管理界面相关的数据。<br>ViewModel 类让数据可在发生屏幕旋转等配置更改后继续留存。</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="问题："><a href="#问题：" class="headerlink" title="问题："></a>问题：</h3><p>1.旋转界面，配置更改，导致数据丢失，onSaveInstanceState() 方法保存 然后从 onCreate() 中的Bundle 或者 onRestoreInstanceState 恢复数据，但IPC对Bundle有1M的限制，如何做到大数据恢复</p>
 <p>2.逻辑层会持有UI层的引用（比如：在MVP的Presenter中需要持有IView接口来回调结果给界面），如何避免内存泄漏</p>
 <hr>
 <p>ViewModel生命周期长于Activity，因系统配置变更Activity销毁重建，ViewModel对象会保留并关联到新的Activity。而Activity的正常销毁（系统不会重建Activity）时，ViewModel对象是会清除的。</p>

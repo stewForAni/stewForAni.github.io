@@ -14,7 +14,7 @@
 <meta property="og:description" content="Glide是一个快速高效的Android图片加载库,注重于列表滚动">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-07-11T06:42:00.000Z">
-<meta property="article:modified_time" content="2023-03-22T11:48:29.299Z">
+<meta property="article:modified_time" content="2023-05-15T07:36:31.452Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Glide是一个快速高效的Android图片加载库-注重于列表滚动"><a href="#Glide是一个快速高效的Android图片加载库-注重于列表滚动" class="headerlink" title="Glide是一个快速高效的Android图片加载库,注重于列表滚动"></a>Glide是一个快速高效的Android图片加载库,注重于列表滚动<br><span id="more"></span></h2><h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h5 id="1、添加依赖："><a href="#1、添加依赖：" class="headerlink" title="1、添加依赖："></a>1、添加依赖：</h5><p><code>implementation &#39;com.github.bumptech.glide:glide:4.10.0&#39;</code><br><code>annotationProcessor &#39;com.github.bumptech.glide:compiler:4.10.0&#39;</code></p>
+        <p>Glide是一个快速高效的Android图片加载库,注重于列表滚动</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h5 id="1、添加依赖："><a href="#1、添加依赖：" class="headerlink" title="1、添加依赖："></a>1、添加依赖：</h5><p><code>implementation &#39;com.github.bumptech.glide:glide:4.10.0&#39;</code><br><code>annotationProcessor &#39;com.github.bumptech.glide:compiler:4.10.0&#39;</code></p>
 <h5 id="2、添加网络权限"><a href="#2、添加网络权限" class="headerlink" title="2、添加网络权限"></a>2、添加网络权限</h5><p><code>&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;</code></p>
 <h5 id="3、一句代码加载图片到ImageView"><a href="#3、一句代码加载图片到ImageView" class="headerlink" title="3、一句代码加载图片到ImageView"></a>3、一句代码加载图片到ImageView</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(<span class="built_in">this</span>).load(imgUrl).into(mIv1);</span><br><span class="line"></span><br><span class="line"><span class="comment">//进阶</span></span><br><span class="line"><span class="type">RequestOptions</span> <span class="variable">options</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RequestOptions</span>()</span><br><span class="line">            .placeholder(R.drawable.ic_launcher_background)</span><br><span class="line">            .error(R.mipmap.ic_launcher)</span><br><span class="line">            .diskCacheStrategy(DiskCacheStrategy.NONE)</span><br><span class="line">    		.override(<span class="number">200</span>, <span class="number">100</span>);<span class="comment">//override指定加载图片大小</span></span><br><span class="line">    </span><br><span class="line">Glide.with(<span class="built_in">this</span>)</span><br><span class="line">            .load(imgUrl)</span><br><span class="line">            .apply(options)</span><br><span class="line">            .into(mIv2);</span><br></pre></td></tr></table></figure>
 

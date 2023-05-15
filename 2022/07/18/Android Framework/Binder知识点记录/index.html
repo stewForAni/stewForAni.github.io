@@ -14,7 +14,7 @@
 <meta property="og:description" content="Andorid系统中的一种进程间通信方式">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-07-18T14:02:39.000Z">
-<meta property="article:modified_time" content="2023-04-14T12:15:38.297Z">
+<meta property="article:modified_time" content="2023-05-15T07:35:36.829Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="framework">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Andorid系统中的一种进程间通信方式"><a href="#Andorid系统中的一种进程间通信方式" class="headerlink" title="Andorid系统中的一种进程间通信方式"></a>Andorid系统中的一种进程间通信方式<br><span id="more"></span></h2><h3 id="Android-IPC"><a href="#Android-IPC" class="headerlink" title="Android IPC"></a>Android IPC</h3><h5 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h5><p>Serializeble 是 java 的序列化方式，Parcelable 是 Android 特有的序列化方式；</p>
+        <p>Andorid系统中的一种进程间通信方式</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="Android-IPC"><a href="#Android-IPC" class="headerlink" title="Android IPC"></a>Android IPC</h3><h5 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h5><p>Serializeble 是 java 的序列化方式，Parcelable 是 Android 特有的序列化方式；</p>
 <p>Serializable 在序列化的时候会产生大量的临时变量，从而引起频繁的 GC。</p>
 <p>Parcel 提供了一套机制，可以将序列化之后的数据写入到一个共享内存中，其他进程通过Parcel 可以从这块共享内存中读出字节流，并反序列化成对象</p>
 <p>一般在保存数据到本地或者网络传输时建议使用 Serializable 即可，虽然效率差一些，适合数据持久化。</p>

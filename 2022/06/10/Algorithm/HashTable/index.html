@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://stewforani.github.io/images/hashtable1.png">
 <meta property="og:image" content="https://stewforani.github.io/images/hashtable2.png">
 <meta property="article:published_time" content="2022-06-10T15:51:07.000Z">
-<meta property="article:modified_time" content="2022-06-13T15:27:44.192Z">
+<meta property="article:modified_time" content="2023-05-15T07:38:33.479Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="algorithm">
 <meta name="twitter:card" content="summary">
@@ -105,7 +105,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Hash-Table，也叫哈希表，是数组的一种扩展"><a href="#Hash-Table，也叫哈希表，是数组的一种扩展" class="headerlink" title="Hash Table，也叫哈希表，是数组的一种扩展"></a>Hash Table，也叫哈希表，是数组的一种扩展<br><span id="more"></span></h2><p>举例1：1-10号选手，使用数组，下标key：1-10，value：选手信息<br>举例2：051167编号，05年级，11班级，67选手号，编号不能直接作为下标，我们可以取后两位作为数组下标</p>
+        <p>Hash Table，也叫哈希表，是数组的一种扩展</p>
+<span id="more"></span>
+
+<hr>
+<p>举例1：1-10号选手，使用数组，下标key：1-10，value：选手信息<br>举例2：051167编号，05年级，11班级，67选手号，编号不能直接作为下标，我们可以取后两位作为数组下标</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">hash</span><span class="params">(String key)</span> &#123;</span><br><span class="line">  <span class="comment">// 获取后两位字符</span></span><br><span class="line">  <span class="type">string</span> <span class="variable">lastTwoChars</span> <span class="operator">=</span> key.substr(length-<span class="number">2</span>, length);</span><br><span class="line">  <span class="comment">// 将后两位字符转换为整数</span></span><br><span class="line">  <span class="type">int</span> <span class="variable">hashValue</span> <span class="operator">=</span> convert lastTwoChas to <span class="type">int</span>-type;</span><br><span class="line">  <span class="keyword">return</span> hashValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这就是典型的散列思想。其中，参赛选手的编号我们叫做键（key）或者关键字。我们用它来标识一个选手。我们把参赛编号转化为数组下标的映射方法就叫作散列函数（或“Hash 函数”“哈希函数”），而散列函数计算得到的值就叫作散列值（或“Hash 值”“哈希值”）。</p>

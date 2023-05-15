@@ -14,7 +14,7 @@
 <meta property="og:description" content="Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-07-13T09:19:55.000Z">
-<meta property="article:modified_time" content="2022-07-18T10:01:25.782Z">
+<meta property="article:modified_time" content="2023-05-15T07:38:28.110Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式"><a href="#Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式" class="headerlink" title="Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式"></a>Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。<br>Activity的启动流程在API28以后变成了事务启动的方式<br><span id="more"></span></h2><h3 id="Activity-java"><a href="#Activity-java" class="headerlink" title="Activity.java"></a>Activity.java</h3><p><font color=blue>startActivity<br>startActivity<br>startActivityForResult<br>startActivityForResult<br></font></p>
+        <p>Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。<br>Activity的启动流程在API28以后变成了事务启动的方式</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="Activity-java"><a href="#Activity-java" class="headerlink" title="Activity.java"></a>Activity.java</h3><p><font color=blue>startActivity<br>startActivity<br>startActivityForResult<br>startActivityForResult<br></font></p>
 <h3 id="Instrumentation-java"><a href="#Instrumentation-java" class="headerlink" title="Instrumentation.java"></a>Instrumentation.java</h3><p>Instrumentation从字面上来看是仪器盘的意思，具体到程序中是管理activity的一个工具类，包括创建和启动Activity，activity的生命周期方法都是由Instrumentation这个仪器来控制，一个进程中只用一个Instrumentation实例。</p>
 <p><font color=blue>execStartActivity<br>ActivityManager.getService().startActivity</font><br>&#x2F;&#x2F;其中有contextThread和token两个参数，AMS反过来通知的时候需要这俩参数</p>
 <p><font color=blue>checkStartActivityResult</font><br>&#x2F;&#x2F;检查启动Activity的结果（抛出异常，例如清单文件未注册Activity）<br>&#x2F;&#x2F;通过IActivityManagerSingleton.get()得到ActivityManagerProxy（IActivityManager）代理对象，IActivityManager 是应用程序进程与 SystemServer（AMS 所在进程）通信的 Binder 在 Client 端的代理，因为是应用程序进程向 AMS 发消息，所以应用程序进程是 Client 端。反过来是ApplicationThreadProxy</p>

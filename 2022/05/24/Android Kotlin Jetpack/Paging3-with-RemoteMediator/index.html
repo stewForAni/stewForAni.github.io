@@ -14,7 +14,7 @@
 <meta property="og:description" content="实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-24T15:46:15.000Z">
-<meta property="article:modified_time" content="2022-06-05T14:56:58.002Z">
+<meta property="article:modified_time" content="2023-05-15T07:33:21.022Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Jetpack">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到-UI-上"><a href="#实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到-UI-上" class="headerlink" title="实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上"></a>实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上<br><span id="more"></span></h2><p>RemoteMediator 和 PagingSource 相似，都需要覆盖 load() 方法，但是不同的是 RemoteMediator 不是加载分页数据到 RecyclerView 列表上，而是获取网络分页数据并更新到数据库中。</p>
+        <p>实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上</p>
+<span id="more"></span>
+
+<hr>
+<p>RemoteMediator 和 PagingSource 相似，都需要覆盖 load() 方法，但是不同的是 RemoteMediator 不是加载分页数据到 RecyclerView 列表上，而是获取网络分页数据并更新到数据库中。</p>
 <h3 id="区别："><a href="#区别：" class="headerlink" title="区别："></a>区别：</h3><p>PagingSource：实现单一数据源以及如何从该数据源中查找数据，例如 Room，数据源的变动会直接映射到 UI 上<br>RemoteMediator：实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上<br>在项目中如何进行选择？</p>
 <p>PagingSource：用于加载有限的数据集（本地数据库）例如手机通讯录等等。<br>RemoteMediator：主要用来加载网络分页数据并更新到数据库中，当我们没有更多的数据时，我们向网络请求更多的数据，结合 PagingSource 当保存更多数据时会直接映射到 UI 上</p>
 <h3 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h3><p>RemoteMediator 目前是实验性的 API ，所有实现 RemoteMediator 的类都需要添加 @OptIn(ExperimentalPagingApi::class) 注解。</p>

@@ -15,7 +15,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://stewforani.github.io/images/nest1.jpeg">
 <meta property="article:published_time" content="2022-08-13T06:05:42.000Z">
-<meta property="article:modified_time" content="2023-03-03T10:34:38.884Z">
+<meta property="article:modified_time" content="2023-05-15T07:38:22.348Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
@@ -104,7 +104,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Android-5-0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷"><a href="#Android-5-0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷" class="headerlink" title="Android 5.0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷"></a>Android 5.0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷<br><span id="more"></span></h2><h3 id="传统嵌套滑动"><a href="#传统嵌套滑动" class="headerlink" title="传统嵌套滑动"></a>传统嵌套滑动</h3><p>由于父View拦截后，后续事件无法传递到子View，导致滑动无法连贯，必须滑完父View，抬起手指，重新向上滑动</p>
+        <p>Android 5.0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="传统嵌套滑动"><a href="#传统嵌套滑动" class="headerlink" title="传统嵌套滑动"></a>传统嵌套滑动</h3><p>由于父View拦截后，后续事件无法传递到子View，导致滑动无法连贯，必须滑完父View，抬起手指，重新向上滑动</p>
 <p>比如：ScrollView嵌套TopView+ListView，或者自定义一个LinearLayout（在onInterceptTouchEvent中判断是否拦截，在onTouchEvent中使用scrollBy进行滑动）</p>
 <h3 id="NestedScrolling机制"><a href="#NestedScrolling机制" class="headerlink" title="NestedScrolling机制"></a>NestedScrolling机制</h3><ul>
 <li>Android5.0以上，可以直接使用ViewGoup与View自带方法</li>

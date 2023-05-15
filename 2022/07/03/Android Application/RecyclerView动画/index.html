@@ -14,7 +14,7 @@
 <meta property="og:description" content="RecyclerView动画知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-07-03T03:15:50.000Z">
-<meta property="article:modified_time" content="2023-03-15T10:05:33.774Z">
+<meta property="article:modified_time" content="2023-05-15T07:36:17.218Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="RecyclerView动画知识点记录"><a href="#RecyclerView动画知识点记录" class="headerlink" title="RecyclerView动画知识点记录"></a>RecyclerView动画知识点记录<br><span id="more"></span></h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>列表中有两个表项（1、2），删除 2，此时 3 会从屏幕底部平滑地移入并占据原来 2 的位置。</p>
+        <p>RecyclerView动画知识点记录</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>列表中有两个表项（1、2），删除 2，此时 3 会从屏幕底部平滑地移入并占据原来 2 的位置。</p>
 <p><code>item1</code><br><code>item2</code><br><code>删除item2，item3自动补位</code><br><code>item1</code><br><code>item3</code></p>
 <p>RecyclerView的策略是：<br>为动画前的表项先执行一次pre-layout，将不可见的表项 3 也加载到布局中，形成（1、2、3）<br>再为动画后的表项执行一次post-layout，同样形成（1、3）</p>
 <h3 id="pre-layout预布局"><a href="#pre-layout预布局" class="headerlink" title="pre-layout预布局"></a>pre-layout预布局</h3><ul>

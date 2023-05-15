@@ -14,7 +14,7 @@
 <meta property="og:description" content="Android存储分区 知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-08-30T15:25:53.000Z">
-<meta property="article:modified_time" content="2023-05-14T08:14:45.375Z">
+<meta property="article:modified_time" content="2023-05-15T07:11:49.102Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Expansion">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,78 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Android存储分区-知识点记录"><a href="#Android存储分区-知识点记录" class="headerlink" title="Android存储分区 知识点记录"></a>Android存储分区 知识点记录<br><span id="more"></span></h2>
+        <p>Android存储分区 知识点记录</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="Android存储"><a href="#Android存储" class="headerlink" title="Android存储"></a>Android存储</h3><ol>
+<li><p>内部存储<br><code>/data/data/com.xxx.xxx/</code><br>一般用于存储容量较小的，私密性较强的文件<br>App卸载后被删除，会被统计进存储</p>
+</li>
+<li><p>外部存储<br>1)外部私有空间：<br><code>/sdcard/Android/data/com.xxx.xxx/</code><br>一般用于存储容量较大的文件，即使删除了也不影响App正常功能<br>App卸载后被删除，会被统计进存储<br>2)外部共享空间（所有app共享）：<br>媒体文件：<br><code>/sdcard/Movies/</code><br><code>/sdcard/DCIM/（相册）</code><br>文档和其他文件：<br><code>/sdcard/Documents/</code></p>
+</li>
+</ol>
+<p>在Android 10 之前 ，用户可以随意在SD 卡创建文件目录，比如我们能够直接在&#x2F;sdcard&#x2F;目录下创建目录&#x2F;文件，好处是不进入统计，且方便操作文件，缺点是不安全</p>
+<p>Google在Android 10.0上引入Scoped Storage分区存储，原理如下：</p>
+<ol>
+<li>App访问自身内部空间与 访问外部私有目录不需要任何权限(与Android 10.0之前一致)</li>
+<li>外部共享空间、外部其它目录，App无法通过路径直接访问，不能新建、删除、修改目录&#x2F;文件等， 需要通过Uri访问</li>
+</ol>
+<p>以下目录无需存储权限即可访问：</p>
+<ol>
+<li>App自身的内部存储 </li>
+<li>App自身的自带外部存储-私有目录</li>
+</ol>
+<p>剩下的都需要申请存储权限，Android 10.0前后对于存储作用域访问的区别就体现在如何访问剩余这些目录内的文件。</p>
+<hr>
+<h3 id="Android6-0之前"><a href="#Android6-0之前" class="headerlink" title="Android6.0之前"></a>Android6.0之前</h3><p>无需申请动态权限的，在AndroidManifest.xml 里声明存储权限即可：<br><code>&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</code><br><code>&lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot; /&gt;</code><br>这样即可访问外部共享和外部其他</p>
+<hr>
+<h3 id="Android6-0-Android9-0"><a href="#Android6-0-Android9-0" class="headerlink" title="Android6.0-Android9.0"></a>Android6.0-Android9.0</h3><p>需要动态申请权限，除了在AndroidManifest.xml 里声明存储权限外，还需要在代码里动态申请，可以使用第三方库</p>
+<h5 id="外部共享"><a href="#外部共享" class="headerlink" title="外部共享"></a>外部共享</h5><p>访问媒体文件（这里以图片为例）</p>
+<ol>
+<li>直接构造路径获取</li>
+<li>通过MediaStore获取路径</li>
+<li>通过MediaStore获取Uri，图片的信息封装在Uri里，通过Uri构造出InputStream，再进行图片解码拿到Bitmap</li>
+</ol>
+<p>访问文档和其它文件</p>
+<ol>
+<li>直接构造路径获取</li>
+<li>SAF（这里以图片为例）：Storage Access Framework 简称SAF：存储访问框架。相当于系统内置了文件选择器，通过它可以拿到想要访问的文件信息</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startSAF</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(Intent.ACTION_OPEN_DOCUMENT);</span><br><span class="line">    intent.addCategory(Intent.CATEGORY_OPENABLE);</span><br><span class="line">    <span class="comment">//选择图片</span></span><br><span class="line">    intent.setType(<span class="string">&quot;image/jpeg&quot;</span>);</span><br><span class="line">    startActivityForResult(intent, <span class="number">100</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onActivityResult</span><span class="params">(<span class="type">int</span> requestCode, <span class="type">int</span> resultCode, <span class="meta">@Nullable</span> Intent data)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onActivityResult(requestCode, resultCode, data);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (requestCode == <span class="number">100</span>) &#123;</span><br><span class="line">        <span class="comment">//选中返回的图片封装在uri里</span></span><br><span class="line">        <span class="type">Uri</span> <span class="variable">uri</span> <span class="operator">=</span> data.getData();</span><br><span class="line">        openUri(uri);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">openUri</span><span class="params">(Uri uri)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//从uri构造输入流</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">fis</span> <span class="operator">=</span> getContentResolver().openInputStream(uri);</span><br><span class="line">        <span class="type">Bitmap</span> <span class="variable">bitmap</span> <span class="operator">=</span> BitmapFactory.decodeStream(fis);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="外部其他目录"><a href="#外部其他目录" class="headerlink" title="外部其他目录"></a>外部其他目录</h5><ol>
+<li>直接构造路径获取</li>
+<li>SAF 与上述一致</li>
+</ol>
+<h5 id="上述总结："><a href="#上述总结：" class="headerlink" title="上述总结："></a>上述总结：</h5><ol>
+<li>通过路径访问。路径可以直接构造也可以通过MediaStore获取。</li>
+<li>通过Uri访问。Uri可以通过MediaStore或者SAF获取。</li>
+</ol>
+<hr>
+<h3 id="Android10及以后（开始有分区）"><a href="#Android10及以后（开始有分区）" class="headerlink" title="Android10及以后（开始有分区）"></a>Android10及以后（开始有分区）</h3><p>外部共享，外部其他，无法通过路径访问，不能创建&#x2F;删除&#x2F;修改，<code>可以通过Uri访问</code></p>
+<p><code>targetSdkVersion&lt;=28</code>或者 <code>android:requestLegacyExternalStorage=&quot;true&quot;</code> 可禁用分区存储</p>
+<p>上述是缓冲方法，不能一劳永逸，且Android11会强制开启分区</p>
+<h5 id="外部共享空间"><a href="#外部共享空间" class="headerlink" title="外部共享空间"></a>外部共享空间</h5><p>系统里有external.db数据库，该数据库里有files表，该表里存放着共享文件的诸多信息，如图片有宽高，经纬度、存放路径等，视频宽高、时长、存放路径等。而文件真正存放的地方在于共享存储空间。</p>
+<ol>
+<li>保存图片到相册<br>路径写入数据库，并获取Uri，Uri构造输出流，将该图片保存在&#x2F;sdcard&#x2F;Pictures&#x2F;目录下</li>
+<li>从相册获取图片<br>从Cursor中获取Uri，Uri构造输入流读取图片</li>
+</ol>
+<p>视频音频同理</p>
+<h5 id="外部其他"><a href="#外部其他" class="headerlink" title="外部其他"></a>外部其他</h5><p>txt文件读写，Uri不能通过MediaStore获取，只能通过SAF获取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startSAF</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(Intent.ACTION_OPEN_DOCUMENT);</span><br><span class="line">    intent.addCategory(Intent.CATEGORY_OPENABLE);</span><br><span class="line">    <span class="comment">//指定选择文本类型的文件</span></span><br><span class="line">    intent.setType(<span class="string">&quot;text/plain&quot;</span>);</span><br><span class="line">    startActivityForResult(intent, <span class="number">100</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onActivityResult</span><span class="params">(<span class="type">int</span> requestCode, <span class="type">int</span> resultCode, <span class="meta">@Nullable</span> Intent data)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onActivityResult(requestCode, resultCode, data);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (requestCode == <span class="number">100</span>) &#123;</span><br><span class="line">        <span class="comment">//选中返回的文件信息封装在Uri里</span></span><br><span class="line">        <span class="type">Uri</span> <span class="variable">uri</span> <span class="operator">=</span> data.getData();</span><br><span class="line"></span><br><span class="line">        openUriForRead(uri);</span><br><span class="line">    <span class="comment">//openUriForWrite(uri);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="外部私有（不需要权限）"><a href="#外部私有（不需要权限）" class="headerlink" title="外部私有（不需要权限）"></a>外部私有（不需要权限）</h5><p>创建文件：<br><code>File externalFilesDir = getExternalFilesDir(null);</code><br><code>getExternalFilesDir: /storage/emulated/0/Android/data/com.stew.androidtest/files</code></p>
+<hr>
+<h3 id="MediaStore作用"><a href="#MediaStore作用" class="headerlink" title="MediaStore作用"></a>MediaStore作用</h3><p>其内部有Audio、Images等内部类，这些内部类里记录着files表的各个字段名，通过构造这些参数就可以插入相应的字段值以及获取对应的字段值。</p>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>内部或者外部私有<br>自己的文件存放自己目录：<br><code>/sdcard/Android/data/packagename/ 和/data/data/packagename/</code></li>
+<li>外部共享（媒体，文件）<br>共享存储空间里的文件需要通过Uri构造输入输出流访问，Uri获取方式有两种：MediaStore和SAF。</li>
+<li>外部其他<br>暂时不建议操作</li>
+</ul>
+<hr>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7012108220982362149">https://juejin.cn/post/7012108220982362149</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7012259637734948895">https://juejin.cn/post/7012259637734948895</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7012262477828194340">https://juejin.cn/post/7012262477828194340</a></p>
+
       
     </div>
     <footer class="article-footer">

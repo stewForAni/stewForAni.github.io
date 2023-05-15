@@ -14,7 +14,7 @@
 <meta property="og:description" content="JVM &#x2F; Dalvik &#x2F; ART知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-09-01T15:02:39.000Z">
-<meta property="article:modified_time" content="2023-04-17T08:17:07.581Z">
+<meta property="article:modified_time" content="2023-05-15T07:34:32.049Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="framework">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="JVM-x2F-Dalvik-x2F-ART知识点记录"><a href="#JVM-x2F-Dalvik-x2F-ART知识点记录" class="headerlink" title="JVM &#x2F; Dalvik &#x2F; ART知识点记录"></a>JVM &#x2F; Dalvik &#x2F; ART知识点记录<br><span id="more"></span></h2><h3 id="JVM-x2F-Dalvik"><a href="#JVM-x2F-Dalvik" class="headerlink" title="JVM &#x2F; Dalvik"></a>JVM &#x2F; Dalvik</h3><p>Android应用程序运行在Dalvik&#x2F;ART虚拟机，并且每一个应用程序对应有一个单独的Dalvik虚拟机实例。Dalvik虚拟机实则也算是一个Java虚拟机，只不过它执行的不是class文件，而是dex文件。</p>
+        <p>JVM &#x2F; Dalvik &#x2F; ART知识点记录</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="JVM-x2F-Dalvik"><a href="#JVM-x2F-Dalvik" class="headerlink" title="JVM &#x2F; Dalvik"></a>JVM &#x2F; Dalvik</h3><p>Android应用程序运行在Dalvik&#x2F;ART虚拟机，并且每一个应用程序对应有一个单独的Dalvik虚拟机实例。Dalvik虚拟机实则也算是一个Java虚拟机，只不过它执行的不是class文件，而是dex文件。</p>
 <p>Jvm基于栈，Dalvik基于寄存器，可以结合【第01讲：程序运行时，内存到底是如何进行分配的？】一文来理解，与JVM版相比，Dalvik版程序的指令数明显减少，数据移动次数也明显减少</p>
 <hr>
 <h3 id="Dalvik-x2F-ART"><a href="#Dalvik-x2F-ART" class="headerlink" title="Dalvik &#x2F; ART"></a>Dalvik &#x2F; ART</h3><p>Dalvik虚拟机执行的是dex字节码，解释执行。从Android 2.2版本开始，支持JIT及时编译（Just In Time）在程序运行的过程中进行选择热点代码（经常执行的代码）进行编译或者优化。 </p>

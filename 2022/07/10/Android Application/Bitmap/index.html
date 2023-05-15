@@ -14,7 +14,7 @@
 <meta property="og:description" content="Bitmap 用来描述一张图片的长、宽、颜色等信息。通常情况下，我们可以使用 BitmapFactory 来将某一路径下的图片解析为 Bitmap 对象。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-07-10T06:42:00.000Z">
-<meta property="article:modified_time" content="2023-03-22T07:22:16.987Z">
+<meta property="article:modified_time" content="2023-05-15T07:36:38.217Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,11 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Bitmap-用来描述一张图片的长、宽、颜色等信息。通常情况下，我们可以使用-BitmapFactory-来将某一路径下的图片解析为-Bitmap-对象。"><a href="#Bitmap-用来描述一张图片的长、宽、颜色等信息。通常情况下，我们可以使用-BitmapFactory-来将某一路径下的图片解析为-Bitmap-对象。" class="headerlink" title="Bitmap 用来描述一张图片的长、宽、颜色等信息。通常情况下，我们可以使用 BitmapFactory 来将某一路径下的图片解析为 Bitmap 对象。"></a>Bitmap 用来描述一张图片的长、宽、颜色等信息。通常情况下，我们可以使用 BitmapFactory 来将某一路径下的图片解析为 Bitmap 对象。<br><span id="more"></span></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Bitmap</span> <span class="variable">bitmap</span> <span class="operator">=</span> BitmapFactory.decodeResource(getResource(),R.drawable.xxx);</span><br><span class="line">img.setBitmap(bitmap);</span><br></pre></td></tr></table></figure>
+        <p>Bitmap 用来描述一张图片的长、宽、颜色等信息。通常情况下，我们可以使用 BitmapFactory 来将某一路径下的图片解析为 Bitmap 对象。</p>
+<span id="more"></span>
+
+<hr>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Bitmap</span> <span class="variable">bitmap</span> <span class="operator">=</span> BitmapFactory.decodeResource(getResource(),R.drawable.xxx);</span><br><span class="line">img.setBitmap(bitmap);</span><br></pre></td></tr></table></figure>
 
 <p>xxx 是保存在 res&#x2F;drawable-xhdpi 目录下的一张 600*600，大小为 65Kb 的图片。</p>
 <p>默认情况下 BitmapFactory 使用 Bitmap.Config.ARGB_8888 的存储方式来加载图片内容，而在这种存储模式下，每一个像素需要占用 4 个字节。</p>
