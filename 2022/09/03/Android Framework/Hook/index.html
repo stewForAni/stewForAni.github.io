@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hook知识点记录 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Hook 直译为中文就是“钩子”。在 Android 平台上，Hook 的目标事件的粒度一般为函数级别，即在指定函数被调用时，根据我们的逻辑拦截修改原有的函数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hook知识点记录">
+<meta property="og:url" content="https://stewforani.github.io/2022/09/03/Android%20Framework/Hook/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Hook 直译为中文就是“钩子”。在 Android 平台上，Hook 的目标事件的粒度一般为函数级别，即在指定函数被调用时，根据我们的逻辑拦截修改原有的函数。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-09-03T15:02:39.000Z">
+<meta property="article:modified_time" content="2023-04-19T10:32:26.079Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/Hook" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/09/03/Android%20Framework/Hook/" class="article-date">
+  <time class="dt-published" datetime="2022-09-03T15:02:39.000Z" itemprop="datePublished">2022-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Hook知识点记录
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Hook-直译为中文就是“钩子”。在-Android-平台上，Hook-的目标事件的粒度一般为函数级别，即在指定函数被调用时，根据我们的逻辑拦截修改原有的函数。"><a href="#Hook-直译为中文就是“钩子”。在-Android-平台上，Hook-的目标事件的粒度一般为函数级别，即在指定函数被调用时，根据我们的逻辑拦截修改原有的函数。" class="headerlink" title="Hook 直译为中文就是“钩子”。在 Android 平台上，Hook 的目标事件的粒度一般为函数级别，即在指定函数被调用时，根据我们的逻辑拦截修改原有的函数。"></a>Hook 直译为中文就是“钩子”。在 Android 平台上，Hook 的目标事件的粒度一般为函数级别，即在指定函数被调用时，根据我们的逻辑拦截修改原有的函数。<br><span id="more"></span></h2><p>通过 Hook 实现 AOP 编程、插桩性能监控、热补丁、在线修复等</p>
+<p>hook技术：<br>1.反射：虚拟机提供的能力，稳定高但范围小（java部分）<br>2.ClassLoader：修改类的加载顺序，需要准备好dex（java全部）<br>3.Xposed：适配性差，每个版本需要改动（java全部）<br>当然还有其他技术。。。</p>
+<hr>
+<h3 id="反射（android9-0限制-hide被反射）"><a href="#反射（android9-0限制-hide被反射）" class="headerlink" title="反射（android9.0限制@hide被反射）"></a>反射（android9.0限制@hide被反射）</h3><p>Android P 9.0 引入了针对非 SDK 接口（俗称为隐藏API   @hide）的使用限制。这是继 Android N上针对 NDK 中私有库的链接限制之后的又一次重大调整。从今以后，不论是native层的NDK还是 Java层的SDK，我们只能使用Google提供的、公开的标准接口。</p>
+<p>如果不是系统类，且API处于黑名单，禁止调用</p>
+<p>android 9.0  10.0  可以使用【元反射】方法：<br>通过反射去获取Class.class类上getDeclaredMethod方法，获取到的Method可以称为“元反射方法”，通过“元反射方法” 去调用隐藏API，就意味着调用者是java.lang.Class，这个类属于系统类，可以正常调用</p>
+<p>比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Field <span class="title function_">getDeclaredField</span><span class="params">(Class&lt;?&gt; cls, String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Method</span> <span class="variable">dMethod</span> <span class="operator">=</span> Class.class.getDeclaredMethod(<span class="string">&quot;getDeclaredField&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> (Field) dMethod.invoke(cls, name);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>https://github.com/tiann/FreeReflection</code></p>
+<p>android 11.0 上【元反射】开始失效，因为增加了 调用者上下文判断 机制。机制给 调用者 跟 被调用的方法 增加了domian，调用者domain要等于或者小于 被调用的方法domain，才能允许访问。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum class</span> <span class="title class_">Domain</span> : <span class="type">char</span> &#123; <span class="comment">//Domain范围</span></span><br><span class="line">	kCorePlatform = <span class="number">0</span>, <span class="comment">// 0</span></span><br><span class="line">	kPlatform,  	   <span class="comment">// 1 </span></span><br><span class="line">	kApplication, 	   <span class="comment">// 2</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>https://bbs.kanxue.com/thread-268936.htm</code></p>
+<p><code>https://github.com/whulzz1993/RePublic</code></p>
+<hr>
+<h3 id="Hook-选择的关键点"><a href="#Hook-选择的关键点" class="headerlink" title="Hook 选择的关键点"></a>Hook 选择的关键点</h3><h5 id="Hook-的选择点："><a href="#Hook-的选择点：" class="headerlink" title="Hook 的选择点："></a>Hook 的选择点：</h5><p>尽量静态变量和单例，因为一旦创建对象，它们不容易变化，非常容易定位</p>
+<h5 id="Hook-过程："><a href="#Hook-过程：" class="headerlink" title="Hook 过程："></a>Hook 过程：</h5><p>寻找 Hook 点，原则是尽量静态变量或者单例对象，尽量 Hook public 的对象和方法。<br>选择合适的代理方式，如果是接口可以用动态代理。<br>偷梁换柱——用代理对象替换原始对象。<br>Android 的 API 版本比较多，方法和类可能不一样，所以要做好 API 的兼容工作。</p>
+<h3 id="Hook-必须掌握的知识"><a href="#Hook-必须掌握的知识" class="headerlink" title="Hook 必须掌握的知识"></a>Hook 必须掌握的知识</h3><h5 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h5><p>需要了解反射操作</p>
+<h5 id="java-的动态代理（动态代理机制InvocationHandler）"><a href="#java-的动态代理（动态代理机制InvocationHandler）" class="headerlink" title="java 的动态代理（动态代理机制InvocationHandler）"></a>java 的动态代理（动态代理机制InvocationHandler）</h5><p>动态代理是指在运行时动态生成代理类，不需要我们像静态代理那个去手动写一个个的代理类。在 java 中，我们可以使用 InvocationHandler 实现动态代理，有兴趣的，可以查看我的这一篇博客 java 代理模式详解</p>
+<hr>
+<h3 id="Hook举例"><a href="#Hook举例" class="headerlink" title="Hook举例"></a>Hook举例</h3><h5 id="Hook-Click（不过这种方式没有做到普遍性，需要自己手动取每个地方设置）"><a href="#Hook-Click（不过这种方式没有做到普遍性，需要自己手动取每个地方设置）" class="headerlink" title="Hook Click（不过这种方式没有做到普遍性，需要自己手动取每个地方设置）"></a>Hook Click（不过这种方式没有做到普遍性，需要自己手动取每个地方设置）</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setOnClickListener</span><span class="params">(<span class="meta">@Nullable</span> OnClickListener l)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!isClickable()) &#123;</span><br><span class="line">        setClickable(<span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    getListenerInfo().mOnClickListener = l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>反射getListenerInfo方法，在反射获取mOnClickListener变量</p>
+<p>&#x2F;&#x2F;先设置ClickListener，再hook取代</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">TextView</span> <span class="variable">tx</span> <span class="operator">=</span> findViewById(R.id.tx);</span><br><span class="line">tx.setOnClickListener(…);</span><br><span class="line">HookClickManager.hook(tx);</span><br><span class="line"></span><br><span class="line"><span class="comment">//其实就是给ClickListener外加一层自己的逻辑，内部还是ClickListener执行</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">hook</span><span class="params">(View v)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="comment">//获取listnerInfo实例</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> View.class.getDeclaredMethod(<span class="string">&quot;getListenerInfo&quot;</span>);</span><br><span class="line">        method.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">listnerInfo</span> <span class="operator">=</span> method.invoke(v);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取listnerInfo类的View.OnClickListener变量</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;android.view.View$ListenerInfo&quot;</span>);</span><br><span class="line">        <span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;mOnClickListener&quot;</span>);</span><br><span class="line">        View.<span class="type">OnClickListener</span> <span class="variable">clickListener</span> <span class="operator">=</span> (View.OnClickListener) field.get(listnerInfo);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//给listnerInfo的View.OnClickListener变量设置新值</span></span><br><span class="line">        <span class="type">ProxyOnClickListener</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ProxyOnClickListener</span>(clickListener);</span><br><span class="line">        field.set(listnerInfo, proxy);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyOnClickListener</span> <span class="keyword">implements</span> <span class="title class_">View</span>.OnClickListener &#123;</span><br><span class="line">    View.OnClickListener listener;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ProxyOnClickListener</span><span class="params">(View.OnClickListener l)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.listener = l;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onClick</span><span class="params">(View v)</span> &#123;</span><br><span class="line">        Log.d(<span class="string">&quot;ProxyOnClickListener&quot;</span>, <span class="string">&quot;this is hook&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (listener != <span class="literal">null</span>) &#123;</span><br><span class="line">            listener.onClick(v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h5 id="HooK-Activity"><a href="#HooK-Activity" class="headerlink" title="HooK Activity"></a>HooK Activity</h5><p>hook  mInstrumentation即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">HookActivityManager.hook(<span class="built_in">this</span>);</span><br><span class="line">startActivity(<span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="built_in">this</span>, xxxActivity.class))</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HookActivityManager</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">hook</span><span class="params">(Activity activity)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Field</span> <span class="variable">mInstrumentation</span> <span class="operator">=</span> Activity.class.getDeclaredField(<span class="string">&quot;mInstrumentation&quot;</span>);</span><br><span class="line">            mInstrumentation.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            <span class="type">Instrumentation</span> <span class="variable">instrumentation</span> <span class="operator">=</span> (Instrumentation) mInstrumentation.get(activity);</span><br><span class="line">            <span class="type">ProxyInstrumentation</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ProxyInstrumentation</span>(instrumentation);</span><br><span class="line">            mInstrumentation.set(activity, proxy);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyInstrumentation</span> <span class="keyword">extends</span> <span class="title class_">Instrumentation</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Instrumentation instrumentation;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ProxyInstrumentation</span><span class="params">(Instrumentation i)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.instrumentation = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@SuppressLint(&quot;DiscouragedPrivateApi&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ActivityResult <span class="title function_">execStartActivity</span><span class="params">(</span></span><br><span class="line"><span class="params">            Context who, IBinder contextThread, IBinder token, Activity target,</span></span><br><span class="line"><span class="params">            Intent intent, <span class="type">int</span> requestCode, Bundle options)</span> &#123;</span><br><span class="line">        Log.d(<span class="string">&quot;ProxyInstrumentation&quot;</span>, <span class="string">&quot;Proxy Instrumentation success !&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class&lt;?&gt; c = Class.forName(<span class="string">&quot;android.app.Instrumentation&quot;</span>);</span><br><span class="line">            <span class="type">Method</span> <span class="variable">execStartActivity</span> <span class="operator">=</span> c.getDeclaredMethod(</span><br><span class="line">                    <span class="string">&quot;execStartActivity&quot;</span>,</span><br><span class="line">                    Context.class, IBinder.class, IBinder.class, Activity.class,</span><br><span class="line">                    Intent.class, <span class="type">int</span>.class, Bundle.class);</span><br><span class="line">            <span class="keyword">return</span> (ActivityResult) execStartActivity.invoke(instrumentation, who, contextThread, token, target, intent, requestCode, options);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>Lancet本质上是 Gradle Plugin，通过依赖 Android 的打包插件提供的 Transform API，在打包过程中获取到所有的代码。 依赖 ASM 提供的字节码注入能力，通过我们解析自定义的注解，在目标点注入相应的代码。 通过注解进行 AOP 这点和 AspectJ 很相似，但是更加轻量和简洁，使用方式也有所不同。</p>
+<p>这里要区分一个概念，编译期注入和运行期注入。</p>
+<p>编译期：即在编译时对字节码做插桩修改，达到 AOP 的目的。优点是运行时无额外的性能损耗，但因为编译时的限制，只能修改最终打包到APK中的代码，即 Android Framework 的代码是固化在 ROM 中的，无法修改。 运行期：是只在运行时动态的修改代码的执行，因而可以修改 Framework 中代码的执行流程，在hook点上执行性能上有所损耗。</p>
+<p>Lancet，编译期注入<br>AspectJ，既支持编译期也支持运行期的注入，运行期的注入一般是依赖JVM提供的AttachAPI，因为 Android 没有 JVM 的环境，实际上 class 还会继续转换成 dex，因此 AspectJ 在 Android 平台是只能做到编译期注入<br>Dexposed，运行期注入</p>
+<hr>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7023717952180617247">https://juejin.cn/post/7023717952180617247</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/09/03/Android%20Framework/Hook/" data-id="clhoa7k530026tlcag3hhggo6" data-title="Hook知识点记录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/09/04/Android%20Optimization/Android%E4%BC%98%E5%8C%96/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          android优化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/09/02/Android%20Framework/ClassLoader/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">类加载-双亲委派</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

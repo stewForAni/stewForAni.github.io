@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>JVM与DVM(二)GC回收与分代 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="GC主要关注堆和方法区">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM与DVM(二)GC回收与分代">
+<meta property="og:url" content="https://stewforani.github.io/2022/05/27/JVM/JVM%E4%B8%8EDVM-%E4%BA%8C/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="GC主要关注堆和方法区">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-05-26T17:03:52.000Z">
+<meta property="article:modified_time" content="2022-06-05T14:50:01.656Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-JVM/JVM与DVM-二" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/27/JVM/JVM%E4%B8%8EDVM-%E4%BA%8C/" class="article-date">
+  <time class="dt-published" datetime="2022-05-26T17:03:52.000Z" itemprop="datePublished">2022-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      JVM与DVM(二)GC回收与分代
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="GC主要关注堆和方法区"><a href="#GC主要关注堆和方法区" class="headerlink" title="GC主要关注堆和方法区"></a>GC主要关注堆和方法区<br><span id="more"></span></h2><p>Java 内存运行时区域的各个部分，其中程序计数器、虚拟机栈、本地方法栈 3 个区域随线程而生，随线程而灭；栈中的栈帧随着方法的进入和退出而有条不紊地执行着出栈和入栈操作，这几个区域内不需要过多考虑回收的问题。而堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的就是这部分内存。</p>
+<p><code>GC Root 也是一组引用而并非对象。</code></p>
+<h5 id="在-Java-中，有以下几种对象可以作为-GC-Root："><a href="#在-Java-中，有以下几种对象可以作为-GC-Root：" class="headerlink" title="在 Java 中，有以下几种对象可以作为 GC Root："></a>在 Java 中，有以下几种对象可以作为 GC Root：</h5><ul>
+<li>Java 虚拟机栈（局部变量表）中的引用的对象。（方法结束后，局部变量系统会回收的）</li>
+<li>方法区中静态引用指向的对象。</li>
+<li>仍处于存活状态中的线程对象。</li>
+<li>Native 方法中 JNI 引用的对象。</li>
+</ul>
+<h5 id="什么时候回收"><a href="#什么时候回收" class="headerlink" title="什么时候回收"></a>什么时候回收</h5><ul>
+<li><p>Allocation Failure：在堆内存中分配时，如果因为可用剩余空间不足导致对象内存分配失败，这时系统会触发一次 GC。</p>
+</li>
+<li><p>System.gc()：在应用层，Java 开发工程师可以主动调用此 API 来请求一次 GC。</p>
+</li>
+</ul>
+<p><code>-Xms 初始分配 JVM 运行时的内存大小，如果不指定默认为物理内存的 1/64。</code></p>
+<hr>
+<h3 id="验证虚拟机栈（栈帧中的局部变量）中引用的对象作为-GC-Root"><a href="#验证虚拟机栈（栈帧中的局部变量）中引用的对象作为-GC-Root" class="headerlink" title="验证虚拟机栈（栈帧中的局部变量）中引用的对象作为 GC Root"></a>验证虚拟机栈（栈帧中的局部变量）中引用的对象作为 GC Root</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GCRootTest</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] memory = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">8</span> * <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">10</span>];</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        printMemory();</span><br><span class="line">        fun1();</span><br><span class="line">        System.gc();</span><br><span class="line">        printMemory();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">fun1</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">GCRootTest</span> <span class="variable">gcRootTest</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GCRootTest</span>();</span><br><span class="line">        System.gc();</span><br><span class="line">        printMemory();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printMemory</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.print(<span class="string">&quot;free is &quot;</span> + Runtime.getRuntime().freeMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;total is &quot;</span> + Runtime.getRuntime().totalMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">free is <span class="number">242</span> M, total is <span class="number">245</span> M, </span><br><span class="line">第一次gc</span><br><span class="line">free is <span class="number">163</span> M, total is <span class="number">245</span> M, </span><br><span class="line">第二次gc</span><br><span class="line">free is <span class="number">243</span> M, total is <span class="number">245</span> M, </span><br></pre></td></tr></table></figure>
+
+<p>当第一次 GC 时，g 作为局部变量，引用了 new 出的对象（80M），并且它作为 GC Roots，在 GC 后并不会被 GC 回收。</p>
+<p>当第二次 GC：method() 方法执行完后，局部变量 g 跟随方法消失，不再有引用类型指向该 80M 对象，所以第二次 GC 后此 80M 也会被回收。</p>
+<hr>
+<h3 id="验证方法区中的静态变量引用的对象作为-GC-Root"><a href="#验证方法区中的静态变量引用的对象作为-GC-Root" class="headerlink" title="验证方法区中的静态变量引用的对象作为 GC Root"></a>验证方法区中的静态变量引用的对象作为 GC Root</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GCRootTest</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] memory = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">8</span> * <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">10</span>];</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> GCRootTest gcRootTest;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        printMemory();</span><br><span class="line">        <span class="type">GCRootTest</span> <span class="variable">g</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GCRootTest</span>();</span><br><span class="line">        g.gcRootTest = <span class="keyword">new</span> <span class="title class_">GCRootTest</span>();</span><br><span class="line">        printMemory();</span><br><span class="line">        g=<span class="literal">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        printMemory();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printMemory</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.print(<span class="string">&quot;free is &quot;</span> + Runtime.getRuntime().freeMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;total is &quot;</span> + Runtime.getRuntime().totalMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">free is <span class="number">244</span> M, total is <span class="number">245</span> M, </span><br><span class="line">free is <span class="number">84</span> M, total is <span class="number">245</span> M, </span><br><span class="line">free is <span class="number">163</span> M, total is <span class="number">245</span> M, </span><br></pre></td></tr></table></figure>
+
+<p>静态变量 gcRootTest 作为 GC Root，它引用的 80M 并不会被回收。</p>
+<hr>
+<h3 id="验证活跃线程作为-GC-Root"><a href="#验证活跃线程作为-GC-Root" class="headerlink" title="验证活跃线程作为 GC Root"></a>验证活跃线程作为 GC Root</h3><p>猜想：线程结束，局部变量会被回收，但之所以使用System.gc()是因为可以马上进行回收，达到测试效果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GCRootTest</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] memory = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">8</span> * <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">10</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            printMemory();</span><br><span class="line">            <span class="type">MyRunnable</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyRunnable</span>(<span class="keyword">new</span> <span class="title class_">GCRootTest</span>());</span><br><span class="line">            <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(r);</span><br><span class="line">            thread.start();</span><br><span class="line">            System.out.println(System.currentTimeMillis());</span><br><span class="line">            System.gc();</span><br><span class="line">            printMemory();</span><br><span class="line"></span><br><span class="line">            thread.join();</span><br><span class="line">            System.out.println(System.currentTimeMillis());</span><br><span class="line">            r = <span class="literal">null</span>;</span><br><span class="line">            System.gc();</span><br><span class="line">            printMemory();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">MyRunnable</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> GCRootTest gcRootTest;</span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">MyRunnable</span><span class="params">(GCRootTest gcRootTest)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.gcRootTest = gcRootTest;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printMemory</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.print(<span class="string">&quot;free is &quot;</span> + Runtime.getRuntime().freeMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;total is &quot;</span> + Runtime.getRuntime().totalMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">free is <span class="number">242</span> M, total is <span class="number">245</span> M, </span><br><span class="line"><span class="number">1654268214086</span></span><br><span class="line">free is <span class="number">163</span> M, total is <span class="number">245</span> M, </span><br><span class="line"><span class="number">1654268216087</span></span><br><span class="line">free is <span class="number">243</span> M, total is <span class="number">245</span> M, </span><br></pre></td></tr></table></figure>
+
+<p>程序刚开始时是 242M 内存，当调用第一次 GC 时线程并没有执行结束，并且它作为 GC Root，所以它所引用的 80M 内存并不会被 GC 回收掉。 thread.join() 保证线程结束再调用后续代码，所以当调用第二次 GC 时，线程已经执行完毕并被置为 null，这时线程已经被销毁，所以之前它所引用的 80M 此时会被 GC 回收掉。</p>
+<hr>
+<h3 id="测试成员变量是否可作为-GC-Root"><a href="#测试成员变量是否可作为-GC-Root" class="headerlink" title="测试成员变量是否可作为 GC Root"></a>测试成员变量是否可作为 GC Root</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GCRootTest</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] memory = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">8</span> * <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">10</span>];</span><br><span class="line">    <span class="keyword">private</span> GCRootTest gcRootTest;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        printMemory();</span><br><span class="line">        <span class="type">GCRootTest</span> <span class="variable">g</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GCRootTest</span>();</span><br><span class="line">        g.gcRootTest = <span class="keyword">new</span> <span class="title class_">GCRootTest</span>();</span><br><span class="line">        printMemory();</span><br><span class="line">        g=<span class="literal">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        printMemory();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printMemory</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.print(<span class="string">&quot;free is &quot;</span> + Runtime.getRuntime().freeMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;total is &quot;</span> + Runtime.getRuntime().totalMemory() / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">&quot; M, &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">free is <span class="number">242</span> M, total is <span class="number">245</span> M, </span><br><span class="line">free is <span class="number">82</span> M, total is <span class="number">245</span> M, </span><br><span class="line">free is <span class="number">243</span> M, total is <span class="number">245</span> M, </span><br></pre></td></tr></table></figure>
+
+<p>表明全局变量同静态变量不同，它不会被当作 GC Root。</p>
+<hr>
+<h3 id="如何回收垃圾"><a href="#如何回收垃圾" class="headerlink" title="如何回收垃圾"></a>如何回收垃圾</h3><h5 id="标记清除算法（Mark-and-Sweep-GC）"><a href="#标记清除算法（Mark-and-Sweep-GC）" class="headerlink" title="标记清除算法（Mark and Sweep GC）"></a>标记清除算法（Mark and Sweep GC）</h5><p>Mark 标记阶段：找到内存中的所有 GC Root 对象，只要是和 GC Root 对象直接或者间接相连则标记为灰色（也就是存活对象），否则标记为黑色（也就是垃圾对象）。Sweep 清除阶段：当遍历完所有的 GC Root 之后，则将标记为垃圾的对象直接清除。</p>
+<ul>
+<li>优点：实现简单，不需要将对象进行移动。</li>
+<li>缺点：这个算法需要中断进程内其他组件的执行（stop the world），并且可能产生内存碎片，提高了垃圾回收的频率。</li>
+</ul>
+<h5 id="复制算法（Copying）"><a href="#复制算法（Copying）" class="headerlink" title="复制算法（Copying）"></a>复制算法（Copying）</h5><p>将现有的内存空间分为两快，每次只使用其中一块，在垃圾回收时将正在使用的内存中的存活对象复制到未被使用的内存块中。之后，清除正在使用的内存块中的所有对象，交换两个内存的角色，完成垃圾回收。</p>
+<ul>
+<li>优点：按顺序分配内存即可，实现简单、运行高效，不用考虑内存碎片。</li>
+<li>缺点：可用的内存大小缩小为原来的一半，对象存活率高时会频繁进行复制。</li>
+</ul>
+<h5 id="标记-压缩算法-Mark-Compact"><a href="#标记-压缩算法-Mark-Compact" class="headerlink" title="标记-压缩算法 (Mark-Compact)"></a>标记-压缩算法 (Mark-Compact)</h5><p>Mark 标记阶段：找到内存中的所有 GC Root 对象，只要是和 GC Root 对象直接或者间接相连则标记为灰色（也就是存活对象），否则标记为黑色（也就是垃圾对象）Compact 压缩阶段：将剩余存活对象按顺序压缩到内存的某一端。</p>
+<ul>
+<li>优点：这种方法既避免了碎片的产生，又不需要两块相同的内存空间，因此，其性价比比较高。</li>
+<li>缺点：所谓压缩操作，仍需要进行局部对象移动，所以一定程度上还是降低了效率。</li>
+</ul>
+<hr>
+<h3 id="JVM分代回收策略"><a href="#JVM分代回收策略" class="headerlink" title="JVM分代回收策略"></a>JVM分代回收策略</h3><p>Java 虚拟机根据对象存活的周期不同，把堆内存划分为几块，一般分为新生代、老年代，这就是 JVM 的内存分代策略。注意: 在 HotSpot 中除了新生代和老年代，还有永久代<br>分代回收的中心思想就是：对于新创建的对象会在新生代中分配内存，此区域的对象生命周期一般较短。如果经过多次回收仍然存活下来，则将它们转移到老年代中。</p>
+<p>新生代中因为要进行一些复制操作，所以一般采用的 GC 回收算法是复制算法。</p>
+<p>新生代又可以继续细分为 3 部分：Eden、Survivor0（简称 S0）、Survivor1（简称S1）。这 3 部分按照 8:1:1 的比例来划分新生代。这 3 块区域的内存分配过程如下：<br>绝大多数刚刚被创建的对象会存放在 Eden 区。</p>
+<p>当 Eden 区第一次满的时候，会进行垃圾回收。首先将 Eden区的垃圾对象回收清除，并将存活的对象复制到 S0，此时 S1是空的。</p>
+<p>下一次 Eden 区满时，再执行一次垃圾回收。此次会将 Eden和 S0区中所有垃圾对象清除，并将存活对象复制到 S1，此时 S0变为空。</p>
+<p>如此反复在 S0 和 S1之间切换几次（默认 15 次）之后，如果还有存活对象。说明这些对象的生命周期较长，则将它们转移到老年代中。</p>
+<p>一个对象如果在新生代存活了足够长的时间而没有被清理掉，则会被复制到老年代。老年代的内存大小一般比新生代大，能存放更多的对象。如果对象比较大（比如长字符串或者大数组），并且新生代的剩余空间不足，则这个大对象会直接被分配到老年代上。</p>
+<p>我们可以使用 -XX:PretenureSizeThreshold 来控制直接升入老年代的对象大小，大于这个值的对象会直接分配在老年代上。老年代因为对象的生命周期较长，不需要过多的复制操作，所以一般采用标记压缩的回收算法。</p>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1856">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1856</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/05/27/JVM/JVM%E4%B8%8EDVM-%E4%BA%8C/" data-id="clhoa7k5i003ptlcabjsy57gx" data-title="JVM与DVM(二)GC回收与分代" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/05/27/JVM/JVM%E4%B8%8EDVM/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          JVM与DVM
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/05/27/JVM/JVM%E4%B8%8EDVM%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A-%E4%B8%80/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JVM与DVM(一)程序运行时内存如何分配</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

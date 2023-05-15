@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Binder之系统服务注册 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="本篇讲解系统服务的注册过程，即addService">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Binder之系统服务注册">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/20/Android%20Framework/Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="本篇讲解系统服务的注册过程，即addService">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-20T14:11:12.000Z">
+<meta property="article:modified_time" content="2023-03-16T09:39:40.491Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/Binder之系统服务注册" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/20/Android%20Framework/Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" class="article-date">
+  <time class="dt-published" datetime="2022-07-20T14:11:12.000Z" itemprop="datePublished">2022-07-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Binder之系统服务注册
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="本篇讲解系统服务的注册过程，即addService"><a href="#本篇讲解系统服务的注册过程，即addService" class="headerlink" title="本篇讲解系统服务的注册过程，即addService"></a>本篇讲解系统服务的注册过程，即addService<br><span id="more"></span></h2><h3 id="注册MediaPlayerService"><a href="#注册MediaPlayerService" class="headerlink" title="注册MediaPlayerService"></a>注册MediaPlayerService</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/av/media/mediaserver/main_mediaserver.cpp</span></span><br><span class="line"><span class="comment">//注册MediaPlayerService </span></span><br><span class="line">MediaPlayerService::instantiate();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/av/media/libmediaplayerservice/MediaPlayerService.cpp</span></span><br><span class="line"><span class="keyword">void</span> MediaPlayerService::instantiate() &#123;</span><br><span class="line">    defaultServiceManager()-&gt;addService(</span><br><span class="line">            String16(<span class="string">&quot;media.player&quot;</span>), <span class="keyword">new</span> <span class="title class_">MediaPlayerService</span>());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/IServiceManager.cpp</span></span><br><span class="line"><span class="comment">//其中remote就是mRemote，即bpbinder</span></span><br><span class="line">virtual status_t <span class="title function_">addService</span><span class="params">(const String16&amp; name, const sp&lt;IBinder&gt;&amp; service,</span></span><br><span class="line"><span class="params">                                bool allowIsolated, <span class="type">int</span> dumpsysPriority)</span> &#123;</span><br><span class="line">        Parcel data, reply;</span><br><span class="line">        data.writeInterfaceToken(IServiceManager::getInterfaceDescriptor());</span><br><span class="line">        data.writeString16(name);</span><br><span class="line">        data.writeStrongBinder(service);</span><br><span class="line">        data.writeInt32(allowIsolated ? <span class="number">1</span> : <span class="number">0</span>);</span><br><span class="line">        data.writeInt32(dumpsysPriority);</span><br><span class="line">        <span class="type">status_t</span> <span class="variable">err</span> <span class="operator">=</span> remote()-&gt;transact(ADD_SERVICE_TRANSACTION, data, &amp;reply);</span><br><span class="line">        <span class="keyword">return</span> err == NO_ERROR ? reply.readExceptionCode() : err;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/BpBinder.cpp</span></span><br><span class="line"><span class="comment">//可以看到bpbinder把逻辑交个IPCThreadState</span></span><br><span class="line"><span class="comment">//其中IPCThreadState内包含了2个变量mIn，mOut</span></span><br><span class="line"><span class="comment">//mIn用来接收来自Binder驱动的数据，mOut用来存储发往Binder驱动的数据，它们默认大小都为256字节。</span></span><br><span class="line">status_t BpBinder::transact(uint32_t code, const Parcel&amp; data, Parcel* reply, uint32_t flags)&#123;</span><br><span class="line">    <span class="comment">// Once a binder has died, it will never come back to life.</span></span><br><span class="line">    <span class="keyword">if</span> (mAlive) &#123;</span><br><span class="line">        <span class="type">status_t</span> <span class="variable">status</span> <span class="operator">=</span> IPCThreadState::self()-&gt;transact(</span><br><span class="line">            mHandle, code, data, reply, flags);</span><br><span class="line">        <span class="keyword">if</span> (status == DEAD_OBJECT) mAlive = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> status;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> DEAD_OBJECT;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/IPCThreadState.cpp</span></span><br><span class="line">status_t IPCThreadState::transact(...)&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//BC_TRANSACTION代表向Binder驱动发送命令协议</span></span><br><span class="line">    <span class="comment">//向Binder设备发送的命令协议都以BC开头</span></span><br><span class="line">    <span class="comment">//从Binder驱动返回数据以BR开头</span></span><br><span class="line">    <span class="comment">//writeTransactionData内部逻辑：</span></span><br><span class="line">    <span class="comment">//将 BC_TRANSACTION和tr结构体写入到mOut中（mOut用来存储发往Binder驱动的数据）</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//此函数 准备 发送的数据</span></span><br><span class="line">    err = writeTransactionData(BC_TRANSACTION, flags, handle, code, data,NULL);</span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line">    <span class="comment">//内部调用了talkWithDriver</span></span><br><span class="line">    err = waitForResponse(reply);</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">status_t IPCThreadState::waitForResponse(......)&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        ......</span><br><span class="line">        <span class="keyword">if</span> ((err=talkWithDriver()) &lt; NO_ERROR) <span class="keyword">break</span>;<span class="comment">//1</span></span><br><span class="line">        ......</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//talkWithDriver函数的内部通过ioctl与Binder驱动进行通信</span></span><br><span class="line"><span class="comment">//1.和Binder驱动通信的结构体</span></span><br><span class="line"><span class="comment">//4.通过ioctl和binder进行通信，进入kernel</span></span><br><span class="line">status_t IPCThreadState::talkWithDriver(bool doReceive)&#123;</span><br><span class="line">    ......</span><br><span class="line">    binder_write_read bwr;<span class="comment">//1</span></span><br><span class="line">    ......</span><br><span class="line">    bwr.write_buffer = (uintptr_t)mOut.data();<span class="comment">//2</span></span><br><span class="line">    ......</span><br><span class="line">    bwr.read_buffer = (uintptr_t)mIn.data();<span class="comment">//3</span></span><br><span class="line">    ......</span><br><span class="line">    ioctl(mProcess-&gt;mDriverFD, BINDER_WRITE_READ, &amp;bwr)<span class="comment">//4</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="number">1.</span>sm进程内，循环监听bnder驱动有没有新消息</span><br><span class="line"><span class="number">2.</span>一旦有新消息，比如注册服务</span><br><span class="line"><span class="number">3.</span>根据 <span class="keyword">case</span> SVC_MGR_ADD_SERVICE ，调用do_add_service()</span><br><span class="line"><span class="number">4.</span>服务名和handle值保存在svcinfo中，svcinfo保存到svclist列表中</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><ol>
+<li>addService函数将数据打包发送给BpBinder来进行处理。</li>
+<li>BpBinder新建一个IPCThreadState对象，并将通信的任务交给IPCThreadState。</li>
+<li>IPCThreadState的writeTransactionData函数用于将命令协议和数据写入到mOut中。</li>
+<li>IPCThreadState的waitForResponse函数主要做了两件事，一件事是通过ioctl函数操作mOut和<br>mIn来与Binder驱动进行数据交互，另一件事是处理各种命令协议。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/20/Android%20Framework/Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="clhoa7k50001wtlcadaw2hkrq" data-title="Binder之系统服务注册" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/21/Android%20Framework/Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E8%8E%B7%E5%8F%96/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Binder之系统服务获取
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/19/Android%20Framework/Binder%E4%B9%8BServiceManager%E5%90%AF%E5%8A%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Binder之ServiceManager启动</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

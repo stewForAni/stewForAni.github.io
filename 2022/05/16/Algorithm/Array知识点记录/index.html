@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>数组与链表 -- 知识点记录 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="数组（Array）是一种线性表数据结构。它用一组连续的内存空间，来存储一组具有相同类型的数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数组与链表 -- 知识点记录">
+<meta property="og:url" content="https://stewforani.github.io/2022/05/16/Algorithm/Array%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="数组（Array）是一种线性表数据结构。它用一组连续的内存空间，来存储一组具有相同类型的数据。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://stewforani.github.io/images/array1.png">
+<meta property="og:image" content="https://stewforani.github.io/images/array2.png">
+<meta property="og:image" content="https://stewforani.github.io/images/array3.png">
+<meta property="og:image" content="https://stewforani.github.io/images/ll1.jpeg">
+<meta property="og:image" content="https://stewforani.github.io/images/ll2.jpeg">
+<meta property="og:image" content="https://stewforani.github.io/images/ll3.jpeg">
+<meta property="og:image" content="https://stewforani.github.io/images/ll4.jpeg">
+<meta property="og:image" content="https://stewforani.github.io/images/ll5.jpeg">
+<meta property="og:image" content="https://stewforani.github.io/images/ll6.jpeg">
+<meta property="article:published_time" content="2022-05-16T07:56:45.000Z">
+<meta property="article:modified_time" content="2022-05-26T09:27:52.841Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stewforani.github.io/images/array1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Algorithm/Array知识点记录" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/16/Algorithm/Array%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time class="dt-published" datetime="2022-05-16T07:56:45.000Z" itemprop="datePublished">2022-05-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      数组与链表 -- 知识点记录
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="数组（Array）是一种线性表数据结构。它用一组连续的内存空间，来存储一组具有相同类型的数据。"><a href="#数组（Array）是一种线性表数据结构。它用一组连续的内存空间，来存储一组具有相同类型的数据。" class="headerlink" title="数组（Array）是一种线性表数据结构。它用一组连续的内存空间，来存储一组具有相同类型的数据。"></a>数组（Array）是一种线性表数据结构。它用一组连续的内存空间，来存储一组具有相同类型的数据。<br><span id="more"></span></h2><p>第一是线性表（Linear List）。顾名思义，线性表就是数据排成像一条线一样的结构。每个线性表上的数据最多只有前和后两个方向。其实除了数组，链表、队列、栈等也是线性表结构。</p>
+<img src="/images/array1.png" width=360 height=262>
+
+<p>而与它相对立的概念是非线性表，比如二叉树、堆、图等。之所以叫非线性，是因为，在非线性表中，数据之间并不是简单的前后关系。</p>
+<img src="/images/array2.png" width=360 height=228>
+
+<p>第二个是连续的内存空间和相同类型的数据。正是因为这两个限制，它才有了一个堪称“杀手锏”的特性：“随机访问”。但有利就有弊，这两个限制也让数组的很多操作变得非常低效，比如要想在数组中删除、插入一个数据，为了保证连续性，就需要做大量的数据搬移工作。</p>
+<img src="/images/array3.png" width=360 height=182>
+
+<p>计算机会给每个内存单元分配一个地址，计算机通过地址来访问内存中的数据。当计算机需要随机访问数组中的某个元素时，它会首先通过下面的寻址公式，计算出该元素存储的内存地址：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address = base_address + i * data_type_size</span><br></pre></td></tr></table></figure>
+
+<p>数组支持随机访问，根据下标随机访问的时间复杂度为 O(1)。（访问不等于查找，不同概念）</p>
+<h4 id="插入操作"><a href="#插入操作" class="headerlink" title="插入操作"></a>插入操作</h4><p>在每个位置插入元素的概率是一样的，所以平均情况时间复杂度为 (1+2+…n)&#x2F;n&#x3D;O(n)。</p>
+<h4 id="删除操作"><a href="#删除操作" class="headerlink" title="删除操作"></a>删除操作</h4><p>平均情况时间复杂度也为 O(n)</p>
+<hr>
+<ul>
+<li>1.Java ArrayList 无法存储基本类型，比如 int、long，需要封装为 Integer、Long 类，而 Autoboxing、Unboxing 则有一定的性能消耗，所以如果特别关注性能，或者希望使用基本类型，就可以选用数组。</li>
+<li><ol start="2">
+<li>如果数据大小事先已知，并且对数据的操作非常简单，用不到 ArrayList 提供的大部分方法，也可以直接使用数组。</li>
+</ol>
+</li>
+<li>3.当要表示多维数组时，用数组往往会更加直观。</li>
+</ul>
+<p><code>为什么大多数编程语言中，数组要从 0 开始编号，而不是从 1 开始呢？</code></p>
+<p>从数组存储的内存模型上来看，“下标”最确切的定义应该是“偏移（offset）”。前面也讲到，如果用 a 来表示数组的首地址，a[0]就是偏移为 0 的位置，也就是首地址，a[k]就表示偏移 k 个 type_size 的位置，所以计算 a[k]的内存地址只需要用这个公式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[k]_address = base_address + k * type_size</span><br></pre></td></tr></table></figure>
+<p>但是，如果数组从 1 开始计数，那我们计算数组元素 a[k]的内存地址就会变为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[k]_address = base_address + (k<span class="number">-1</span>)*type_size</span><br></pre></td></tr></table></figure>
+<p>对比两个公式，我们不难发现，从 1 开始编号，每次随机访问数组元素都多了一次减法运算，对于 CPU 来说，就是多了一次减法指令。</p>
+<hr>
+<h3 id="链表Linked-List"><a href="#链表Linked-List" class="headerlink" title="链表Linked List"></a>链表Linked List</h3><p>数组需要一块连续的内存空间来存储，对内存的要求比较高。如果我们申请一个 100MB 大小的数组，当内存中没有连续的、足够大的存储空间时，即便内存的剩余总可用空间大于 100MB，仍然会申请失败。而链表恰恰相反，它并不需要一块连续的内存空间，它通过“指针”将一组零散的内存块串联起来使用，所以如果我们申请的是 100MB 大小的链表，根本不会有问题。</p>
+<img src="/images/ll1.jpeg" width=360 height=219>
+
+<h5 id="单链表"><a href="#单链表" class="headerlink" title="单链表"></a>单链表</h5><p>链表通过指针将一组零散的内存块串联在一起。其中，我们把内存块称为链表的“结点”。为了将所有的结点串起来，每个链表的结点除了存储数据之外，还需要记录链上的下一个结点的地址。</p>
+<img src="/images/ll2.jpeg" width=360 height=125>
+
+<h5 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h5><p>单向链表只有一个方向，结点只有一个后继指针 next 指向后面的结点。而双向链表，顾名思义，它支持两个方向，每个结点不止有一个后继指针 next 指向后面的结点，还有一个前驱指针 prev 指向前面的结点。</p>
+<img src="/images/ll3.jpeg" width=360 height=125>
+
+<h5 id="双向循环链表"><a href="#双向循环链表" class="headerlink" title="双向循环链表"></a>双向循环链表</h5><img src="/images/ll4.jpeg" width=360 height=157>
+
+<h5 id="优缺点："><a href="#优缺点：" class="headerlink" title="优缺点："></a>优缺点：</h5><p><code>数组简单易用，在实现上使用的是连续的内存空间，可以借助 CPU 的缓存机制，预读数组中的数据，所以访问效率更高。而链表在内存中并不是连续存储，所以对 CPU 缓存不友好，没办法有效预读。</code></p>
+<p><code>数组的缺点是大小固定，一经声明就要占用整块连续内存空间。如果声明的数组过大，系统可能没有足够的连续内存空间分配给它，导致“内存不足（out of memory）”。如果声明的数组过小，则可能出现不够用的情况。这时只能再申请一个更大的内存空间，把原数组拷贝进去，非常费时。链表本身没有大小的限制，天然地支持动态扩容，我觉得这也是它与数组最大的区别。</code></p>
+<h5 id="基于链表实现-LRU-缓存淘汰算法"><a href="#基于链表实现-LRU-缓存淘汰算法" class="headerlink" title="基于链表实现 LRU 缓存淘汰算法"></a>基于链表实现 LRU 缓存淘汰算法</h5><ol>
+<li><p>如果此数据之前已经被缓存在链表中了，我们遍历得到这个数据对应的结点，并将其从原来的位置删除，然后再插入到链表的头部。</p>
+</li>
+<li><p>如果此数据没有在缓存链表中，又可以分为两种情况：<br>1）如果此时缓存未满，则将此结点直接插入到链表的头部；<br>2）如果此时缓存已满，则链表尾结点删除，将新的数据结点插入链表的头部。</p>
+</li>
+</ol>
+<hr>
+<h5 id="理解指针或引用的含义"><a href="#理解指针或引用的含义" class="headerlink" title="理解指针或引用的含义"></a>理解指针或引用的含义</h5><p>将某个变量赋值给指针，实际上就是将这个变量的地址赋值给指针，或者反过来说，指针中存储了这个变量的内存地址，指向了这个变量，通过指针就能找到这个变量。</p>
+<p>p-&gt;next&#x3D;q。这行代码是说，p 结点中的 next 指针存储了 q 结点的内存地址。</p>
+<p>p-&gt;next&#x3D;p-&gt;next-&gt;next。这行代码表示，p 结点的 next 指针存储了 p 结点的下下一个结点的内存地址。</p>
+<h5 id="警惕指针丢失和内存泄漏"><a href="#警惕指针丢失和内存泄漏" class="headerlink" title="警惕指针丢失和内存泄漏"></a>警惕指针丢失和内存泄漏</h5><img src="/images/ll5.jpeg" width=360 height=160>
+
+<p>在结点 a 和相邻的结点 b 之间插入结点 x，假设当前指针 p 指向结点 a</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x-&gt;next = p-&gt;next;  <span class="comment">// 将x的结点的next指针指向b结点；</span></span><br><span class="line">p-&gt;next = x;  <span class="comment">// 将p的next指针指向x结点；</span></span><br></pre></td></tr></table></figure>
+
+<p>插入结点时，一定要注意操作的顺序，要先将结点 x 的 next 指针指向结点 b，再把结点 a 的 next 指针指向结点 x，这样才不会丢失指针，导致内存泄漏</p>
+<h5 id="利用哨兵简化实现难度"><a href="#利用哨兵简化实现难度" class="headerlink" title="利用哨兵简化实现难度"></a>利用哨兵简化实现难度</h5><p>首先，我们先来回顾一下单链表的插入和删除操作。如果我们在结点 p 后面插入一个新的结点，只需要下面两行代码就可以搞定。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">new_node-&gt;next = p-&gt;next;</span><br><span class="line">p-&gt;next = new_node;</span><br></pre></td></tr></table></figure>
+<p>当我们要向一个空链表中插入第一个结点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (head == <span class="literal">null</span>) &#123;</span><br><span class="line">  head = new_node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果要删除结点 p 的后继结点，我们只需要一行代码就可以搞定。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p-&gt;next = p-&gt;next-&gt;next;</span><br></pre></td></tr></table></figure>
+<p>如果我们要删除链表中的最后一个结点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (head-&gt;next == <span class="literal">null</span>) &#123;</span><br><span class="line">   head = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>如果我们引入哨兵结点，在任何时候，不管链表是不是空，head 指针都会一直指向这个哨兵结点。我们也把这种有哨兵结点的链表叫带头链表。相反，没有哨兵结点的链表就叫作不带头链表。我画了一个带头链表，你可以发现，哨兵结点是不存储数据的。因为哨兵结点一直存在，所以插入第一个结点和插入其他结点，删除最后一个结点和删除其他结点，都可以统一为相同的代码实现逻辑了。</p>
+<img src="/images/ll6.jpeg" width=360 height=119>
+
+<h5 id="重点留意边界条件处理"><a href="#重点留意边界条件处理" class="headerlink" title="重点留意边界条件处理"></a>重点留意边界条件处理</h5><p>1.如果链表为空时，代码是否能正常工作？<br>2.如果链表只包含一个结点时，代码是否能正常工作？<br>3.如果链表只包含两个结点时，代码是否能正常工作？<br>4.代码逻辑在处理头结点和尾结点的时候，是否能正常工作？</p>
+<h5 id="举例画图，辅助思考"><a href="#举例画图，辅助思考" class="headerlink" title="举例画图，辅助思考"></a>举例画图，辅助思考</h5><p>。。。</p>
+<h5 id="多写多练，没有捷径"><a href="#多写多练，没有捷径" class="headerlink" title="多写多练，没有捷径"></a>多写多练，没有捷径</h5><p>1.单链表反转<br>2.链表中环的检测<br>3.两个有序的链表合并<br>4.删除链表倒数第 n 个结点<br>5.求链表的中间结点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 单链表反转</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title function_">reverse</span><span class="params">(Node list)</span> &#123;</span><br><span class="line">  <span class="type">Node</span> <span class="variable">curr</span> <span class="operator">=</span> list, pre = <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">while</span> (curr != <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">next</span> <span class="operator">=</span> curr.next;</span><br><span class="line">    curr.next = pre;</span><br><span class="line">    pre = curr;</span><br><span class="line">    curr = next;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> pre;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 检测环</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="title function_">checkCircle</span><span class="params">(Node list)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (list == <span class="literal">null</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">Node</span> <span class="variable">fast</span> <span class="operator">=</span> list.next;</span><br><span class="line">  <span class="type">Node</span> <span class="variable">slow</span> <span class="operator">=</span> list;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (fast != <span class="literal">null</span> &amp;&amp; fast.next != <span class="literal">null</span>) &#123;</span><br><span class="line">    fast = fast.next.next;</span><br><span class="line">    slow = slow.next;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (slow == fast) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 有序链表合并 Leetcode 21 </span></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">	* Definition for singly-linked list.</span></span><br><span class="line"><span class="comment">	* public class ListNode &#123;</span></span><br><span class="line"><span class="comment">	*     int val;</span></span><br><span class="line"><span class="comment">	*     ListNode next;</span></span><br><span class="line"><span class="comment">	*     ListNode(int x) &#123; val = x; &#125;</span></span><br><span class="line"><span class="comment">	* &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">  <span class="keyword">public</span> ListNode <span class="title function_">mergeTwoLists</span><span class="params">(ListNode l1, ListNode l2)</span> &#123;</span><br><span class="line">       <span class="type">ListNode</span> <span class="variable">soldier</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ListNode</span>(<span class="number">0</span>); <span class="comment">//利用哨兵结点简化实现难度 技巧三</span></span><br><span class="line">       <span class="type">ListNode</span> <span class="variable">p</span> <span class="operator">=</span> soldier;</span><br><span class="line">       </span><br><span class="line">       <span class="keyword">while</span> ( l1 != <span class="literal">null</span> &amp;&amp; l2 != <span class="literal">null</span> )&#123;</span><br><span class="line">           <span class="keyword">if</span> ( l1.val &lt; l2.val )&#123;</span><br><span class="line">               p.next = l1;</span><br><span class="line">               l1 = l1.next;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">else</span>&#123;</span><br><span class="line">               p.next = l2;</span><br><span class="line">               l2 = l2.next;</span><br><span class="line">           &#125;</span><br><span class="line">           p = p.next;</span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">       <span class="keyword">if</span> (l1 != <span class="literal">null</span>) &#123; p.next = l1; &#125;</span><br><span class="line">       <span class="keyword">if</span> (l2 != <span class="literal">null</span>) &#123; p.next = l2; &#125;</span><br><span class="line">       <span class="keyword">return</span> soldier.next;   </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除倒数第K个结点</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title function_">deleteLastKth</span><span class="params">(Node list, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">  <span class="type">Node</span> <span class="variable">fast</span> <span class="operator">=</span> list;</span><br><span class="line">  <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">while</span> (fast != <span class="literal">null</span> &amp;&amp; i &lt; k) &#123;</span><br><span class="line">    fast = fast.next;</span><br><span class="line">    ++i;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fast == <span class="literal">null</span>) <span class="keyword">return</span> list;</span><br><span class="line"></span><br><span class="line">  <span class="type">Node</span> <span class="variable">slow</span> <span class="operator">=</span> list;</span><br><span class="line">  <span class="type">Node</span> <span class="variable">prev</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">while</span> (fast.next != <span class="literal">null</span>) &#123;</span><br><span class="line">    fast = fast.next;</span><br><span class="line">    prev = slow;</span><br><span class="line">    slow = slow.next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (prev == <span class="literal">null</span>) &#123;</span><br><span class="line">    list = list.next;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    prev.next = prev.next.next;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 求中间结点</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title function_">findMiddleNode</span><span class="params">(Node list)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (list == <span class="literal">null</span>) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">Node</span> <span class="variable">fast</span> <span class="operator">=</span> list;</span><br><span class="line">  <span class="type">Node</span> <span class="variable">slow</span> <span class="operator">=</span> list;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (fast != <span class="literal">null</span> &amp;&amp; fast.next != <span class="literal">null</span>) &#123;</span><br><span class="line">    fast = fast.next.next;</span><br><span class="line">    slow = slow.next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> slow;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/40961">https://time.geekbang.org/column/article/40961</a><br><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/41149">https://time.geekbang.org/column/article/41149</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/05/16/Algorithm/Array%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" data-id="clhoa7k470000tlcacjps1ubj" data-title="数组与链表 -- 知识点记录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/05/16/Algorithm/%E6%A0%88/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          栈与列队 -- 知识点记录
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/05/14/Android%20Application/RxJava%E5%9F%BA%E7%A1%80/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">RxJava知识点记录（扔物线）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

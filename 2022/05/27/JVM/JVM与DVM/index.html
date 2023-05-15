@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>JVM与DVM | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="剩余知识点请参考具体链接内容">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM与DVM">
+<meta property="og:url" content="https://stewforani.github.io/2022/05/27/JVM/JVM%E4%B8%8EDVM/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="剩余知识点请参考具体链接内容">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-05-27T09:21:33.000Z">
+<meta property="article:modified_time" content="2023-03-02T10:28:16.283Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-JVM/JVM与DVM" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/27/JVM/JVM%E4%B8%8EDVM/" class="article-date">
+  <time class="dt-published" datetime="2022-05-27T09:21:33.000Z" itemprop="datePublished">2022-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      JVM与DVM
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="剩余知识点请参考具体链接内容"><a href="#剩余知识点请参考具体链接内容" class="headerlink" title="剩余知识点请参考具体链接内容"></a>剩余知识点请参考具体链接内容<br><span id="more"></span></h2><h3 id="第03讲：字节码层面分析-class-类文件结构"><a href="#第03讲：字节码层面分析-class-类文件结构" class="headerlink" title="第03讲：字节码层面分析 class 类文件结构"></a>第03讲：字节码层面分析 class 类文件结构</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1857">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1857</a></p>
+<h3 id="第04讲：编译插桩操纵字节码"><a href="#第04讲：编译插桩操纵字节码" class="headerlink" title="第04讲：编译插桩操纵字节码"></a>第04讲：编译插桩操纵字节码</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1858">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1858</a></p>
+<h3 id="第05讲：深入理解-ClassLoader-的加载机制"><a href="#第05讲：深入理解-ClassLoader-的加载机制" class="headerlink" title="第05讲：深入理解 ClassLoader 的加载机制"></a>第05讲：深入理解 ClassLoader 的加载机制</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1859">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1859</a></p>
+<h3 id="第06讲：Class-对象在执行引擎中的初始化过程"><a href="#第06讲：Class-对象在执行引擎中的初始化过程" class="headerlink" title="第06讲：Class 对象在执行引擎中的初始化过程"></a>第06讲：Class 对象在执行引擎中的初始化过程</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1860">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1860</a></p>
+<h3 id="第07讲：Java-内存模型与线程"><a href="#第07讲：Java-内存模型与线程" class="headerlink" title="第07讲：Java 内存模型与线程"></a>第07讲：Java 内存模型与线程</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1861">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1861</a></p>
+<h3 id="第08讲：Synchronized-amp-ReentrantLock"><a href="#第08讲：Synchronized-amp-ReentrantLock" class="headerlink" title="第08讲：Synchronized &amp; ReentrantLock"></a>第08讲：Synchronized &amp; ReentrantLock</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1862">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1862</a></p>
+<h3 id="第09讲：Java-线程优化-偏向锁，轻量级锁、重量级锁"><a href="#第09讲：Java-线程优化-偏向锁，轻量级锁、重量级锁" class="headerlink" title="第09讲：Java 线程优化 偏向锁，轻量级锁、重量级锁"></a>第09讲：Java 线程优化 偏向锁，轻量级锁、重量级锁</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1863">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1863</a></p>
+<h3 id="第10讲：深入理解-AQS-和-CAS-原理"><a href="#第10讲：深入理解-AQS-和-CAS-原理" class="headerlink" title="第10讲：深入理解 AQS 和 CAS 原理"></a>第10讲：深入理解 AQS 和 CAS 原理</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1864">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1864</a></p>
+<h3 id="第11讲：线程池"><a href="#第11讲：线程池" class="headerlink" title="第11讲：线程池"></a>第11讲：线程池</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1865">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1865</a></p>
+<h3 id="第12讲：DVM-以及-ART-是如何对-JVM-进行优化的？"><a href="#第12讲：DVM-以及-ART-是如何对-JVM-进行优化的？" class="headerlink" title="第12讲：DVM 以及 ART 是如何对 JVM 进行优化的？"></a>第12讲：DVM 以及 ART 是如何对 JVM 进行优化的？</h3><p><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1866">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1866</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/05/27/JVM/JVM%E4%B8%8EDVM/" data-id="clhoa7k5i003rtlca50d473qk" data-title="JVM与DVM" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/06/10/Algorithm/BinarySearch/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          二分查找（BinarySearch）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/05/27/JVM/JVM%E4%B8%8EDVM-%E4%BA%8C/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JVM与DVM(二)GC回收与分代</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

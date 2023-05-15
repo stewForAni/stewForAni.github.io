@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Activity启动流程(API28) | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Activity启动流程(API28)">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/13/Android%20Application/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-13T09:19:55.000Z">
+<meta property="article:modified_time" content="2022-07-18T10:01:25.782Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/Activity启动流程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/13/Android%20Application/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2022-07-13T09:19:55.000Z" itemprop="datePublished">2022-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Activity启动流程(API28)
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式"><a href="#Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式" class="headerlink" title="Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。Activity的启动流程在API28以后变成了事务启动的方式"></a>Activity的启动是Activity与ActivityManagerService之间多次通讯的结果。<br>Activity的启动流程在API28以后变成了事务启动的方式<br><span id="more"></span></h2><h3 id="Activity-java"><a href="#Activity-java" class="headerlink" title="Activity.java"></a>Activity.java</h3><p><font color=blue>startActivity<br>startActivity<br>startActivityForResult<br>startActivityForResult<br></font></p>
+<h3 id="Instrumentation-java"><a href="#Instrumentation-java" class="headerlink" title="Instrumentation.java"></a>Instrumentation.java</h3><p>Instrumentation从字面上来看是仪器盘的意思，具体到程序中是管理activity的一个工具类，包括创建和启动Activity，activity的生命周期方法都是由Instrumentation这个仪器来控制，一个进程中只用一个Instrumentation实例。</p>
+<p><font color=blue>execStartActivity<br>ActivityManager.getService().startActivity</font><br>&#x2F;&#x2F;其中有contextThread和token两个参数，AMS反过来通知的时候需要这俩参数</p>
+<p><font color=blue>checkStartActivityResult</font><br>&#x2F;&#x2F;检查启动Activity的结果（抛出异常，例如清单文件未注册Activity）<br>&#x2F;&#x2F;通过IActivityManagerSingleton.get()得到ActivityManagerProxy（IActivityManager）代理对象，IActivityManager 是应用程序进程与 SystemServer（AMS 所在进程）通信的 Binder 在 Client 端的代理，因为是应用程序进程向 AMS 发消息，所以应用程序进程是 Client 端。反过来是ApplicationThreadProxy</p>
+<h3 id="AMS-java"><a href="#AMS-java" class="headerlink" title="AMS.java"></a>AMS.java</h3><p><font color=blue>startActivity<br>startActivityAsUser<br>startActivityAsUser<br>mActivityStartController.obtainStarter……<br>        .setMayWait(userId) &#x2F;&#x2F;这一步如下<br>        .execute();</font></p>
+<p>&#x2F;&#x2F;ActivityStarter.java<br><font color=blue>ActivityStarter setMayWait(int userId) {<br>    mRequest.mayWait &#x3D; true;<br>    mRequest.userId &#x3D; userId;<br>    return this;<br>}<br></font></p>
+<h3 id="ActivityStarter-java"><a href="#ActivityStarter-java" class="headerlink" title="ActivityStarter.java"></a>ActivityStarter.java</h3><p><font color=blue>int execute() </font><br>&#x2F;&#x2F; 因为mRequest.mayWait &#x3D; true，所以调用startActivityMayWait</p>
+<p><font color=blue>startActivityMayWait</font><br>&#x2F;&#x2F;根据intent在系统中找到合适的应用的activity，如果有多个activity可选择，则会弹出ResolverActivity让用户选择合适的应用。</p>
+<p><font color=blue>ActivityInfo aInfo &#x3D; mSupervisor.resolveActivity(intent, rInfo, startFlags, profilerInfo);<br>startActivity-1<br>startActivity-2<br>ActivityRecord r &#x3D; new ActivityRecord(……)</font><br>&#x2F;&#x2F;创建ActivityRecord对象,在AMS中，将用ActivityRecord来作为Activity的记录者,每次启动一个Actvity会有一个对应的ActivityRecord对象</p>
+<p><font color=blue>startActivity-3<br>startActivityUnchecked</font><br>&#x2F;&#x2F;startActivityUnchecked方法负责调度ActivityRecord和Task，理解该方法是理解Actvity启动模式的关键。startActivityUnchecked方法调度task的算法非常复杂，和当前回退栈，要启动的acitivity的启动模式以及taskAffinity属性，启动activity时设置的intent的flag等诸多要素相关</p>
+<p><font color=blue>postStartActivityProcessing</font><br>&#x2F;&#x2F;此处将通知ActivityStarter, Activity对应的Task被移动到前台</p>
+<p><font color=blue>mTargetStack.startActivityLocked</font><br>&#x2F;&#x2F;调用WMS准备App切换相关的工作</p>
+<p><font color=blue>mSupervisor.resumeFocusedStackTopActivityLocked</font></p>
+<h3 id="ActivityStackSupervisor-java"><a href="#ActivityStackSupervisor-java" class="headerlink" title="ActivityStackSupervisor.java"></a>ActivityStackSupervisor.java</h3><p><font color=blue>resumeFocusedStackTopActivityLocked</font></p>
+<font color=blue>
+~~~targetStack.resumeTopActivityUncheckedLocked(target, targetOptions);
+~~~mFocusedStack.resumeTopActivityUncheckedLocked(null, null);
+</font>
+
+<p>&#x2F;&#x2F;待启动Activity对应的Task为前台Task时，调用该Task对应ActivityStack的resumeTopActivityUncheckedLocked<br>&#x2F;&#x2F;否则只是调用当前前台栈的resumeTopActivityUncheckedLocked</p>
+<h3 id="ActivityStack-java"><a href="#ActivityStack-java" class="headerlink" title="ActivityStack.java"></a>ActivityStack.java</h3><p><font color=blue>resumeTopActivityUncheckedLocked<br>resumeTopActivityInnerLocked</font><br>&#x2F;&#x2F;mResumedActivity指向上一次启动的Activity(比如Launcher或者前一个Activity)<br>&#x2F;&#x2F;通知Launcher或者前一个Activity进入pause状态<br><font color=blue>if (mResumedActivity !&#x3D; null) {<br>    pausing |&#x3D; startPausingLocked(userLeaving, false, next, false);<br>}</font></p>
+<p>&#x2F;&#x2F;Launcher或者前一个Activity已经暂停了<br><font color=blue>if (pausing) {<br>            if (next.app !&#x3D; null &amp;&amp; next.app.thread !&#x3D; null) {<br>                &#x2F;&#x2F;如果app已经启动过，提高待启动Activity所在进程的优先级，保证其不被kill<br>                mService.updateLruProcessLocked(next.app, true, null);<br>            }<br>} </font></p>
+<p>&#x2F;&#x2F;这里比较复杂<br><font color=blue>if (next.app !&#x3D; null &amp;&amp; next.app.thread !&#x3D; null) {<br>    ……<br>    &#x2F;&#x2F;假设App已启动，点击Home键返回到Launcher,再次从Launcher启动app<br>    mStackSupervisor.scheduleResumeTopActivities();<br>    ……<br>}else{<br>    ……<br>    mStackSupervisor.startSpecificActivityLocked(next, true, true);<br>    ……<br>}</font></p>
+<h3 id="ActivityStackSupervisor-java-1"><a href="#ActivityStackSupervisor-java-1" class="headerlink" title="ActivityStackSupervisor.java"></a>ActivityStackSupervisor.java</h3><p><font color=blue>startSpecificActivityLocked</p>
+<p>ProcessRecord app &#x3D; mService.getProcessRecordLocked(r.processName,<br>        r.info.applicationInfo.uid, true);<br>if (app !&#x3D; null &amp;&amp; app.thread !&#x3D; null) {<br>    realStartActivityLocked<br>    &#x2F;&#x2F;目标Activity的App已经启动（存在ActivityThread），则启动Activity<br>    return;<br>}<br>mService.startProcessLocked</font><br>&#x2F;&#x2F;如果进程不存在，则通过zygote创建应用进程。<br>&#x2F;&#x2F;从Launcher冷启动app，则需要创建新进程</p>
+<hr>
+<p>我们假设进程不存在</p>
+<p>1.调用AMS的startProcessLocked方法</p>
+<p>2.Process.java的start函数，将通过socket发送消息给zygote</p>
+<p>3.zygote将派生出一个子进程，子进程将通过反射调用ActivityThread的main函数，在该方法里会先准备好Looper和消息队列，然后调用attach方法将ApplicationThread绑定到AMS，然后进入loop循环，不断地读取消息队列里的消息，并分发消息。</p>
+<hr>
+<h3 id="ActivityThread-java"><a href="#ActivityThread-java" class="headerlink" title="ActivityThread.java"></a>ActivityThread.java</h3><p><font color=blue>public static void main(String[] args) {<br>    ……<br>    Looper.prepareMainLooper();<br>    &#x2F;&#x2F;准备主线程的Looper<br>    ActivityThread thread &#x3D; new ActivityThread();<br>    &#x2F;&#x2F;创建当前进程的ActivityThread<br>    thread.attach(false);<br>    &#x2F;&#x2F;将ApplicationThread绑定到AMS<br>    &#x2F;&#x2F;这样AMS就可以通过ApplicationThread代理对象控制应用进程<br>    if (sMainThreadHandler &#x3D;&#x3D; null) {<br>        sMainThreadHandler &#x3D; thread.getHandler();<br>    }<br>    &#x2F;&#x2F;保存当前进程的主线程的Handler<br>    ……<br>    Looper.loop();<br>    &#x2F;&#x2F;开启主线程的消息循环<br>    ……<br>}</font></p>
+<h3 id="AMS-java-1"><a href="#AMS-java-1" class="headerlink" title="AMS.java"></a>AMS.java</h3><p><font color=blue>attachApplication<br>attachApplicationLocked</font></p>
+<p>&#x2F;&#x2F;因为进程由AMS启动，所以在AMS中一定会有ProcessRecord（app进程记录）<br>&#x2F;&#x2F;如果没有ProcessRecord，则需要杀死该进程并退出<br><font color=blue>if (app &#x3D;&#x3D; null) {<br>    ……<br>    return false;<br>}</font></p>
+<p>&#x2F;&#x2F;如果从ProcessRecord中获取的IApplicationThread不为空，有可能旧应用进程刚释放，内部IApplicationThread尚未清空，需要去清空<br><font color=blue>if (app.thread !&#x3D; null) {<br>    handleAppDiedLocked(app, true, true);<br>}</p>
+<p>……<br>try{<br>    &#x2F;&#x2F;绑定Application到ActivityThread<br>    thread.bindApplication<br>}catch{<br>    &#x2F;&#x2F;重启进程，和ActivityStackSupervisor.java中的一样<br>    startProcessLocked<br>}</p>
+<p>try {<br>    &#x2F;&#x2F;启动Activity<br>    if (mStackSupervisor.attachApplicationLocked(app)) {<br>    &#x2F;&#x2F;didSomething表示是否有启动四大组件<br>        didSomething &#x3D; true;<br>    }<br>} catch (Exception e) {<br>    badApp &#x3D; true;<br>}</font></p>
+<p>&#x2F;&#x2F;绑定service和Broadcast的Application</p>
+<p><font color=blue>if (badApp) {<br>    &#x2F;&#x2F;如果以上组件启动出错，则需要杀死进程并移除记录<br>    app.kill(“error during init”, true);<br>    handleAppDiedLocked(app, false, true);<br>    return false;<br>}</font></p>
+<p>&#x2F;&#x2F;如果以上没有启动任何组件，那么didSomething为false<br><font color=blue>if (!didSomething) {<br>    updateOomAdjLocked();<br>}</font><br>&#x2F;&#x2F;调整进程的oom_adj值， oom_adj相当于一种优先级<br>&#x2F;&#x2F;如果应用进程没有运行任何组件，那么当内存出现不足时，该进程是最先被系统“杀死”</p>
+<h3 id="2个重点方法："><a href="#2个重点方法：" class="headerlink" title="2个重点方法："></a>2个重点方法：</h3><h3 id="AMS-java——thread-bindApplication"><a href="#AMS-java——thread-bindApplication" class="headerlink" title="AMS.java——thread.bindApplication"></a>AMS.java——thread.bindApplication</h3><p>&#x2F;&#x2F;ActivityThread内部类ApplicationThread的bindApplication被调用，通过handler发送消息，将逻辑转移到主线程handleBindApplication</p>
+<p>&#x2F;&#x2F;获取LoadeApk对象<br><font color=blue>data.info &#x3D; getPackageInfoNoCheck(data.appInfo, data.compatInfo);</font></p>
+<p>&#x2F;&#x2F;创建进程对应的Android运行环境ContextImpl对象<br><font color=blue>final ContextImpl appContext &#x3D; ContextImpl.createAppContext(this, data.info);</font></p>
+<p>&#x2F;&#x2F;创建Instrumentation监控android生命周期（一个进程对应一个Instrumentation实例）<br><font color=blue>if ((InstrumentationInfo)ii !&#x3D; null) {<br>    ……<br>} else {<br>    mInstrumentation &#x3D; new Instrumentation();<br>}</font></p>
+<p>&#x2F;&#x2F;创建Application<br><font color=blue>Application app;<br>app &#x3D; data.info.makeApplication(data.restrictedBackupMode, null);<br>mInitialApplication &#x3D; app;</font></p>
+<p>&#x2F;&#x2F;加载进程对应中的ContentProvider<br><font color=blue>installContentProviders(app, data.providers);</p>
+<p>mInstrumentation.onCreate(data.instrumentationArgs);</font></p>
+<p>&#x2F;&#x2F;调用Application的onCreate方法<br><font color=blue>mInstrumentation.callApplicationOnCreate(app);</font></p>
+<h3 id="ActivityStackSupervisor-java——attachApplicationLocked"><a href="#ActivityStackSupervisor-java——attachApplicationLocked" class="headerlink" title="ActivityStackSupervisor.java——attachApplicationLocked"></a>ActivityStackSupervisor.java——attachApplicationLocked</h3><p>&#x2F;&#x2F;App创建好了之后，开始启动Activity<br>&#x2F;&#x2F;前台待启动的Activity与当前新建的进程一致时，启动这个Activity<br><font color=blue>if (activity.app &#x3D;&#x3D; null &amp;&amp; app.uid &#x3D;&#x3D; activity.info.applicationInfo.uid&amp;&amp; processName.equals(activity.processName)) {<br>try {<br>if (realStartActivityLocked(activity, app,<br>        top &#x3D;&#x3D; activity &#x2F;* andResume <em>&#x2F;, true &#x2F;</em> checkConfig *&#x2F;)) {<br>    didSomething &#x3D; true;<br>}<br></font></p>
+<hr>
+<h3 id="Activity的启动流程在API28以后变成了事务启动的方式"><a href="#Activity的启动流程在API28以后变成了事务启动的方式" class="headerlink" title="Activity的启动流程在API28以后变成了事务启动的方式"></a>Activity的启动流程在API28以后变成了事务启动的方式</h3><p>clientTransaction.addCallback(LaunchActivityItem.obtain(new Intent(r.intent),<br>        System.identityHashCode(r), r.info,<br>        mergedConfiguration.getGlobalConfiguration(),<br>        mergedConfiguration.getOverrideConfiguration(), r.compat,<br>        r.launchedFromPackage, task.voiceInteractor, app.repProcState, r.icicle,<br>        r.persistentState, results, newIntents, mService.isNextTransitionForward(),<br>        profilerInfo));</p>
+<p>mService.getLifecycleManager().scheduleTransaction(clientTransaction);</p>
+<h5 id="ClientLifecycleManager-java"><a href="#ClientLifecycleManager-java" class="headerlink" title="ClientLifecycleManager.java"></a>ClientLifecycleManager.java</h5><p>scheduleTransaction(ClientTransaction transaction) throws RemoteException</p>
+<h5 id="ClientTransaction-java"><a href="#ClientTransaction-java" class="headerlink" title="ClientTransaction.java"></a>ClientTransaction.java</h5><p>public void schedule() throws RemoteException {<br>    mClient.scheduleTransaction(this);<br>}</p>
+<h5 id="ActivityThread-java-x2F-ApplicationThread"><a href="#ActivityThread-java-x2F-ApplicationThread" class="headerlink" title="ActivityThread.java &#x2F; ApplicationThread"></a>ActivityThread.java &#x2F; ApplicationThread</h5><p>@Override<br>public void scheduleTransaction(ClientTransaction transaction) throws RemoteException {<br>    ActivityThread.this.scheduleTransaction(transaction);<br>}</p>
+<h5 id="ClientTransactionHandler-java"><a href="#ClientTransactionHandler-java" class="headerlink" title="ClientTransactionHandler.java"></a>ClientTransactionHandler.java</h5><p>void scheduleTransaction(ClientTransaction transaction) {<br>    transaction.preExecute(this);<br>    sendMessage(ActivityThread.H.EXECUTE_TRANSACTION, transaction);<br>}</p>
+<h5 id="ActivityThread-java-x2F-H"><a href="#ActivityThread-java-x2F-H" class="headerlink" title="ActivityThread.java &#x2F; H"></a>ActivityThread.java &#x2F; H</h5><p>case EXECUTE_TRANSACTION:<br>    final ClientTransaction transaction &#x3D; (ClientTransaction) msg.obj;<br>    mTransactionExecutor.execute(transaction);<br>    if (isSystem()) {<br>        transaction.recycle();<br>    }<br>    break;</p>
+<h5 id="TransactionExecutor-java"><a href="#TransactionExecutor-java" class="headerlink" title="TransactionExecutor.java"></a>TransactionExecutor.java</h5><p>public void execute(ClientTransaction transaction) {<br>    final IBinder token &#x3D; transaction.getActivityToken();<br>    log(“Start resolving transaction for client: “ + mTransactionHandler + “, token: “ + token);<br>    executeCallbacks(transaction);<br>    executeLifecycleState(transaction);<br>    mPendingActions.clear();<br>    log(“End resolving transaction”);<br>}</p>
+<p>executeCallbacks(ClientTransaction transaction)</p>
+<p>item.execute(mTransactionHandler, token, mPendingActions);</p>
+<h5 id="LaunchActivityItem-java"><a href="#LaunchActivityItem-java" class="headerlink" title="LaunchActivityItem.java"></a>LaunchActivityItem.java</h5><p>@Override<br>public void execute(ClientTransactionHandler client, IBinder token,<br>        PendingTransactionActions pendingActions) {<br>    Trace.traceBegin(TRACE_TAG_ACTIVITY_MANAGER, “activityStart”);<br>    ActivityClientRecord r &#x3D; new ActivityClientRecord(token, mIntent, mIdent, mInfo,<br>            mOverrideConfig, mCompatInfo, mReferrer, mVoiceInteractor, mState, mPersistentState,<br>            mPendingResults, mPendingNewIntents, mIsForward,<br>            mProfilerInfo, client);<br>    client.handleLaunchActivity(r, pendingActions, null);<br>    Trace.traceEnd(TRACE_TAG_ACTIVITY_MANAGER);<br>}</p>
+<hr>
+<h3 id="ActivityThread-java-1"><a href="#ActivityThread-java-1" class="headerlink" title="ActivityThread.java"></a>ActivityThread.java</h3><p><font color=purple>handleLaunchActivity<br>performLaunchActivity</font></p>
+<p>&#x2F;&#x2F;它是Context的具体实现，ContextImpl是通过Activity的attach方法来和Activity建立关联的，在attach方法中Activity还会完成Window的创建并建立和Window的关联，这样当Window接收到外部输入事件后就可以将事件传递给Activity。<br><font color=purple>ContextImpl appContext &#x3D; createBaseContextForActivity(r);</font></p>
+<p>&#x2F;&#x2F;从ActivityClientRecord中获取待启动的Activity的组件信息<br>&#x2F;&#x2F;通过Instrumentation的newActivity方法使用类加载器创建Activity对象<br><font color=purple>activity &#x3D; mInstrumentation.newActivity(cl, component.getClassName(), r.intent);</font></p>
+<p>&#x2F;&#x2F;Instrumentation.java<br><font color=purple>getFactory(pkg).instantiateActivity(cl, className, intent);</font></p>
+<p>&#x2F;&#x2F;AppComponentFactory.java<br><font color=purple>(Activity) cl.loadClass(className).newInstance();</font></p>
+<p>&#x2F;&#x2F;创建application（其实在handleBindApplication中已经创建完成，直接返回实例）<br><font color=purple>Application app &#x3D; r.packageInfo.makeApplication(false, mInstrumentation);</font></p>
+<p>&#x2F;&#x2F;Instrumentation.java<br><font color=purple>app &#x3D; mActivityThread.mInstrumentation.newApplication(cl, appClass, appContext);</font></p>
+<p>&#x2F;&#x2F;AppComponentFactory.java<br><font color=purple>(Application) cl.loadClass(className).newInstance();</font></p>
+<p>&#x2F;&#x2F;创建phonewindow，给winodw绑定windowmanager<br><font color=purple>activity.attach</font></p>
+<p>&#x2F;&#x2F;调用Activity的onCreate方法<br><font color=purple>mInstrumentation.callActivityOnCreate(activity, r.state);<br>activity.performCreate(icicle);<br>performCreate(icicle, null);<br>onCreate(icicle);</font></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/13/Android%20Application/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" data-id="clhoa7k4q000utlcae6dy3fmr" data-title="Activity启动流程(API28)" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/16/Android%20Framework/JNI(1)/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          JNI(1)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/11/Android%20Application/Glide/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Glide</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

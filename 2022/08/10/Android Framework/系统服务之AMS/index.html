@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>系统服务之AMS | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统服务之AMS">
+<meta property="og:url" content="https://stewforani.github.io/2022/08/10/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BAMS/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-08-10T15:25:53.000Z">
+<meta property="article:modified_time" content="2023-04-08T08:31:34.067Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/系统服务之AMS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/08/10/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BAMS/" class="article-date">
+  <time class="dt-published" datetime="2022-08-10T15:25:53.000Z" itemprop="datePublished">2022-08-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      系统服务之AMS
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作"><a href="#AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作" class="headerlink" title="AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作"></a>AMS主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作<br><span id="more"></span></h2><p>ActivityManagerService 主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作，AMS的注册启动可以参考Binder之系统服务注册一文</p>
+<h3 id="Activity跳转逻辑"><a href="#Activity跳转逻辑" class="headerlink" title="Activity跳转逻辑"></a>Activity跳转逻辑</h3><p><code>举例：AActivity#onPause -&gt; BActivity#onCreate -&gt; BActivity#onStart -&gt; BActivity#onResume -&gt; AActivity#onStop</code></p>
+<p><code>mStackSupervisor.resumeFocusedStackTopActivityLocked</code><br><code>startPausingLocked</code><br>将当前未Pause的Activity进行Pause</p>
+<p>暂停完又会回到<br><code>mStackSupervisor.resumeFocusedStackTopActivityLocked</code><br>进行<code>mStackSupervisor.startSpecificActivityLocked</code></p>
+<p>这个方法还有一个重要的事情就是将已被Pause的Activity加入到<code>mStackSupervisor.mStoppingActivities</code>的列表中，这是一个ArrayList</p>
+<p>新的Activity启动（没有进程就<code>mService.startProcessLockedfork</code>fork新进程）<br>有进程就<code>realStartActivityLocked-handleLaunchActivity-performLaunchActivity</code></p>
+<p>在performLaunchActivity中执行了<font color =red >（这里逻辑针对8.0，9.0开始使用事务模式）</font></p>
+<ol>
+<li>ClassLoader创建Activity实例</li>
+<li>activity.attach（创建phonewindow，windowmanager）</li>
+<li>Activity#onCreate和Activity#onStart</li>
+<li>回到handleLaunchActivity，执行handleResumeActivity，执行performResumeActivity ，执行Activity#onResume</li>
+<li>回到handleResumeActivity，执行Looper.myQueue().addIdleHandler(new Idler());这个方法是为了stop之前被pause的activity，从mStoppingActivities里面拿（和上面对应）</li>
+</ol>
+<hr>
+<h3 id="Activity启动过程中创建新Task的条件"><a href="#Activity启动过程中创建新Task的条件" class="headerlink" title="Activity启动过程中创建新Task的条件"></a>Activity启动过程中创建新Task的条件</h3><ol>
+<li>standard、singleTop模式<br>Intent.FLAG_ACTIVITY_NEW_TASK 和taskAffinity必须同时设置 </li>
+<li>sinlgeTask模式 只需设置taskAffinity<br>Intent.FLAG_ACTIVITY_NEW_TASK 可有可无</li>
+<li>singeInstance模式<br>Intent.FLAG_ACTIVITY_NEW_TASK 和taskAffinity均可有可无</li>
+</ol>
+<hr>
+<h3 id="AMS进程管理"><a href="#AMS进程管理" class="headerlink" title="AMS进程管理"></a>AMS进程管理</h3><p>1.进程LRU列表动态更新：动态调整进程在mLruProcesses列表的位置<br>2.进程优先级动态调整：实际是调整进程oom_adj的值。</p>
+<h3 id="进程LRU列表动态更新"><a href="#进程LRU列表动态更新" class="headerlink" title="进程LRU列表动态更新"></a>进程LRU列表动态更新</h3><p>LRU进程列表：</p>
+<p><code>final ArrayList&lt;ProcessRecord&gt; mLruProcesses = new ArrayList&lt;ProcessRecord&gt;();</code></p>
+<p>LRU列表被分为3段：<br>1.hasActivity：带Activity的进程<br>2.hasService：带Service的进程<br>3.other：其他进程。</p>
+<p>LRU列表中存储的是一个个ProcessRecord，AMS中使用ProcessRecord来代表一个进程、内部存储了一个进程所有的信息。</p>
+<p>AMS中的updateLruProcessLocked实现了对进程LRU列表动态更新</p>
+<h3 id="进程优先级动态调整"><a href="#进程优先级动态调整" class="headerlink" title="进程优先级动态调整"></a>进程优先级动态调整</h3><p>AMS中的updateOomAdjLocked方法实现了进程优先级的动态更新</p>
+<h5 id="进程优先级（OOM-ADJ）"><a href="#进程优先级（OOM-ADJ）" class="headerlink" title="进程优先级（OOM_ADJ）"></a>进程优先级（OOM_ADJ）</h5><p>OOM_ADJ定义在ProcessList.java文件，大概划分为20个级。进程回收机制就是根据这个adj值来进行的 前台进程adj值最低，代表进程优先级最高，空进程adj值越高，最容易被kill，对于相等优先级的进程：使用的内存越多越容易被杀死</p>
+<h5 id="进程state级别（ProcState）"><a href="#进程state级别（ProcState）" class="headerlink" title="进程state级别（ProcState）"></a>进程state级别（ProcState）</h5><p>ProcState定义在ActivityManager.java文件，大概划分为22类。用来表示当前进程的一组状态</p>
+<h5 id="进程组schedGroup"><a href="#进程组schedGroup" class="headerlink" title="进程组schedGroup"></a>进程组schedGroup</h5><p>用来表示当前进程所在的进程调度组序列。</p>
+<h5 id="LMK机制"><a href="#LMK机制" class="headerlink" title="LMK机制"></a>LMK机制</h5><p>LMK 全称 Low Memory Killer<br>在Android中，即使当用户退出应用程序后，应用进程也还会存在内存中，方便下次可以快速进入应用而不需要重新创建进程。 这样带来的直接影响就是由于进程数量越来越多，系统内存会越来越少，这个时候就需要杀死一部分进程来缓解内存压力。 至于哪些进程会被杀死，这个时候就需要用到Low Memory Killer机制来进行判定。</p>
+<p>AMS通过四大组件的运行状态更新这些组件相关联的进程的oom_adj(包括adj,proc_state,schedule_group等值), AMS计算好每个进程的oom_adj，通过socket向lmkd服务发送请求，让lmkd去更新进程的优先级，lmkd收到请求后，会通过&#x2F;proc文件系统去更新内核中的进程优先级。这样AMS就可以间接通过LMK实现对进程的动态管理。</p>
+<hr>
+<hr>
+<h3 id="AMS作用，什么时候初始化"><a href="#AMS作用，什么时候初始化" class="headerlink" title="AMS作用，什么时候初始化"></a>AMS作用，什么时候初始化</h3><p>主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作</p>
+<h3 id="ActivityThread和ApplicationThread，以及关系和区别"><a href="#ActivityThread和ApplicationThread，以及关系和区别" class="headerlink" title="ActivityThread和ApplicationThread，以及关系和区别"></a>ActivityThread和ApplicationThread，以及关系和区别</h3><p>ActivityThread可以理解为android主线程（不是线程），app进程的入口，执行loop使当前线程进入消息循环<br>ApplicationThread是ActivityThread的内部类，是一个Binder对象，可以理解为app端的代理，ams可以通过它和app通信，到了app端的ApplicationThread，内部通过handler进行发送消息到主线程的消息循环</p>
+<h3 id="Instrumentation是什么，和ActivityThread是什么关系"><a href="#Instrumentation是什么，和ActivityThread是什么关系" class="headerlink" title="Instrumentation是什么，和ActivityThread是什么关系"></a>Instrumentation是什么，和ActivityThread是什么关系</h3><p>监控系统和应用之间的交互，一个进程对应一个Instrumentation<br>ActivityThread通过Instrumentation执行activity的生命周期<br>activity通过Instrumentation（转到AMS）跳转activity</p>
+<h3 id="AMS和zygote进程通信是如何实现的"><a href="#AMS和zygote进程通信是如何实现的" class="headerlink" title="AMS和zygote进程通信是如何实现的"></a>AMS和zygote进程通信是如何实现的</h3><p>ams 请求zygote fork新的进程，底层通过socket</p>
+<p>通过ZygoteProcess 的内部类ZygoteState，执行ZygoteState的connect方法，这里作为客户端，Zygote进程作为服务端<br>客户端connect，服务端accept，客户端write，服务端read，根据ags中的各种参数，Zygote孵化新的进程Zygote.forkAndSpecialize<br>最后找到 ActivityThread 类的 main() 方法并执行，子进程就这样启动了</p>
+<p>无限循环等待AMS请求，代码如下：<br>frameworks&#x2F;base&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;internal&#x2F;os&#x2F;ZygoteServer.java<br>Runnable runSelectLoop(String abiList) {<br>    while(true){<br>    ……<br>    final Runnable command &#x3D; connection.processOneCommand(this);<br>    ……<br>    }<br>}<br>frameworks&#x2F;base&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;internal&#x2F;os&#x2F;Zygote.java<br>Runnable processOneCommand(ZygoteServer zygoteServer) {<br>    ……<br>    args &#x3D; Zygote.readArgumentList(mSocketReader);<br>    ……<br>    pid &#x3D; Zygote.forkAndSpecialize(……);<br>    ……<br>}</p>
+<h3 id="ActivityRecord、TaskRecord和ActivityStack"><a href="#ActivityRecord、TaskRecord和ActivityStack" class="headerlink" title="ActivityRecord、TaskRecord和ActivityStack"></a>ActivityRecord、TaskRecord和ActivityStack</h3><p>ActivityRecord代表一个activity，应用中启动的Activity，在AMS中都有一个ActivityRecord实例来与之对应</p>
+<p>TaskRecord任务栈，栈顶的ActivityRecord表示当前可见的界面。一个App是可能有多个TaskRecord存在。</p>
+<p>ActivityStack负责所有Activity栈的管理。ActivityStackSupervisor内部管理了mHomeStack、mFocusedStack和mLastFocusedStack三个Activity栈。<br>其中，mHomeStack管理的是Launcher相关的Activity栈；<br>mFocusedStack管理的是当前显示在前台Activity的Activity栈；<br>mLastFocusedStack管理的是上一次显示在前台Activity的Activity栈。</p>
+<h3 id="ActivityManager"><a href="#ActivityManager" class="headerlink" title="ActivityManager"></a>ActivityManager</h3><p>ActivityManager虽然名为Activity管理器，其实际功能比类名描述的广泛，定义的方法涵盖了内存、进程、任务、设备等相关功能。因此，将ActivityManager理解为AppManager，更符合这个类。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/08/10/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BAMS/" data-id="clhoa7k54002ctlca96lfgwbf" data-title="系统服务之AMS" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/08/13/Android%20Application/Android%E5%B5%8C%E5%A5%97%E6%BB%91%E5%8A%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Android嵌套滑动
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/08/09/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BPMS/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">系统服务之PMS</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

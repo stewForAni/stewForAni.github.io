@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Binder知识点记录 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Andorid系统中的一种进程间通信方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Binder知识点记录">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/18/Android%20Framework/Binder%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Andorid系统中的一种进程间通信方式">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-18T14:02:39.000Z">
+<meta property="article:modified_time" content="2023-04-14T12:15:38.297Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/Binder知识点记录" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/18/Android%20Framework/Binder%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time class="dt-published" datetime="2022-07-18T14:02:39.000Z" itemprop="datePublished">2022-07-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Binder知识点记录
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Andorid系统中的一种进程间通信方式"><a href="#Andorid系统中的一种进程间通信方式" class="headerlink" title="Andorid系统中的一种进程间通信方式"></a>Andorid系统中的一种进程间通信方式<br><span id="more"></span></h2><h3 id="Android-IPC"><a href="#Android-IPC" class="headerlink" title="Android IPC"></a>Android IPC</h3><h5 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h5><p>Serializeble 是 java 的序列化方式，Parcelable 是 Android 特有的序列化方式；</p>
+<p>Serializable 在序列化的时候会产生大量的临时变量，从而引起频繁的 GC。</p>
+<p>Parcel 提供了一套机制，可以将序列化之后的数据写入到一个共享内存中，其他进程通过Parcel 可以从这块共享内存中读出字节流，并反序列化成对象</p>
+<p>一般在保存数据到本地或者网络传输时建议使用 Serializable 即可，虽然效率差一些，适合数据持久化。</p>
+<p>而在运行时数据传递时建议使用 Parcelable，比如 Intent，Bundle 等，Android 底层做了优化处理，效率很高。</p>
+<h5 id="Messenger"><a href="#Messenger" class="headerlink" title="Messenger"></a>Messenger</h5><p>底层是AIDL，对AIDL做了简单的封装，串行处理数据，因为用到了Handler</p>
+<h5 id="Bundle"><a href="#Bundle" class="headerlink" title="Bundle"></a>Bundle</h5><p>Bundle实现了Parcelable接口，所以它可以方便的在不同的进程间传输。Acitivity、Service、Receiver 都是在Intent中通过Bundle来进行数据传递。</p>
+<h5 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h5><p>读写文件，SharedPreference 底层也是文件XML，线程不安全，进程不安全</p>
+<h6 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h6><p>ContentProvider是Android中提供的专门用于不同应用间数据交互和共享的组件。ContentProvider实际上是对SQLiteOpenHelper的进一步封装，以一个或多个表的形式将数据呈现给外部应用，通过Uri映射来选择需要操作数据库中的哪个表，并对表中的数据进行增删改查处理。ContentProvider其底层使用了Binder来完成APP进程之间的通信，同时使用匿名共享内存来作为共享数据的载体。ContentProvider支持访问权限管理机制，以控制数据的访问者及访问方式，保证数据访问的安全性。</p>
+<hr>
+<h3 id="Linux-IPC"><a href="#Linux-IPC" class="headerlink" title="Linux IPC"></a>Linux IPC</h3><p>copy_from_user:将用户空间的数据拷贝到内核空间。<br>copy_to_user:将内核空间的数据拷贝到用户空间。<br>用户空间 –&gt; 内核缓存区 –&gt; 用户空间，需要2次数据拷贝，这样效率不高。</p>
+<h3 id="Binder通信原理"><a href="#Binder通信原理" class="headerlink" title="Binder通信原理"></a>Binder通信原理</h3><ol>
+<li>Binder驱动在内核空间创建一个数据接收缓存区B</li>
+<li>内核空间创建内核缓存区A，接收数据的进程有用户空间地址C</li>
+<li>建立A与B，B与C的映射关系，相当于A与C有映射关系，所以A中数据更新会直接反映到C</li>
+</ol>
+<p>整个过程只使用了一次拷贝</p>
+<hr>
+<h3 id="Android-Binder-原理"><a href="#Android-Binder-原理" class="headerlink" title="Android Binder 原理"></a>Android Binder 原理</h3><p><code>在性能（mmap一次拷贝），稳定性（C/S架构），安全性（识别UID，只暴露Client），符合面向对象等特征，所以android采用了Binder</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Java Binder （fw层）</span><br><span class="line">---------------------</span><br><span class="line">Native Binder （nt层）</span><br><span class="line">---------------------</span><br><span class="line">Kernel Binder （kn层）</span><br><span class="line">---------------------</span><br></pre></td></tr></table></figure>
+
+<h5 id="基于CS"><a href="#基于CS" class="headerlink" title="基于CS"></a>基于CS</h5><p><code>Client</code> —查询服务—&gt; <code>ServiceManager</code> &lt;—注册服务— <code>Server</code><br>即：<br><code>Client</code> —间接使用服务—&gt; <code>Server</code></p>
+<h5 id="以MediaPlayer举例"><a href="#以MediaPlayer举例" class="headerlink" title="以MediaPlayer举例"></a>以MediaPlayer举例</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MediaPlayer.java   （java fw层）</span><br><span class="line">------------------------------------------------------------------</span><br><span class="line">android_media_MediaPlayer.cpp    （JNI层）</span><br><span class="line">------------------------------------------------------------------</span><br><span class="line">MediaPlayer.cpp    （Native层）</span><br><span class="line"><span class="comment">//MediaPlayer客户端从SM中获取服务</span></span><br><span class="line"><span class="comment">//中间通过Binder通信</span></span><br><span class="line"><span class="comment">//MediaPlayerService服务端向SM中注册服务</span></span><br><span class="line">MediaPlayerService.cpp</span><br><span class="line"><span class="comment">//MediaPlayerService服务运行在MediaServer进程中，android系统启动时会启动MS进程</span></span><br></pre></td></tr></table></figure>
+<p>从MediaServer的入口函数开始：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/av/media/mediaserver/main_mediaserver.cpp</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc __unused, <span class="type">char</span> **argv __unused)</span></span><br><span class="line">&#123;</span><br><span class="line">    signal(SIGPIPE, SIG_IGN);</span><br><span class="line">    <span class="comment">//获取ProcessState实例</span></span><br><span class="line">    sp&lt;ProcessState&gt; <span class="title function_">proc</span><span class="params">(ProcessState::self()</span>); </span><br><span class="line">    sp&lt;IServiceManager&gt; <span class="title function_">sm</span><span class="params">(defaultServiceManager()</span>); </span><br><span class="line">    ALOGI(<span class="string">&quot;ServiceManager: %p&quot;</span>, sm.get()); </span><br><span class="line">    InitializeIcuOrDie();</span><br><span class="line">    <span class="comment">//注册MediaPlayerService </span></span><br><span class="line">    MediaPlayerService::instantiate();</span><br><span class="line">    ResourceManagerService::instantiate(); </span><br><span class="line">    registerExtensions();</span><br><span class="line">    <span class="comment">//启动Binder线程池 </span></span><br><span class="line">    ProcessState::self()-&gt;startThreadPool(); </span><br><span class="line">    <span class="comment">//当前线程加入到线程池 </span></span><br><span class="line">    IPCThreadState::self()-&gt;joinThreadPool();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/binder/ProcessState.cpp</span></span><br><span class="line">sp&lt;ProcessState&gt; ProcessState::self()&#123;</span><br><span class="line">    Mutex::Autolock <span class="title function_">_l</span><span class="params">(gProcessMutex)</span>;</span><br><span class="line">    <span class="keyword">if</span> (gProcess != NULL) &#123;</span><br><span class="line">        <span class="keyword">return</span> gProcess;</span><br><span class="line">    &#125;</span><br><span class="line">    gProcess = <span class="keyword">new</span> <span class="title class_">ProcessState</span>(<span class="string">&quot;/dev/binder&quot;</span>);<span class="comment">//1</span></span><br><span class="line">    <span class="keyword">return</span> gProcess;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ProcessState 进程状态，进程唯一，使用了单例模式，ProcessState构造函数中 进行了open_driver和mmap</p>
+<ol>
+<li>打开binder设备，内部调用open函数（打开Binder设备）和ioctl函数（向Binder设备传递参数），最终返回一个文件描述符fd</li>
+<li>mmap函数，它会在内核虚拟地址空间中申请一块与用户虚拟内存相同大小的内存，然后再申请物理内存，将同一块物理内存分别映射到内核虚拟地址空间和用户虚拟内存空间，实现了内核虚拟地址空间和用户虚拟内存空间的数据同步操作，也就是内存映射。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/binder/IServiceManager.cpp</span></span><br><span class="line">sp&lt;IServiceManager&gt; <span class="title function_">defaultServiceManager</span><span class="params">()</span>&#123;</span><br><span class="line">   ......</span><br><span class="line">   gDefaultServiceManager = interface_cast&lt;IServiceManager&gt;(</span><br><span class="line">ProcessState::self()-&gt;getContextObject(NULL));</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样使用了单例模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/binder/ProcessState.cpp</span></span><br><span class="line">sp&lt;IBinder&gt; ProcessState::getContextObject(const sp&lt;IBinder&gt;&amp; <span class="comment">/*caller*/</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> getStrongProxyForHandle(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">sp&lt;IBinder&gt; ProcessState::getStrongProxyForHandle(int32_t handle)&#123;</span><br><span class="line">    ......</span><br><span class="line">    b = BpBinder::create(handle);</span><br><span class="line">    result = b;</span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>handle&#x3D;0，创建了BpBinder，BpBinder和BBinder，都继承了IBinder。BpBinder是 Client端与Server交互的代理类，而BBinder则代表了Server端。BpBinder和BBinder是一一对应的， BpBinder会通过handle来找到对应的BBinder。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/binder/include/binder/IInterface.h</span></span><br><span class="line">template&lt;typename INTERFACE&gt;</span><br><span class="line">inline sp&lt;INTERFACE&gt; <span class="title function_">interface_cast</span><span class="params">(const sp&lt;IBinder&gt;&amp; obj)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> INTERFACE::asInterface(obj);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//替换后</span></span><br><span class="line">inline sp&lt;IServiceManager&gt; <span class="title function_">interface_cast</span><span class="params">(const sp&lt;IBinder&gt;&amp; obj)</span>&#123;    </span><br><span class="line">    <span class="keyword">return</span> IServiceManager::asInterface(obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>回到interface_cast，这里的INTERFACE是IServiceManager</p>
+<h5 id="IServiceManager"><a href="#IServiceManager" class="headerlink" title="IServiceManager"></a>IServiceManager</h5><p>BpBinder和BBinder负责Binder的通信，而IServiceManager用于处理ServiceManager的业务</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/binder/include/binder/IServiceManager.h</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">IServiceManager</span> : <span class="keyword">public</span> IInterface&#123;</span><br><span class="line">    <span class="comment">//执行了一个宏,它的定义在IInterface.h中</span></span><br><span class="line">    DECLARE_META_INTERFACE(ServiceManager)<span class="comment">//1</span></span><br><span class="line">    <span class="comment">//定义了一些操作service的函数</span></span><br><span class="line">    getService()</span><br><span class="line">    checkService()</span><br><span class="line">    addService()</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/IServiceManager.cpp</span></span><br><span class="line">IMPLEMENT_META_INTERFACE(ServiceManager, <span class="string">&quot;android.os.IServiceManager&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//上面两个宏都定义在</span></span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/include/binder/IInterface.h</span></span><br><span class="line">#define <span class="title function_">DECLARE_META_INTERFACE</span><span class="params">(INTERFACE)</span></span><br><span class="line">......</span><br><span class="line">#define <span class="title function_">IMPLEMENT_META_INTERFACE</span><span class="params">(INTERFACE, NAME)</span></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="comment">//经过替换后的代码如下所示</span></span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line"><span class="keyword">static</span> const ::android::String16 descriptor; </span><br><span class="line"><span class="comment">//定义asInterface函数</span></span><br><span class="line"><span class="keyword">static</span> ::android::sp&lt;IServiceManager&gt; <span class="title function_">asInterface</span><span class="params">(const ::android::sp&lt;::android::IBinder&gt;&amp; obj)</span>;</span><br><span class="line">virtual const ::android::String16&amp; getInterfaceDescriptor() const; </span><br><span class="line"><span class="comment">//定义IServiceManager构造函数</span></span><br><span class="line">IServiceManager();</span><br><span class="line"><span class="comment">//定义IServiceManager析构函数</span></span><br><span class="line">virtual ~IServiceManager();</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">const ::android::String16</span><br><span class="line">IServiceManager::descriptor(<span class="string">&quot;android.os.IServiceManager&quot;</span>);</span><br><span class="line">const ::android::String16&amp;</span><br><span class="line">        IServiceManager::getInterfaceDescriptor() const &#123;</span><br><span class="line">    <span class="keyword">return</span> IServiceManager::descriptor;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现了asInterface函数</span></span><br><span class="line">::android::sp&lt;IServiceManager&gt; IServiceManager::asInterface(</span><br><span class="line">        const ::android::sp&lt;::android::IBinder&gt;&amp; obj)</span><br><span class="line">&#123;</span><br><span class="line">    ::android::sp&lt;IServiceManager&gt; intr;</span><br><span class="line">    <span class="keyword">if</span> (obj != NULL) &#123;</span><br><span class="line">        intr = static_cast&lt;IServiceManager&gt;(</span><br><span class="line">            obj-&gt;queryLocalInterface(</span><br><span class="line">                    IServiceManager::descriptor).get());</span><br><span class="line">        <span class="keyword">if</span> (intr == NULL) &#123;</span><br><span class="line">            intr = <span class="keyword">new</span> <span class="title class_">BpServiceManager</span>(obj);<span class="comment">//1</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">    <span class="keyword">return</span> intr;</span><br><span class="line">&#125;</span><br><span class="line">IServiceManager::IServiceManager() &#123; &#125;</span><br><span class="line">IServiceManager::~IServiceManager() &#123; &#125;</span><br><span class="line">---------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+<p>可以看出创建了BpServiceManager，其中obj是之前创建的BpBinder，最后得出defaultServiceManager()返回的就是BpServiceManager（定义在frameworks&#x2F;native&#x2F;libs&#x2F;binder&#x2F;IServiceManager.cpp中）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/binder/IServiceManager.cpp</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BpServiceManager</span> : <span class="keyword">public</span> BpInterface&lt;IServiceManager&gt;&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    explicit <span class="title function_">BpServiceManager</span><span class="params">(const sp&lt;IBinder&gt;&amp; impl)</span></span><br><span class="line">        : BpInterface&lt;IServiceManager&gt;(impl)</span><br><span class="line">&#123;</span><br><span class="line">&#125; ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//找到BpInterface</span></span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/include/binder/IInterface.h</span></span><br><span class="line">template&lt;typename INTERFACE&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BpInterface</span> : <span class="keyword">public</span> INTERFACE, <span class="keyword">public</span> BpRefBase&#123;</span><br><span class="line">...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//找到BpRefBase</span></span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/Binder.cpp</span></span><br><span class="line">BpRefBase::BpRefBase(const sp&lt;IBinder&gt;&amp; o)</span><br><span class="line">    : mRemote(o.get()), mRefs(NULL), mState(<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    extendObjectLifetime(OBJECT_LIFETIME_WEAK);</span><br><span class="line">    <span class="keyword">if</span> (mRemote) &#123;</span><br><span class="line">        mRemote-&gt;incStrong(<span class="built_in">this</span>);</span><br><span class="line">        mRefs = mRemote-&gt;createWeak(<span class="built_in">this</span>);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/native/libs/binder/include/binder/Binder.h</span></span><br><span class="line">IBinder* const   mRemote;</span><br></pre></td></tr></table></figure>
+<p><code>可以看出最后BpBinder存于mRemote内</code><br><code>得出BpServiceManager的mRemote变量里面存放了BpBinder</code><br><code>得出BpServiceManager实现了IServiceManager,或者说BpServiceManager派生自IServiceManager，且BpBinder可以用来通信</code></p>
+<ul>
+<li>BpServiceManager 继承 BpInterface<IServiceManager> 且构造函数需要 BpBinder</li>
+<li>BpServiceManager —-&gt; BpInterface —-&gt; IServiceManager + BpRefBase</li>
+<li>IServiceManager —-&gt; IInterface</li>
+<li>BpBinder —-&gt; IBinder    &#x2F;     BBinder —-&gt; IBinder</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">小结：</span><br><span class="line">1. sp&lt;ProcessState&gt; ProcessState::self()</span><br><span class="line">打开binder设备，使用mmap申请一块虚拟内存进行映射</span><br><span class="line">2. sp&lt;IServiceManager&gt; defaultServiceManager()</span><br><span class="line">创建BpServiceManager（派生自IServiceManager），他的mRemote变量含有BpBinder变量，可进行binder通信</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="关键点总结"><a href="#关键点总结" class="headerlink" title="关键点总结"></a>关键点总结</h3><p>由于Binder内存映射的空间最大只允许4M，binder的两个进程间需要传输大量的数据时就只能使用传递文件句柄fd方式。例如：图像声音数据、或者是一个对象。可以在匿名共享内存(Ashmem)中创建一块区域，源进程会得到一个相应的fd，再把这个fd使用binder传递给目的进程，就可以共享数据了。</p>
+<p>binder驱动给每个进程分配最多4M的buffer空间（一般从Zygote孵化出来的APP默认分配 1M-8K大小，servicemanager默认分配128K），当然可以突破这个 1M-8K 的限制，可以自己手动调用open和mmap即可：（但是还是无法突破 binder_mmap() 中 SM_4M 的限制）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc,<span class="type">char</span> **argv)</span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    bs = binder_open(<span class="string">&quot;/dev/binder&quot;</span>,【自定义大小】);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>binder驱动负责远程引用和本地实体服务的转换：<br>binder对象即binder_node和handle即binder_ref的映射关系，由binder驱动负责</p>
+<p>发消息需要拷贝数据，收消息使用mmap</p>
+<p>不论是client端还是server端，实例化ProcessState之后，都会开启一个binder线程用于循环监听binder驱动发来的消息！<br>即<code>startThreadPool</code>和<code>joinThreadPool</code>方法</p>
+<h5 id="Client发消息："><a href="#Client发消息：" class="headerlink" title="Client发消息："></a>Client发消息：</h5><ul>
+<li>BpBinder::transact</li>
+<li>IPCThreadState::transact<br>&#x2F;&#x2F;准备数据，写入Parcel类型的mOut</li>
+<li>writeTransactionData</li>
+<li>IPCThreadState::waitForResponse<br>&#x2F;&#x2F;发起通信，通信的数据来自全局变量 mOut，如果有收到回复，回复数据将存在 mIn 中。</li>
+<li>IPCThreadState::talkWithDriver<br>&#x2F;&#x2F;用于包装传入的数据，把mOut的数据存入bwr（其实内部是保存的数据的地址，不是数据本身）</li>
+<li>binder_write_read bwr;</li>
+<li>ioctl(bwr)</li>
+<li>binder_ioctl（内核层）</li>
+</ul>
+<p>其实在 binder 通信中，会有多次的 copy_from_user() 和多次的 copy_to_user()，之所以说 binder只有“一次拷贝”，实际指的是只有“一次数据拷贝”。其他的拷贝都只是小数据的拷贝，例如控制命令、数据地址指针等信息。</p>
+<h5 id="binder-ioctl（内核层）"><a href="#binder-ioctl（内核层）" class="headerlink" title="binder_ioctl（内核层）"></a>binder_ioctl（内核层）</h5><p>&#x2F;&#x2F;APP或者Server进程开启后，会开启一个binder线程，循环获取从binder驱动发来的消息，就是通过binder_ioctl_write_read()中的binder_thread_read()来获取消息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//binder_ioctl_write_read</span></span><br><span class="line"><span class="keyword">if</span> (copy_from_user(&amp;bwr, ubuf, sizeof(bwr)))&#123;...&#125;</span><br><span class="line"><span class="comment">//write_size大于0，表示用户进程由数据发送到Binder驱动</span></span><br><span class="line"><span class="keyword">if</span>(bwr.write_size&gt;<span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">//发送数据</span></span><br><span class="line">    ret = binder_thread_write(…);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//read_size&gt;0，表示用户进程需要监听Binder驱动发来的数据</span></span><br><span class="line"><span class="keyword">if</span>(bwr.read_size&gt;<span class="number">0</span>)&#123;</span><br><span class="line">    ret = binder_thread_read(…);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>copy_from_user</code>从用户空间将 bwr 拷贝进内核空间，包装在内核空间的 bwr 中,这里的拷贝是命令拷贝，并不是真正的传输数据拷贝，这里 bwr 指向的数据只包含了：一些传入协议，相关控制命令、请求端user data数据的地址指针。所以此时的拷贝并不是真正对user data数据做拷贝，即还没有和服务端被映射的内存关联上。</p>
+<h5 id="binder-thread-write内部："><a href="#binder-thread-write内部：" class="headerlink" title="binder_thread_write内部："></a>binder_thread_write内部：</h5><ol>
+<li>copy_from_user&#x2F;&#x2F;不过也没有真正的数据拷贝</li>
+<li>binder_transaction</li>
+<li>在binder_transaction内又进行了copy_from_user&#x2F;&#x2F;即真正的数据拷贝</li>
+</ol>
+<hr>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><ul>
+<li><strong>从进程角度来看，可以把MPS看成是客户端Client，SM看成是服务端Server</strong></li>
+<li><strong>MPS客户端 —-BC_TRANSACTION—-&gt; BinderDriver —-BR_TRANSACTION—-&gt; SM服务端</strong></li>
+<li><strong>MPS客户端 &lt;——-BR_REPLY——- BinderDriver &lt;——-BC_REPLY——- SM服务端</strong></li>
+<li><strong>Client端和Server端分别运行在两个进程中，通过向Binder来进行通信</strong></li>
+<li><strong>BC_TRANSACTION和BR_TRANSACTION过程是一个完整的事务，BC_REPLY和BR_REPLY是一个完整的事务。</strong></li>
+<li><strong>客户端发送完之后线程会阻塞等待返回的结果，binder驱动唤醒SM的阻塞线程，进行服务注册，拿到结果后，唤醒客户端线程最终拿到结果</strong></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/18/Android%20Framework/Binder%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" data-id="clhoa7k510021tlca572c2c95" data-title="Binder知识点记录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/19/Android%20Framework/Binder%E4%B9%8BServiceManager%E5%90%AF%E5%8A%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Binder之ServiceManager启动
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/16/Android%20Framework/JNI(2)/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JNI(2)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

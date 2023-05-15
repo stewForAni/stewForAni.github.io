@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RxJava知识点记录（扔物线） | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="RxJava 的异步实现，是通过一种扩展的观察者模式来实现的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava知识点记录（扔物线）">
+<meta property="og:url" content="https://stewforani.github.io/2022/05/14/Android%20Application/RxJava%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="RxJava 的异步实现，是通过一种扩展的观察者模式来实现的。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://stewforani.github.io/images/rx1.png">
+<meta property="og:image" content="https://stewforani.github.io/images/rx2.png">
+<meta property="og:image" content="https://stewforani.github.io/images/rx3.png">
+<meta property="og:image" content="https://stewforani.github.io/images/rx4.png">
+<meta property="og:image" content="https://stewforani.github.io/images/rx5.png">
+<meta property="article:published_time" content="2022-05-14T15:39:32.000Z">
+<meta property="article:modified_time" content="2022-05-16T04:31:40.249Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="rxjava">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stewforani.github.io/images/rx1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/RxJava基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/14/Android%20Application/RxJava%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="dt-published" datetime="2022-05-14T15:39:32.000Z" itemprop="datePublished">2022-05-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RxJava知识点记录（扔物线）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="RxJava-的异步实现，是通过一种扩展的观察者模式来实现的。"><a href="#RxJava-的异步实现，是通过一种扩展的观察者模式来实现的。" class="headerlink" title="RxJava 的异步实现，是通过一种扩展的观察者模式来实现的。"></a>RxJava 的异步实现，是通过一种扩展的观察者模式来实现的。<br><span id="more"></span></h2><h3 id="RxJava-到底是什么"><a href="#RxJava-到底是什么" class="headerlink" title="RxJava 到底是什么"></a>RxJava 到底是什么</h3><p>一个词：异步。</p>
+<h3 id="RxJava-好在哪"><a href="#RxJava-好在哪" class="headerlink" title="RxJava 好在哪"></a>RxJava 好在哪</h3><p>一个词：简洁。</p>
+<p>RxJava 的异步实现，是通过一种扩展的观察者模式来实现的。</p>
+<p>观察者模式面向的需求是：A 对象（观察者）对 B 对象（被观察者）的某种变化高度敏感，需要在 B 变化的一瞬间做出反应。采用注册(Register)或者称为订阅(Subscribe)的方式，告诉被观察者：我需要你的某某状态，你要在它变化的时候通知我。 </p>
+<p>Android 开发中一个比较典型的例子是点击监听器 OnClickListener 。对设置 OnClickListener 来说， View 是被观察者， OnClickListener 是观察者，二者通过 setOnClickListener() 方法达成订阅关系。订阅之后用户点击按钮的瞬间，Android Framework 就会将点击事件发送给已经注册的 OnClickListener</p>
+<p><font color=purple>Button -&gt; 被观察者、OnClickListener -&gt; 观察者、setOnClickListener() -&gt; 订阅，onClick() -&gt; 事件</font></p>
+<img src="/images/rx1.png" width=360 height=78>
+
+<br/>
+
+<p>RxJava 有四个基本概念：</p>
+<ul>
+<li>Observable (可观察者，即被观察者)</li>
+<li>Observer (观察者)</li>
+<li>subscribe (订阅)</li>
+<li>事件</li>
+</ul>
+<p>Observable 和 Observer 通过 subscribe() 方法实现订阅关系，从而 Observable 可以在需要的时候发出事件来通知 Observer。</p>
+<p>与传统观察者模式不同， RxJava 的事件回调方法除了普通事件 onNext() （相于 onClick() &#x2F; onEvent()）之外，还定义了两个特殊的事件：onCompleted() 和 onError()。onCompleted(): 事件队列完结。RxJava 不仅把每个事件单独处理，还会把它们看做一个队列。RxJava 规定，当不会再有新的 onNext() 发出时，需要触发 onCompleted() 方法作为标志。onError(): 事件队列异常。在事件处理过程中出异常时，onError() 会被触发，同时队列自动终止，不允许再有事件发出。</p>
+<p>在一个正确运行的事件序列中, onCompleted() 和 onError() 有且只有一个，并且是事件序列中的最后一个。需要注意的是，onCompleted() 和 onError() 二者也是互斥的，即在队列中调用了其中一个，就不应该再调用另一个。</p>
+<img src="/images/rx2.png" width=360 height=97>
+
+<br/>
+
+
+<h3 id="1-创建-Observer"><a href="#1-创建-Observer" class="headerlink" title="1) 创建 Observer"></a>1) 创建 Observer</h3><p>Observer 即观察者，它决定事件触发的时候将有怎样的行为。 RxJava 中的 Observer 接口的实现方式：<br>Subscriber 对 Observer 接口进行了一些扩展，但他们的基本使用方式是完全一样的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Observer&lt;String&gt; observer = <span class="keyword">new</span> <span class="title class_">Observer</span>&lt;String&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSubscribe</span><span class="params">(<span class="meta">@NonNull</span> Disposable d)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onSubscribe: &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(<span class="meta">@NonNull</span> String s)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onNext: &quot;</span> + s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(<span class="meta">@NonNull</span> Throwable e)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onError: &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onComplete</span><span class="params">()</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onComplete: &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建-Observable"><a href="#2-创建-Observable" class="headerlink" title="2) 创建 Observable"></a>2) 创建 Observable</h3><p>Observable 即被观察者，它决定什么时候触发事件以及触发怎样的事件。 RxJava 使用 create() 方法来创建一个 Observable ，并为它定义事件触发规则：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Observable&lt;String&gt; observable = Observable.create(emitter -&gt; &#123;</span><br><span class="line">    Log.d(TAG, <span class="string">&quot;subscribe: &quot;</span>);</span><br><span class="line">    emitter.onNext(<span class="string">&quot;emitter send data --- 1&quot;</span>);</span><br><span class="line">    emitter.onNext(<span class="string">&quot;emitter send data --- 2&quot;</span>);</span><br><span class="line">    emitter.onNext(<span class="string">&quot;emitter send data --- 3&quot;</span>);</span><br><span class="line">    emitter.onComplete();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-Subscribe-订阅"><a href="#3-Subscribe-订阅" class="headerlink" title="3) Subscribe (订阅)"></a>3) Subscribe (订阅)</h3><p>创建了 Observable 和 Observer 之后，再用 subscribe() 方法将它们联结起来，整条链子就可以工作了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">observable.subscribe(observer);</span><br></pre></td></tr></table></figure>
+
+</br>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TestRxjavaActivity: onSubscribe: </span><br><span class="line">TestRxjavaActivity: subscribe: </span><br><span class="line">TestRxjavaActivity: onNext: emitter send data --- <span class="number">1</span></span><br><span class="line">TestRxjavaActivity: onNext: emitter send data --- <span class="number">2</span></span><br><span class="line">TestRxjavaActivity: onNext: emitter send data --- <span class="number">3</span></span><br><span class="line">TestRxjavaActivity: onComplete: </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-场景示例"><a href="#4-场景示例" class="headerlink" title="4) 场景示例"></a>4) 场景示例</h3><h6 id="a-打印字符串数组"><a href="#a-打印字符串数组" class="headerlink" title="a. 打印字符串数组"></a>a. 打印字符串数组</h6><p>将字符串数组 names 中的所有字符串依次打印出来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String[] names = <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;qq&quot;</span>, <span class="string">&quot;ww&quot;</span>, <span class="string">&quot;ee&quot;</span>&#125;;</span><br><span class="line"><span class="type">Disposable</span> <span class="variable">disposable</span> <span class="operator">=</span> Observable.fromArray(names).subscribe(s -&gt;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;accept: &quot;</span> + s)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+</br>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TestRxjavaActivity: accept: qq</span><br><span class="line">TestRxjavaActivity: accept: ww</span><br><span class="line">TestRxjavaActivity: accept: ee</span><br></pre></td></tr></table></figure>
+
+
+<h6 id="b-由-id-取得图片并显示"><a href="#b-由-id-取得图片并显示" class="headerlink" title="b. 由 id 取得图片并显示"></a>b. 由 id 取得图片并显示</h6><p>由指定的一个 drawable 文件 id drawableRes 取得图片，并显示在 ImageView 中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Observable.create((ObservableOnSubscribe&lt;Drawable&gt;) emitter -&gt; &#123;</span><br><span class="line">    <span class="type">Drawable</span> <span class="variable">drawable</span> <span class="operator">=</span> getDrawable(R.mipmap.ic_launcher);</span><br><span class="line">    emitter.onNext(drawable);</span><br><span class="line">    emitter.onComplete();</span><br><span class="line">&#125;).subscribe(<span class="keyword">new</span> <span class="title class_">Observer</span>&lt;Drawable&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSubscribe</span><span class="params">(<span class="meta">@NonNull</span> Disposable d)</span> &#123; &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(<span class="meta">@NonNull</span> Drawable drawable)</span> &#123;</span><br><span class="line">        ((ImageView) (findViewById(R.id.imageView))).setImageDrawable(drawable);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(<span class="meta">@NonNull</span> Throwable e)</span> &#123; &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onComplete</span><span class="params">()</span> &#123; &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</br>
+
+</br>
+
+</br>
+
+
+<hr>
+</br>
+
+</br>
+
+<h3 id="线程控制-：Scheduler（一）"><a href="#线程控制-：Scheduler（一）" class="headerlink" title="线程控制 ：Scheduler（一）"></a>线程控制 ：Scheduler（一）</h3><ul>
+<li>Schedulers.immediate(): 直接在当前线程运行，相当于不指定线程。这是默认的 Scheduler。</li>
+<li>Schedulers.newThread(): 总是启用新线程，并在新线程执行操作。</li>
+<li>Schedulers.io(): I&#x2F;O 操作（读写文件、读写数据库、网络信息交互等）所使用的 Scheduler。行为模式和 newThread() 差不多，区别在于 io() 的内部实现是是用一个无数量上限的线程池，可以重用空闲的线程，因此多数情况下 io() 比 newThread() 更有效率。不要把计算工作放在 io() 中，可以避免创建不必要的线程。</li>
+<li>Schedulers.computation(): 计算所使用的 Scheduler。这个计算指的是 CPU 密集型计算，即不会被 I&#x2F;O 等操作限制性能的操作，例如图形的计算。这个 Scheduler 使用的固定的线程池，大小为 CPU 核数。不要把 I&#x2F;O 操作放在 computation() 中，否则 I&#x2F;O 操作的等待时间会浪费 CPU。</li>
+<li>AndroidSchedulers.mainThread()，它指定的操作将在 Android 主线程运行。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Observable.create((ObservableOnSubscribe&lt;Drawable&gt;) emitter -&gt; &#123;</span><br><span class="line">    Log.d(TAG, <span class="string">&quot;subscribe: &quot;</span> + Thread.currentThread());</span><br><span class="line">    <span class="type">Drawable</span> <span class="variable">drawable</span> <span class="operator">=</span> getDrawable(R.mipmap.ic_launcher);</span><br><span class="line">    emitter.onNext(drawable);</span><br><span class="line">    emitter.onComplete();</span><br><span class="line">&#125;).subscribeOn(Schedulers.io())</span><br><span class="line">  .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">  .subscribe(<span class="keyword">new</span> <span class="title class_">Observer</span>&lt;Drawable&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSubscribe</span><span class="params">(<span class="meta">@NonNull</span> Disposable d)</span> &#123;</span><br><span class="line">            Log.d(TAG, <span class="string">&quot;onSubscribe: &quot;</span> + Thread.currentThread());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(<span class="meta">@NonNull</span> Drawable drawable)</span> &#123;</span><br><span class="line">            Log.d(TAG, <span class="string">&quot;onNext: &quot;</span> + Thread.currentThread());</span><br><span class="line">            ((ImageView) (findViewById(R.id.imageView))).setImageDrawable(drawable);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(<span class="meta">@NonNull</span> Throwable e)</span> &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onComplete</span><span class="params">()</span> &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+</br>
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TestRxjavaActivity: onSubscribe: Thread[main,<span class="number">5</span>,main]</span><br><span class="line">TestRxjavaActivity: subscribe: Thread[RxCachedThreadScheduler-<span class="number">1</span>,<span class="number">5</span>,main]</span><br><span class="line">TestRxjavaActivity: onNext: Thread[main,<span class="number">5</span>,main]</span><br></pre></td></tr></table></figure>
+
+<p>加载图片将会发生在 IO 线程，而设置图片则被设定在了主线程。这就意味着，即使加载图片耗费了几十甚至几百毫秒的时间，也不会造成丝毫界面的卡顿。</p>
+<h3 id="变换"><a href="#变换" class="headerlink" title="变换"></a>变换</h3><ul>
+<li>map(): 事件对象的直接变换，它是 RxJava 最常用的变换 ，是一对一的转化。</li>
+<li>flatMap()：一对多的转化，flatMap() 和 map() 有一个相同点：它也是把传入的参数转化之后返回另一个对象。但需要注意，和 map() 不同的是， flatMap() 中返回的是个 Observable 对象，并且这个 Observable 对象并不是被直接发送到了 Subscriber 的回调方法中。 flatMap() 的原理是这样的：1. 使用传入的事件对象创建一个 Observable 对象；2. 并不发送这个 Observable, 而是将它激活，于是它开始发送事件；3. 每一个创建出来的 Observable 发送的事件，都被汇入同一个 Observable ，而这个 Observable 负责将这些事件统一交给 Subscriber 的回调方法。这三个步骤，把事件拆成了两级，通过一组新创建的 Observable 将初始的对象『铺平』之后通过统一路径分发了下去。而这个『铺平』就是 flatMap() 所谓的 flat。</li>
+</ul>
+<p>由于可以在嵌套的 Observable 中添加异步代码， flatMap() 也常用于嵌套的异步操作，例如嵌套的网络请求。传统的嵌套请求需要使用嵌套的 Callback 来实现。而通过 flatMap() ，可以把嵌套的请求写在一条链中，从而保持程序逻辑的清晰。</p>
+<img src="/images/rx3.png" width=360 height=290>
+
+<ul>
+<li>throttleFirst(): 在每次事件触发后的一定时间间隔内丢弃新的事件。常用作去抖动过滤，例如按钮的点击监听器</li>
+</ul>
+<h3 id="变换的原理：lift-比较晦涩难懂，抽时间研究"><a href="#变换的原理：lift-比较晦涩难懂，抽时间研究" class="headerlink" title="变换的原理：lift() [比较晦涩难懂，抽时间研究]"></a>变换的原理：lift() [比较晦涩难懂，抽时间研究]</h3><p>在 Observable 执行了 lift(Operator) 方法之后，会返回一个新的 Observable，这个新的 Observable 会像一个代理一样，负责接收原始的 Observable 发出的事件，并在处理后发送给 Subscriber。</p>
+<h3 id="compose-对-Observable-整体的变换-比较晦涩难懂，抽时间研究"><a href="#compose-对-Observable-整体的变换-比较晦涩难懂，抽时间研究" class="headerlink" title="compose: 对 Observable 整体的变换 [比较晦涩难懂，抽时间研究]"></a>compose: 对 Observable 整体的变换 [比较晦涩难懂，抽时间研究]</h3><p>它和 lift() 的区别在于， lift() 是针对事件项和事件序列的，而 compose() 是针对 Observable 自身进行变换。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LiftAllTransformer</span> <span class="keyword">implements</span> <span class="title class_">Observable</span>.Transformer&lt;Integer, String&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Observable&lt;String&gt; <span class="title function_">call</span><span class="params">(Observable&lt;Integer&gt; observable)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> observable</span><br><span class="line">            .lift1()</span><br><span class="line">            .lift2()</span><br><span class="line">            .lift3()</span><br><span class="line">            .lift4();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</br>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Transformer</span> <span class="variable">liftAll</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LiftAllTransformer</span>();</span><br><span class="line">observable1.compose(liftAll).subscribe(subscriber1);</span><br><span class="line">observable2.compose(liftAll).subscribe(subscriber2);</span><br><span class="line">observable3.compose(liftAll).subscribe(subscriber3);</span><br><span class="line">observable4.compose(liftAll).subscribe(subscriber4);</span><br></pre></td></tr></table></figure>
+
+<p>像上面这样，使用 compose() 方法，Observable 可以利用传入的 Transformer 对象的 call 方法直接对自身进行处理</p>
+<h3 id="线程控制：Scheduler-二"><a href="#线程控制：Scheduler-二" class="headerlink" title="线程控制：Scheduler (二)"></a>线程控制：Scheduler (二)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Observable.just(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>) <span class="comment">// IO 线程，由 subscribeOn() 指定</span></span><br><span class="line">    .subscribeOn(Schedulers.io())</span><br><span class="line">    .observeOn(Schedulers.newThread())</span><br><span class="line">    .map(mapOperator) <span class="comment">// 新线程，由 observeOn() 指定</span></span><br><span class="line">    .observeOn(Schedulers.io())</span><br><span class="line">    .map(mapOperator2) <span class="comment">// IO 线程，由 observeOn() 指定</span></span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread) </span><br><span class="line">    .subscribe(subscriber);  <span class="comment">// Android 主线程，由 observeOn() 指定</span></span><br></pre></td></tr></table></figure>
+
+<p>通过 observeOn() 的多次调用，程序实现了线程的多次切换。不过，不同于 observeOn() ， subscribeOn() 的位置放在哪里都可以，但它是只能调用一次的，只有第一个subscribeOn() 起作用。</p>
+<p>subscribeOn() 和 observeOn() 的内部实现，也是用的 lift()。具体看图（不同颜色的箭头表示不同的线程）：</p>
+<p>subscribeOn() 原理图：</p>
+<img src="/images/rx4.png" width=360 height=277>
+
+<p>observeOn() 原理图：</p>
+<img src="/images/rx5.png" width=360 height=272>
+
+<p>从图中可以看出，subscribeOn() 和 observeOn() 都做了线程切换的工作（图中的 “schedule…” 部位）。不同的是， subscribeOn() 的线程切换发生在 OnSubscribe 中，即在它通知上一级 OnSubscribe 时，这时事件还没有开始发送，因此 subscribeOn() 的线程控制可以从事件发出的开端就造成影响；而 observeOn() 的线程切换则发生在它内建的 Subscriber 中，即发生在它即将给下一级 Subscriber 发送事件时，因此observeOn() 控制的是它后面的线程。</p>
+<hr>
+<h3 id="RxJava-的适用场景和使用方式"><a href="#RxJava-的适用场景和使用方式" class="headerlink" title="RxJava 的适用场景和使用方式"></a>RxJava 的适用场景和使用方式</h3><h5 id="1-与-Retrofit-的结合"><a href="#1-与-Retrofit-的结合" class="headerlink" title="1. 与 Retrofit 的结合"></a>1. 与 Retrofit 的结合</h5><p>以获取一个 User 对象的接口作为例子。使用Retrofit 的传统 API，你可以用这样的方式来定义请求：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GET(&quot;/user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getUser</span><span class="params">(<span class="meta">@Query(&quot;userId&quot;)</span> String userId, Callback&lt;User&gt; callback)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在程序的构建过程中， Retrofit 会把自动把方法实现并生成代码，然后开发者就可以利用下面的方法来获取特定用户并处理响应：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">getUser(userId, <span class="keyword">new</span> <span class="title class_">Callback</span>&lt;User&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">success</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        userView.setUser(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">failure</span><span class="params">(RetrofitError error)</span> &#123;</span><br><span class="line">        <span class="comment">// Error handling</span></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>而使用 RxJava 形式的 API，定义同样的请求是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GET(&quot;/user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Observable&lt;User&gt; <span class="title function_">getUser</span><span class="params">(<span class="meta">@Query(&quot;userId&quot;)</span> String userId)</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">getUser(userId)</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(<span class="keyword">new</span> <span class="title class_">Observer</span>&lt;User&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(User user)</span> &#123;</span><br><span class="line">            userView.setUser(user);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable error)</span> &#123;</span><br><span class="line">            <span class="comment">// Error handling</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+
+<p>拿到数据后，需要进行数据处理再显示，可以后台处理，切换线程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">getUser(userId)</span><br><span class="line">    .doOnNext(<span class="keyword">new</span> <span class="title class_">Action1</span>&lt;User&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">call</span><span class="params">(User user)</span> &#123;</span><br><span class="line">            processUser(user);</span><br><span class="line">        &#125;)</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(<span class="keyword">new</span> <span class="title class_">Observer</span>&lt;User&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(User user)</span> &#123;</span><br><span class="line">            userView.setUser(user);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable error)</span> &#123;</span><br><span class="line">            <span class="comment">// Error handling</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>接口嵌套调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GET(&quot;/token&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Observable&lt;String&gt; <span class="title function_">getToken</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@GET(&quot;/user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Observable&lt;User&gt; <span class="title function_">getUser</span><span class="params">(<span class="meta">@Query(&quot;token&quot;)</span> String token, <span class="meta">@Query(&quot;userId&quot;)</span> String userId)</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">getToken()</span><br><span class="line">    .flatMap(<span class="keyword">new</span> <span class="title class_">Func1</span>&lt;String, Observable&lt;User&gt;&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> Observable&lt;User&gt; <span class="title function_">onNext</span><span class="params">(String token)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> getUser(token, userId);</span><br><span class="line">        &#125;)</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(<span class="keyword">new</span> <span class="title class_">Observer</span>&lt;User&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(User user)</span> &#123;</span><br><span class="line">            userView.setUser(user);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable error)</span> &#123;</span><br><span class="line">            <span class="comment">// Error handling</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-RxBinding"><a href="#2-RxBinding" class="headerlink" title="2. RxBinding"></a>2. RxBinding</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RxView.clickEvents(button)</span><br><span class="line">    .throttleFirst(<span class="number">500</span>, TimeUnit.MILLISECONDS)</span><br><span class="line">    .subscribe(clickAction);</span><br></pre></td></tr></table></figure>
+
+
+<h5 id="3-各种异步操作"><a href="#3-各种异步操作" class="headerlink" title="3. 各种异步操作"></a>3. 各种异步操作</h5><p>前面举的 Retrofit 和 RxBinding 的例子，是两个可以提供现成的 Observable 的库。而如果你有某些异步操作无法用这些库来自动生成 Observable，也完全可以自己写。例如数据库的读写、大图片的载入、文件压缩&#x2F;解压等各种需要放在后台工作的耗时操作，都可以用 RxJava 来实现，有了之前几章的例子，这里应该不用再举例了。</p>
+<h5 id="4-RxBus"><a href="#4-RxBus" class="headerlink" title="4. RxBus"></a>4. RxBus</h5><p>RxBus 名字看起来像一个库，但它并不是一个库，而是一种模式，它的思想是使用 RxJava 来实现了 EventBus ，而让你不再需要使用 Otto 或者 GreenRobot 的 EventBus。</p>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000011358934">https://segmentfault.com/a/1190000011358934</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/05/14/Android%20Application/RxJava%E5%9F%BA%E7%A1%80/" data-id="clhoa7k4x001ktlcae37e9co0" data-title="RxJava知识点记录（扔物线）" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/05/16/Algorithm/Array%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          数组与链表 -- 知识点记录
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/05/14/Android%20Kotlin%20Jetpack/ViewModel/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Jetpack 之 ViewModel</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

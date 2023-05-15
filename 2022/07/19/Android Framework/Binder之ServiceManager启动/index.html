@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Binder之ServiceManager启动 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="ServiceManager涉及到服务的注册和代理服务的获取，是android Binder 通信的关键">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Binder之ServiceManager启动">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/19/Android%20Framework/Binder%E4%B9%8BServiceManager%E5%90%AF%E5%8A%A8/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="ServiceManager涉及到服务的注册和代理服务的获取，是android Binder 通信的关键">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-19T14:11:12.000Z">
+<meta property="article:modified_time" content="2023-04-13T08:11:44.330Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/Binder之ServiceManager启动" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/19/Android%20Framework/Binder%E4%B9%8BServiceManager%E5%90%AF%E5%8A%A8/" class="article-date">
+  <time class="dt-published" datetime="2022-07-19T14:11:12.000Z" itemprop="datePublished">2022-07-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Binder之ServiceManager启动
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="ServiceManager涉及到服务的注册和代理服务的获取，是android-Binder-通信的关键"><a href="#ServiceManager涉及到服务的注册和代理服务的获取，是android-Binder-通信的关键" class="headerlink" title="ServiceManager涉及到服务的注册和代理服务的获取，是android Binder 通信的关键"></a>ServiceManager涉及到服务的注册和代理服务的获取，是android Binder 通信的关键<br><span id="more"></span></h2><h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><p>init进程解析init.rc配置文件来启动ServiceManager进程（在Android 7.0中对init.rc文件进行了拆分，每个服务一个rc文件。ServiceManager的启动脚本在 servicemanager.rc中）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">/system/core/rootdir/init.rc </span><br><span class="line">start servicemanager  <span class="comment">//319行 ，执行servicemanager.rc脚本</span></span><br><span class="line"></span><br><span class="line">/frameworks/<span class="keyword">native</span>/cmds/servicemanager/servicemanager.rc</span><br><span class="line">service servicemanager /system/bin/servicemanager</span><br><span class="line">……</span><br><span class="line"></span><br><span class="line"><span class="comment">//servicemanager的入口函数在service_manager.c中:</span></span><br><span class="line"><span class="comment">//frameworks/native/cmds/servicemanager/service_manager.c</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span>&#123;</span><br><span class="line">	……</span><br><span class="line">	struct binder_state *bs;</span><br><span class="line">    driver = <span class="string">&quot;/dev/binder&quot;</span>;</span><br><span class="line"></span><br><span class="line">	bs = binder_open(driver, <span class="number">128</span>*<span class="number">1024</span>);<span class="comment">//1</span></span><br><span class="line">	……</span><br><span class="line">	<span class="keyword">if</span> (binder_become_context_manager(bs)) &#123;<span class="comment">//2</span></span><br><span class="line">        		ALOGE(<span class="string">&quot;cannot become context manager (%s)\n&quot;</span>, strerror(errno));</span><br><span class="line">        		<span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    	&#125;</span><br><span class="line">	……</span><br><span class="line">	binder_loop(bs, svcmgr_handler);<span class="comment">//3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//其中bainder_state结构体</span></span><br><span class="line">struct binder_state&#123;</span><br><span class="line"><span class="type">int</span> fd; <span class="comment">//binder设备的文件描述符</span></span><br><span class="line"><span class="keyword">void</span> *mapped; <span class="comment">//binder设备文件映射到进程的地址空间</span></span><br><span class="line">size_t mapsize; <span class="comment">//内存映射后，系统分配的地址空间的大小，默认为128KB</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>binder_open 打开binder设备，申请128k大小的内存空间</li>
+<li>binder_become_context_manager 将自己注册为管理者</li>
+<li>binder_loop 循环等待处理客户端的请求</li>
+</ol>
+<h5 id="binder-open-打开binder设备"><a href="#binder-open-打开binder设备" class="headerlink" title="binder_open 打开binder设备"></a>binder_open 打开binder设备</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/cmds/servicemanager/binder.c</span></span><br><span class="line"><span class="comment">//open()、mmap()最后都是调用kernel层Binder驱动的binder_open()、binder_mmap()</span></span><br><span class="line">struct binder_state *binder_open(......)&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//打开binder设备</span></span><br><span class="line">    bs-&gt;fd = open(driver, O_RDWR | O_CLOEXEC);<span class="comment">//1</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//binder驱动内申请的空间 映射到 SM进程，映射完毕后会将地址空间的起始地址和大小保存在binder_state 结构体中的mapped和mapsize变量中。</span></span><br><span class="line">    bs-&gt;mapsize = mapsize;</span><br><span class="line">    bs-&gt;mapped = mmap(NULL, mapsize, PROT_READ, MAP_PRIVATE, bs-&gt;fd, <span class="number">0</span>);<span class="comment">//2</span></span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//https://www.androidos.net.cn/androidkernel/3.4/xref/drivers/staging/android/binder.c</span></span><br><span class="line"><span class="keyword">static</span> <span class="type">int</span> <span class="title function_">binder_open</span><span class="params">(struct inode *nodp, struct file *filp)</span>&#123;</span><br><span class="line">    <span class="comment">//这个结构体代表Binder进程</span></span><br><span class="line">    struct binder_proc *proc;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//分配内存空间</span></span><br><span class="line">    proc = kzalloc(sizeof(*proc), GFP_KERNEL);</span><br><span class="line">    ......</span><br><span class="line">    filp-&gt;private_data = proc;<span class="comment">//3</span></span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="binder-become-context-manager-注册自己为服务管理者"><a href="#binder-become-context-manager-注册自己为服务管理者" class="headerlink" title="binder_become_context_manager 注册自己为服务管理者"></a>binder_become_context_manager 注册自己为服务管理者</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ioctl会调用kernel层Binder驱动的binder_ioctl()</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">binder_become_context_manager</span><span class="params">(struct binder_state *bs)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ioctl(bs-&gt;fd, BINDER_SET_CONTEXT_MGR, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//https://www.androidos.net.cn/androidkernel/3.4/xref/drivers/staging/android/binder.c</span></span><br><span class="line"><span class="keyword">static</span> <span class="type">long</span> <span class="title function_">binder_ioctl</span><span class="params">(struct file *filp, unsigned <span class="type">int</span> cmd, unsigned <span class="type">long</span> arg)</span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//在binder_open中可以看到这是Binder进程</span></span><br><span class="line">    struct binder_proc *proc = filp-&gt;private_data; <span class="comment">//1</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//获取binder线程</span></span><br><span class="line">    thread = binder_get_thread(proc);<span class="comment">//2</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//全局变量binder_context_mgr_node代表的是Binder机制的上下文管理者对应的一个Binder node对象，如果它不为NULL，说明此前自身已经被注册为Binder的上下文管理者了，Binder的上下文管理 </span></span><br><span class="line">    <span class="comment">//唯一性</span></span><br><span class="line">    <span class="keyword">switch</span> (cmd) &#123;</span><br><span class="line">    <span class="keyword">case</span> BINDER_SET_CONTEXT_MGR:</span><br><span class="line">     <span class="keyword">if</span> (binder_context_mgr_node != NULL) &#123;<span class="comment">//3</span></span><br><span class="line">            printk(KERN_ERR <span class="string">&quot;binder: BINDER_SET_CONTEXT_MGR already set\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//创建一个binder_node对象赋值给binder_context_mgr_node</span></span><br><span class="line">    binder_context_mgr_node = binder_new_node(proc, NULL, NULL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="binder-loop-循环等待处理客户端的请求"><a href="#binder-loop-循环等待处理客户端的请求" class="headerlink" title="binder_loop 循环等待处理客户端的请求"></a>binder_loop 循环等待处理客户端的请求</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/cmds/servicemanager/binder.c</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">binder_loop</span><span class="params">(struct binder_state *bs, binder_handler func)</span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//发送BC_ENTER_LOOPER指令到binder驱动</span></span><br><span class="line">    <span class="comment">//这样当前线程 (ServiceManager的主线程)就成为了一个Binder线程</span></span><br><span class="line">    readbuf[<span class="number">0</span>] = BC_ENTER_LOOPER;</span><br><span class="line">    binder_write(bs, readbuf, sizeof(uint32_t));<span class="comment">//1</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        ......</span><br><span class="line">        <span class="comment">//不断发送BINDER_WRITE_READ指令去查询是否有新的请求</span></span><br><span class="line">        <span class="comment">//如果有，就交给binder_parse处理，如果没有就阻塞</span></span><br><span class="line">        res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);<span class="comment">//2</span></span><br><span class="line">        ......</span><br><span class="line">        res = binder_parse(bs, <span class="number">0</span>, (uintptr_t) readbuf, bwr.read_consumed,func);<span class="comment">//3</span></span><br><span class="line">        ......</span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/native/cmds/servicemanager/binder.c</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">binder_write</span><span class="params">(struct binder_state *bs, <span class="keyword">void</span> *data, size_t len)</span>&#123;</span><br><span class="line">    <span class="comment">//定义binder_write_read结构体</span></span><br><span class="line">    struct binder_write_read bwr;<span class="comment">//1</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//此处data = BC_ENTER_LOOPER</span></span><br><span class="line">    bwr.write_buffer = (uintptr_t) data;<span class="comment">//2</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//调用binder_ioctl，发送BINDER_WRITE_READ指令</span></span><br><span class="line">    res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);<span class="comment">//3</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">return</span> res; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//https://www.androidos.net.cn/androidkernel/3.4/xref/drivers/staging/android/binder.c</span></span><br><span class="line"><span class="keyword">static</span> <span class="type">long</span> <span class="title function_">binder_ioctl</span><span class="params">(struct file *filp, unsigned <span class="type">int</span> cmd, unsigned <span class="type">long</span> arg)</span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">void</span> __user *ubuf = (<span class="keyword">void</span> __user *)arg;</span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">switch</span> (cmd)</span><br><span class="line">        <span class="keyword">case</span> BINDER_WRITE_READ:</span><br><span class="line">            struct binder_write_read bwr;</span><br><span class="line">            <span class="comment">//把用户空间数据ubuf拷贝出来保存到内核数据 bwr(binder_write_read结构体)中。</span></span><br><span class="line">            copy_from_user(&amp;bwr, ubuf, sizeof(bwr))</span><br><span class="line">            ......</span><br><span class="line">            <span class="keyword">if</span> (bwr.write_size &gt; <span class="number">0</span>) &#123;<span class="comment">//2</span></span><br><span class="line">                <span class="comment">//这里处理BC_ENTER_LOOPER指令（write_buffer = BC_ENTER_LOOPER）</span></span><br><span class="line">                <span class="comment">//其内部会将目标线程的状态设置为BINDER_LOOPER_STATE_ENTERED，这样目标线程就是一个Binder线程。</span></span><br><span class="line">                ret = binder_thread_write(proc, thread, (<span class="keyword">void</span> __user*)bwr.write_buffer, bwr.write_size, &amp;bwr.write_consumed);<span class="comment">//3</span></span><br><span class="line">            &#125;</span><br><span class="line">            ......</span><br><span class="line">            <span class="comment">//内核数据拷贝到用户空间</span></span><br><span class="line">            copy_to_user(ubuf, &amp;bwr, sizeof(bwr))</span><br><span class="line">            ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="copy-from-user-x2F-copy-to-user"><a href="#copy-from-user-x2F-copy-to-user" class="headerlink" title="copy_from_user &#x2F; copy_to_user"></a>copy_from_user &#x2F; copy_to_user</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//用__user修饰的指针说明指向用户空间的内存；函数成功则返回0，否则返回没有拷贝成功的数据字节数</span></span><br><span class="line"><span class="function"><span class="type">long</span> <span class="title">copy_to_user</span><span class="params">(<span class="type">void</span> __user *to, <span class="type">const</span> <span class="type">void</span> *from, <span class="type">unsigned</span> <span class="type">long</span> n)</span></span></span><br><span class="line"><span class="function"><span class="type">long</span> <span class="title">copy_from_user</span><span class="params">(<span class="type">void</span> *to, <span class="type">const</span> <span class="type">void</span> __user * from, <span class="type">unsigned</span> <span class="type">long</span> n)</span></span></span><br></pre></td></tr></table></figure>
+<p>用户空间是虚拟地址，和内核空间的地址不一样，不能简单的使用memecopy来进行数据拷贝，copy_to_user和copy_from_user在拷贝数据之前会进行地址安全检测</p>
+<hr>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>ServiceManager的启动过程实际上就是分析ServiceManager的入口函数，在入口函数中主要做了三件事：</p>
+<ol>
+<li>binder_open 打开binder设备，申请128k大小的内存空间并映射到SM进程</li>
+<li>binder_become_context_manager 将自己注册为管理者</li>
+<li>binder_loop 循环等待处理客户端的请求</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/19/Android%20Framework/Binder%E4%B9%8BServiceManager%E5%90%AF%E5%8A%A8/" data-id="clhoa7k4z001rtlca2mq11hdx" data-title="Binder之ServiceManager启动" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/20/Android%20Framework/Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Binder之系统服务注册
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/18/Android%20Framework/Binder%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Binder知识点记录</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

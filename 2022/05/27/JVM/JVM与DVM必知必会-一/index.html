@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>JVM与DVM(一)程序运行时内存如何分配 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为不同的数据区域。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM与DVM(一)程序运行时内存如何分配">
+<meta property="og:url" content="https://stewforani.github.io/2022/05/27/JVM/JVM%E4%B8%8EDVM%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A-%E4%B8%80/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为不同的数据区域。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://stewforani.github.io/images/jvm1.png">
+<meta property="og:image" content="https://stewforani.github.io/images/jvm5.png">
+<meta property="og:image" content="https://stewforani.github.io/images/jvm2.png">
+<meta property="og:image" content="https://stewforani.github.io/images/jvm3.png">
+<meta property="og:image" content="https://stewforani.github.io/images/jvm4.png">
+<meta property="article:published_time" content="2022-05-26T16:25:03.000Z">
+<meta property="article:modified_time" content="2022-05-28T15:32:24.808Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stewforani.github.io/images/jvm1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-JVM/JVM与DVM必知必会-一" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/27/JVM/JVM%E4%B8%8EDVM%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A-%E4%B8%80/" class="article-date">
+  <time class="dt-published" datetime="2022-05-26T16:25:03.000Z" itemprop="datePublished">2022-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      JVM与DVM(一)程序运行时内存如何分配
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Java-虚拟机在执行-Java-程序的过程中，会把它所管理的内存划分为不同的数据区域。"><a href="#Java-虚拟机在执行-Java-程序的过程中，会把它所管理的内存划分为不同的数据区域。" class="headerlink" title="Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为不同的数据区域。"></a>Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为不同的数据区域。<br><span id="more"></span></h2><ul>
+<li>HelloWorld.java 文件首先需要经过编译器编译，生成 HelloWorld.class 字节码文件。</li>
+<li>Java 程序中访问HelloWorld这个类时，需要通过 ClassLoader(类加载器)将HelloWorld.class 加载到 JVM 的内存中。</li>
+<li>JVM 中的内存可以划分为若干个不同的数据区域，主要分为：程序计数器、虚拟机栈、本地方法栈、堆、方法区。</li>
+</ul>
+<img src="/images/jvm1.png" width=360 height=217>
+<img src="/images/jvm5.png" width=360 height=143>
+
+<h3 id="1-1-程序计数器（Program-Counter-Register）"><a href="#1-1-程序计数器（Program-Counter-Register）" class="headerlink" title="1.1 程序计数器（Program Counter Register）"></a>1.1 程序计数器（Program Counter Register）</h3><p>Java 程序是多线程的，CPU 可以在多个线程中分配执行时间片段。当某一个线程被 CPU 挂起时，需要记录代码已经执行到的位置，方便 CPU 重新执行此线程时，知道从哪行指令开始执行。这就是程序计数器的作用。“程序计数器”是虚拟机中一块较小的内存空间，主要用于记录当前线程执行的位置。</p>
+<img src="/images/jvm2.png" width=360 height=207>
+
+<p>关于程序计数器还有几点需要格外注意：</p>
+<ul>
+<li>在 Java 虚拟机规范中，对程序计数器这一区域没有规定任何 OutOfMemoryError 情况（或许是感觉没有必要吧）。</li>
+<li>线程私有的，每条线程内部都有一个私有程序计数器。它的生命周期随着线程的创建而创建，随着线程的结束而死亡。</li>
+<li>当一个线程正在执行一个 Java 方法的时候，这个计数器记录的是正在执行的虚拟机字节码指令的地址。如果正在执行的是 Native 方法，这个计数器值则为空（Undefined）。</li>
+</ul>
+<h3 id="1-2-虚拟机栈"><a href="#1-2-虚拟机栈" class="headerlink" title="1.2 虚拟机栈"></a>1.2 虚拟机栈</h3><p>虚拟机栈也是线程私有的，与线程的生命周期同步。在 Java 虚拟机规范中，对这个区域规定了两种异常状况：</p>
+<p>StackOverflowError：当线程请求栈深度超出虚拟机栈所允许的深度时抛出。</p>
+<p>OutOfMemoryError：当 Java 虚拟机动态扩展到无法申请足够内存时抛出。</p>
+<p>JVM 是基于栈的解释器执行的，DVM 是基于寄存器解释器执行的。</p>
+<p>上面这句话里的“基于栈”指的就是虚拟机栈。虚拟机栈的初衷是用来描述 Java 方法执行的内存模型，每个方法被执行的时候，JVM 都会在虚拟机栈中创建一个栈帧，接下来看下这个栈帧是什么。</p>
+<h3 id="栈帧"><a href="#栈帧" class="headerlink" title="栈帧"></a>栈帧</h3><p>栈帧（Stack Frame）是用于支持虚拟机进行方法调用和方法执行的数据结构，每一个线程在执行某个方法时，都会为这个方法创建一个栈帧。</p>
+<p>我们可以这样理解：一个线程包含一个虚拟机栈，一个虚拟机栈包含多个栈帧，而每个栈帧内部包含局部变量表、操作数栈、动态连接、返回地址等。如下图所示：</p>
+<img src="/images/jvm3.png" width=360 height=227>
+
+<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>局部变量表是变量值的存储空间，我们调用方法时传递的参数，以及在方法内部创建的局部变量都保存在局部变量表中。在 Java 编译成 class 文件的时候，就会在方法的 Code 属性表中的 locals 数据项中，确定该方法需要分配的最大局部变量表的容量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> k)</span> &#123;</span><br><span class="line">	<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">	<span class="keyword">return</span> i + j + k;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Terminal : javac test.java &#x2F; javap -v test.class</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span>)</span>;</span><br><span class="line">    descriptor: (I)I</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: iconst_1</span><br><span class="line">         <span class="number">1</span>: istore_1</span><br><span class="line">         <span class="number">2</span>: iconst_2</span><br><span class="line">         <span class="number">3</span>: istore_2</span><br><span class="line">         <span class="number">4</span>: iload_1</span><br><span class="line">         <span class="number">5</span>: iload_2</span><br><span class="line">         <span class="number">6</span>: iadd</span><br><span class="line">         <span class="number">7</span>: iload_0</span><br><span class="line">         <span class="number">8</span>: iadd</span><br><span class="line">         <span class="number">9</span>: ireturn</span><br></pre></td></tr></table></figure>
+
+<p>上面的 locals&#x3D;3 就是代表局部变量表长度是 3，也就是说经过编译之后，局部变量表的长度已经确定为3，分别保存：参数 k 和局部变量 i、j。</p>
+<p>注意：系统不会为局部变量赋予初始值（实例变量和类变量都会被赋予初始值），也就是说不存在类变量那样的准备阶段。</p>
+<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>操作数栈（Operand Stack）也常称为操作栈，它是一个后入先出栈（LIFO）。<br>同局部变量表一样，操作数栈的最大深度也在编译的时候写入方法的Code属性表中的stacks数据项中。<br>栈中的元素可以是任意Java数据类型，包括long和double。（比如：iadd指令就是将操作数栈中栈顶的两个元素弹出，执行加法运算，并将结果重新压回到操作数栈中）。</p>
+<h3 id="动态链接"><a href="#动态链接" class="headerlink" title="动态链接"></a>动态链接</h3><p>动态链接的主要目的是为了支持方法调用过程中的动态连接（Dynamic Linking）。<br>在一个 class 文件中，一个方法要调用其他方法，需要将这些方法的符号引用转化为其所在内存地址中的直接引用，而符号引用存在于方法区中。Java 虚拟机栈中，每个栈帧都包含一个指向运行时常量池中该栈所属方法的符号引用，持有这个引用的目的就是为了支持方法调用过程中的动态连接（Dynamic Linking）。</p>
+<h3 id="返回地址"><a href="#返回地址" class="headerlink" title="返回地址"></a>返回地址</h3><p>当一个方法开始执行后，只有两种方式可以退出这个方法：正常退出 &#x2F; 异常退出<br>无论当前方法采用何种方式退出，在方法退出后都需要返回到方法被调用的位置，程序才能继续执行。而虚拟机栈中的“返回地址”就是用来帮助当前方法恢复它的上层方法执行状态。</p>
+<hr>
+<h3 id="实例讲解"><a href="#实例讲解" class="headerlink" title="实例讲解"></a>实例讲解</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">  <span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">  <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> i + j;</span><br><span class="line">  <span class="keyword">return</span> result + <span class="number">10</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Terminal : javac test.java &#x2F; javap -v test.class</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: iconst_1    （把常量 <span class="number">1</span> 压入操作数栈栈顶）</span><br><span class="line"><span class="number">1</span>: istore_1    （把操作数栈栈顶的出栈放入局部变量表索引为 <span class="number">1</span> 的位置）</span><br><span class="line"><span class="number">2</span>: iconst_2    （把常量 <span class="number">2</span> 压入操作数栈栈顶）</span><br><span class="line"><span class="number">3</span>: istore_2    （把操作数栈栈顶的出栈放入局部变量表索引为 <span class="number">2</span> 的位置）</span><br><span class="line"><span class="number">4</span>: iload_1     （把局部变量表索引为 <span class="number">1</span> 的值放入操作数栈栈顶）</span><br><span class="line"><span class="number">5</span>: iload_2     （把局部变量表索引为 <span class="number">2</span> 的值放入操作数栈栈顶）</span><br><span class="line"><span class="number">6</span>: iadd        （将操作数栈栈顶的和栈顶下面的一个进行加法运算后放入栈顶）</span><br><span class="line"><span class="number">7</span>: istore_3    （把操作数栈栈顶的出栈放入局部变量表索引为 <span class="number">3</span> 的位置）</span><br><span class="line"><span class="number">8</span>: iload_3     （把局部变量表索引为 <span class="number">3</span> 的值放入操作数栈栈顶）</span><br><span class="line"><span class="number">9</span>: bipush <span class="number">10</span>   （把常量 <span class="number">10</span> 压入操作数栈栈顶）</span><br><span class="line"><span class="number">11</span>: iadd       （将操作数栈栈顶的和栈顶下面的一个进行加法运算后放入栈顶）</span><br><span class="line"><span class="number">12</span>: ireturn    （结束）</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>iconst 和 bipush，这两个指令都是将常量压入操作数栈顶，区别就是：当 int 取值 -1-5 采用 iconst 指令，取值 -128-127 采用 bipush 指令。</li>
+<li>istore 将操作数栈顶的元素放入局部变量表的某索引位置，比如 istore_5 代表将操作数栈顶元素放入局部变量表下标为 5 的位置。</li>
+<li>iload 将局部变量表中某下标上的值加载到操作数栈顶中，比如 iload_2 代表将局部变量表索引为 2 上的值压入操作数栈顶。</li>
+<li>iadd 代表加法运算，具体是将操作数栈最上方的两个元素进行相加操作，然后将结果重新压入栈顶。</li>
+</ul>
+<p>Add.java 被编译成 Add.class 的时候，栈帧中需要多大的局部变量表，多深的操作数栈都已经完全确定了，并且写入到了方法表的 Code 属性中。</p>
+<h3 id="1-3-本地方法栈"><a href="#1-3-本地方法栈" class="headerlink" title="1.3 本地方法栈"></a>1.3 本地方法栈</h3><p>本地方法栈和上面介绍的虚拟栈基本相同，只不过是针对本地（native）方法。在开发中如果涉及 JNI 可能接触本地方法栈多一些，在有些虚拟机的实现中已经将两个合二为一了（比如HotSpot）。</p>
+<h3 id="1-4-堆"><a href="#1-4-堆" class="headerlink" title="1.4 堆"></a>1.4 堆</h3><p>Java 堆（Heap）是 JVM 所管理的内存中最大的一块，该区域唯一目的就是存放对象实例，几乎所有对象的实例都在堆里面分配，因此它也是 Java 垃圾收集器（GC）管理的主要区域，有时候也叫作“GC 堆”，同时它也是所有线程共享的内存区域，因此被分配在此区域的对象如果被多个线程访问的话，需要考虑线程安全问题。</p>
+<p>按照对象存储时间的不同，堆中的内存可以划分为新生代（Young）和老年代（Old），其中新生代又被划分为 Eden 和 Survivor 区。具体如下图所示：<br><img src="/images/jvm4.png" width=360 height=224></p>
+<h3 id="1-5-方法区"><a href="#1-5-方法区" class="headerlink" title="1.5 方法区"></a>1.5 方法区</h3><p>方法区（Method Area）也是 JVM 规范里规定的一块运行时数据区。方法区主要是存储已经被 JVM 加载的类信息（版本、字段、方法、接口）、常量、静态变量、即时编译器编译后的代码和数据。该区域同堆一样，也是被各个线程共享的内存区域。</p>
+<h3 id="1-6-异常再现"><a href="#1-6-异常再现" class="headerlink" title="1.6 异常再现"></a>1.6 异常再现</h3><h5 id="StackOverflowError-栈溢出异常"><a href="#StackOverflowError-栈溢出异常" class="headerlink" title="StackOverflowError 栈溢出异常"></a>StackOverflowError 栈溢出异常</h5><p>递归调用是造成StackOverflowError的一个常见场景，比如以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">method</span><span class="params">( )</span>&#123;</span><br><span class="line">	i++;</span><br><span class="line">	method( );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="OutOfMemoryError-内存溢出异常"><a href="#OutOfMemoryError-内存溢出异常" class="headerlink" title="OutOfMemoryError 内存溢出异常"></a>OutOfMemoryError 内存溢出异常</h5><p>理论上，虚拟机栈、堆、方法区都有发生OutOfMemoryError的可能。但是实际项目中，大多发生于堆当中。比如以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Arraylist</span> <span class="variable">list</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Arraylist</span>();</span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)&#123;</span><br><span class="line">	list.add(xxx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1855">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1855</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/05/27/JVM/JVM%E4%B8%8EDVM%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A-%E4%B8%80/" data-id="clhoa7k5n004dtlca9sne4m4r" data-title="JVM与DVM(一)程序运行时内存如何分配" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/05/27/JVM/JVM%E4%B8%8EDVM-%E4%BA%8C/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          JVM与DVM(二)GC回收与分代
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/05/25/Android%20Kotlin%20Jetpack/Flow/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">kotlin之Flow</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

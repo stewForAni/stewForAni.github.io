@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Android嵌套滑动 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Android 5.0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android嵌套滑动">
+<meta property="og:url" content="https://stewforani.github.io/2022/08/13/Android%20Application/Android%E5%B5%8C%E5%A5%97%E6%BB%91%E5%8A%A8/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Android 5.0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://stewforani.github.io/images/nest1.jpeg">
+<meta property="article:published_time" content="2022-08-13T06:05:42.000Z">
+<meta property="article:modified_time" content="2023-03-03T10:34:38.884Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stewforani.github.io/images/nest1.jpeg">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/Android嵌套滑动" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/08/13/Android%20Application/Android%E5%B5%8C%E5%A5%97%E6%BB%91%E5%8A%A8/" class="article-date">
+  <time class="dt-published" datetime="2022-08-13T06:05:42.000Z" itemprop="datePublished">2022-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Android嵌套滑动
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Android-5-0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷"><a href="#Android-5-0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷" class="headerlink" title="Android 5.0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷"></a>Android 5.0时，谷歌推出NestedScrolling机制，来解决传统嵌套的缺陷<br><span id="more"></span></h2><h3 id="传统嵌套滑动"><a href="#传统嵌套滑动" class="headerlink" title="传统嵌套滑动"></a>传统嵌套滑动</h3><p>由于父View拦截后，后续事件无法传递到子View，导致滑动无法连贯，必须滑完父View，抬起手指，重新向上滑动</p>
+<p>比如：ScrollView嵌套TopView+ListView，或者自定义一个LinearLayout（在onInterceptTouchEvent中判断是否拦截，在onTouchEvent中使用scrollBy进行滑动）</p>
+<h3 id="NestedScrolling机制"><a href="#NestedScrolling机制" class="headerlink" title="NestedScrolling机制"></a>NestedScrolling机制</h3><ul>
+<li>Android5.0以上，可以直接使用ViewGoup与View自带方法</li>
+<li>向下兼容，使用support v4包提供的接口</li>
+</ul>
+<p>父View实现接口：NestedScrollingParent<br>子View实现接口：NestedScrollingChild</p>
+<p>或者</p>
+<p>父View实现接口：NestedScrollingParent2 &#x2F; 3<br>子View实现接口：NestedScrollingChild2 &#x2F; 3</p>
+<h3 id="NestedScrollingParent"><a href="#NestedScrollingParent" class="headerlink" title="NestedScrollingParent"></a>NestedScrollingParent</h3><p>@param child:<br><code>&lt;ParentView&gt;&lt;ChildView/&gt;&lt;/ParentView&gt;</code><br>如果这样，那么 child &#x3D; target<br><code>&lt;ParentView&gt;&lt;ViewGroup&gt;&lt;ChildView/&gt;&lt;/ViewGroup&gt;&lt;/ParentView&gt;</code><br>如果这样，那么 child &#x3D; ViewGroup<br>@param target: 嵌套滚动的view (ChildView)<br>@param axes: 滚动方向<br>@return: 父View是否接收嵌套滑动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">onStartNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View child,</span></span><br><span class="line"><span class="params">                              <span class="meta">@NonNull</span> View target, </span></span><br><span class="line"><span class="params">                              <span class="meta">@ScrollAxis</span> <span class="type">int</span> axes)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>上同，上面方法返回true才会执行此方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">onNestedScrollAccepted</span><span class="params">(<span class="meta">@NonNull</span> View child, </span></span><br><span class="line"><span class="params">                              <span class="meta">@NonNull</span> View target,</span></span><br><span class="line"><span class="params">                              <span class="meta">@ScrollAxis</span> <span class="type">int</span> axes)</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>嵌套滑动结束</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">onStopNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param target:ChildView<br>@param dxConsumed: ChildView消费的x距离<br>@param dyConsumed: ChildView消费的y距离<br>@param dxUnconsumed: ChildView未消费的x距离<br>@param dyUnconsumed:	ChildView未消费的y距离<br>子View滑动之后，判断父View是否继续滑动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">onNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target,</span></span><br><span class="line"><span class="params">                    <span class="type">int</span> dxConsumed,</span></span><br><span class="line"><span class="params">                    <span class="type">int</span> dyConsumed,</span></span><br><span class="line"><span class="params">            <span class="type">int</span> dxUnconsumed,</span></span><br><span class="line"><span class="params">                    <span class="type">int</span> dyUnconsumed)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param target ：ChildView<br>@param dx： 水平滑动距离<br>@param dy： 垂直滑动距离<br>@param consumed ：当前父View消耗的距离<br>consumed[0] 水平消耗的距离，consumed[1] 垂直消耗的距离<br>子View滑动之前，父View优先处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">onNestedPreScroll</span><span class="params">(<span class="meta">@NonNull</span> View target,</span></span><br><span class="line"><span class="params">                          <span class="type">int</span> dx,</span></span><br><span class="line"><span class="params">                          <span class="type">int</span> dy,</span></span><br><span class="line"><span class="params">                          <span class="meta">@NonNull</span> <span class="type">int</span>[] consumed)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param target:ChildView<br>@param velocityX: x轴滚动速度<br>@param velocityY: y轴滚动速度<br>@param consumed: 子View是否消耗掉fling<br>@return:父View是否消耗fling<br>当父View不拦截fling，子View将fling传入父View</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">onNestedFling</span><span class="params">(<span class="meta">@NonNull</span> View target,</span></span><br><span class="line"><span class="params">                         <span class="type">float</span> velocityX,</span></span><br><span class="line"><span class="params">                         <span class="type">float</span> velocityY, </span></span><br><span class="line"><span class="params">                         <span class="type">boolean</span> consumed)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param target:ChildView<br>@param velocityX: x轴滚动速度<br>@param velocityY: y轴滚动速度<br>@return:父View是否拦截fling<br>子View产生fling时，判断父View是否拦截</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">onNestedPreFling</span><span class="params">(<span class="meta">@NonNull</span> View target,</span></span><br><span class="line"><span class="params">                            <span class="type">float</span> velocityX, </span></span><br><span class="line"><span class="params">                            <span class="type">float</span> velocityY)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>返回父View滑动方向</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">getNestedScrollAxes</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="NestedScrollingChild"><a href="#NestedScrollingChild" class="headerlink" title="NestedScrollingChild"></a>NestedScrollingChild</h3><p>设置当前子View是否支持嵌套滑动，如果是false，父View无法响应嵌套滑动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">setNestedScrollingEnabled</span><span class="params">(<span class="type">boolean</span> enabled)</span>;</span><br></pre></td></tr></table></figure>
+<p>当前子View是否支持嵌套滑动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">isNestedScrollingEnabled</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+<p>@param axes滑动方向<br>@return 返回true, 表示有父View可以配合当前子View一起嵌套滑动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">startNestedScroll</span><span class="params">(<span class="meta">@ScrollAxis</span> <span class="type">int</span> axes)</span>;</span><br></pre></td></tr></table></figure>
+<p>当前子View停止嵌套滑动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">stopNestedScroll</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+<p>判断是否有父View</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">hasNestedScrollingParent</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param dxConsumed: ChildView消费的x距离<br>@param dyConsumed: ChildView消费的y距离<br>@param dxUnconsumed: ChildView未消费的x距离<br>@param dyUnconsumed:	ChildView未消费的y距离<br>父View滑动后，子View滑动后，继续将事件分发给父View来判断是否消耗</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">dispatchNestedScroll</span><span class="params">(<span class="type">int</span> dxConsumed, <span class="type">int</span> dyConsumed,</span></span><br><span class="line"><span class="params">        <span class="type">int</span> dxUnconsumed, <span class="type">int</span> dyUnconsumed, <span class="meta">@Nullable</span> <span class="type">int</span>[] offsetInWindow)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param dx： 子View想要的水平滑动距离<br>@param dy： 子View想要的垂直滑动距离<br>@param consumed ：子View传给父View的数组，记录父View消耗的距离<br>consumed[0] 水平消耗的距离，consumed[1] 垂直消耗的距离<br>子View滑动前，将事件发给父View，让父View计算消耗</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">dispatchNestedPreScroll</span><span class="params">(<span class="type">int</span> dx, <span class="type">int</span> dy, <span class="meta">@Nullable</span> <span class="type">int</span>[] consumed,</span></span><br><span class="line"><span class="params">        <span class="meta">@Nullable</span> <span class="type">int</span>[] offsetInWindow)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param velocityX: x轴滚动速度<br>@param velocityY: y轴滚动速度<br>@param consumed: 子View是否消耗掉fling</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">dispatchNestedFling</span><span class="params">(<span class="type">float</span> velocityX, <span class="type">float</span> velocityY, <span class="type">boolean</span> consumed)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>@param velocityX: x轴滚动速度<br>@param velocityY: y轴滚动速度<br>@return:父View是否拦截fling<br>如果返回true，表示父View拦截了fling，子View无法处理fling</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">dispatchNestedPreFling</span><span class="params">(<span class="type">float</span> velocityX, <span class="type">float</span> velocityY)</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="源码分析-以NestedScrollingChild和NestedScrollingParent为例"><a href="#源码分析-以NestedScrollingChild和NestedScrollingParent为例" class="headerlink" title="源码分析(以NestedScrollingChild和NestedScrollingParent为例)"></a>源码分析(以NestedScrollingChild和NestedScrollingParent为例)</h3><p>onTouchEvent</p>
+<h5 id="ACTION-DOWN"><a href="#ACTION-DOWN" class="headerlink" title="ACTION_DOWN"></a>ACTION_DOWN</h5><p><code>NestedScrollingChild / startNestedScroll</code><br>NestedScrollingChildHelper &#x2F; startNestedScroll<br>while循环直到找到实现NestedScrollingParent的父View<br>if(ViewParentCompat &#x2F; onStartNestedScroll)<br><code>NestedScrollingParent / onStartNestedScroll</code><br>如果返回true，则表示已找到父View，进行如下操作<br>NestedScrollingChildHelper &#x2F; setNestedScrollingParentForType（保存父View）<br>ViewParentCompat &#x2F; onNestedScrollAccepted<br><code>NestedScrollingParent / onNestedScrollAccepted</code></p>
+<p><font color=red>Child拿到ActionDown事件，先执行startNestedScroll，通过NestedScrollingChildHelper将参数传递到Parent的回调onStartNestedScroll，如果返回ture（表示配合Child进行嵌套滑动），则还会继续回调onNestedScrollAccepted</font></p>
+<h5 id="ACTION-MOVE"><a href="#ACTION-MOVE" class="headerlink" title="ACTION_MOVE"></a>ACTION_MOVE</h5><p><code>NestedScrollingChild / dispatchNestedPreScroll</code><br>NestedScrollingChildHelper &#x2F; dispatchNestedPreScroll<br>ViewParentCompat &#x2F; onNestedPreScroll<br><code>NestedScrollingParent / onNestedPreScroll</code></p>
+<p>vNestedScrollingChild &#x2F; dispatchNestedScroll<code>NestedScrollingChildHelper / dispatchNestedScroll ViewParentCompat / onNestedScroll</code>NestedScrollingParent &#x2F; onNestedScroll&#96;</p>
+<p><font color=red>Child在滑动之前，调用dispatchNestedPreScroll，通过NestedScrollingChildHelper将参数传递到Parent的回调onNestedPreScroll，在这个方法中Parent可以优先于Child滑动，并记录消费的距离，如果Parent不去记录消费的距离，则距离会由Child自身消费，即Child开始滑动，会调用dispatchNestedScroll，通过NestedScrollingChildHelper将参数传递到Parent的回调onNestedScroll</font></p>
+<h5 id="ACTION-UP"><a href="#ACTION-UP" class="headerlink" title="ACTION_UP"></a>ACTION_UP</h5><p><code>NestedScrollingChild / dispatchNestedPreFling</code><br>NestedScrollingChildHelper &#x2F; dispatchNestedPreFling<br>ViewParentCompat &#x2F; onNestedPreFling<br><code>NestedScrollingParent / onNestedPreFling</code></p>
+<p><code>NestedScrollingChild / dispatchNestedFling</code><br>NestedScrollingChildHelper &#x2F; dispatchNestedFling<br>ViewParentCompat &#x2F; onNestedFling<br><code>NestedScrollingParent / onNestedFling</code></p>
+<p><code>NestedScrollingChild / stopNestedScroll</code><br>NestedScrollingChildHelper &#x2F; stopNestedScroll<br>ViewParentCompat &#x2F; onStopNestedScroll（置空父View）<br><code>NestedScrollingParent / onStopNestedScroll</code></p>
+<p><font color=red>Child在fling之前会调用dispatchNestedPreFling，通过NestedScrollingChildHelper将参数传递到Parent的回调onNestedPreFling，Parent如果返回true，则Child无法处理fling，如果返回false，Child和Parent一起处理fling，这个地方体验不是很好，算是一个初代版本的bug</font></p>
+<hr>
+<p>举例（自定义LinearLayout，包含一个topView和bottomView）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;com.stew.androidtest.testfornestedscroll.NSParentLayout</span><br><span class="line">    android:layout_width=<span class="string">&quot;match_parent&quot;</span></span><br><span class="line">    android:layout_height=<span class="string">&quot;match_parent&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;ImageView</span><br><span class="line">        android:id=<span class="string">&quot;@+id/top_view&quot;</span></span><br><span class="line">        android:layout_width=<span class="string">&quot;match_parent&quot;</span></span><br><span class="line">        android:layout_height=<span class="string">&quot;200dp&quot;</span></span><br><span class="line">        android:background=<span class="string">&quot;@color/purple_200&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;androidx.recyclerview.widget.RecyclerView</span><br><span class="line">        android:id=<span class="string">&quot;@+id/bottom_view&quot;</span></span><br><span class="line">        android:layout_width=<span class="string">&quot;match_parent&quot;</span></span><br><span class="line">        android:layout_height=<span class="string">&quot;match_parent&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line">&lt;/com.stew.androidtest.testfornestedscroll.NSParentLayout&gt;</span><br></pre></td></tr></table></figure>
+
+</br>
+
+
+</br>
+
+
+
+<img src="/images/nest1.jpeg" width=360 height=760>
+
+
+</br>
+
+
+</br>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NSParentLayout</span> <span class="keyword">extends</span> <span class="title class_">LinearLayout</span> <span class="keyword">implements</span> <span class="title class_">NestedScrollingParent</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TAG</span> <span class="operator">=</span> NSParentLayout.class.getSimpleName();</span><br><span class="line">    <span class="keyword">private</span> View topView;</span><br><span class="line">    <span class="keyword">private</span> View bottomView;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> topViewHeight;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> NestedScrollingParentHelper mNestedScrollingParentHelper;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> LinearLayout.LayoutParams params;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">NSParentLayout</span><span class="params">(Context context, <span class="meta">@Nullable</span> AttributeSet attrs)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(context, attrs);</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;NSParentLayout: &quot;</span>);</span><br><span class="line">        mNestedScrollingParentHelper = <span class="keyword">new</span> <span class="title class_">NestedScrollingParentHelper</span>(<span class="built_in">this</span>);</span><br><span class="line">        setOrientation(VERTICAL);</span><br><span class="line">        params = <span class="keyword">new</span> <span class="title class_">LinearLayout</span>.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onFinishInflate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onFinishInflate();</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onFinishInflate: &quot;</span>);</span><br><span class="line">        topView = findViewById(R.id.top_view);</span><br><span class="line">        bottomView = findViewById(R.id.bottom_view);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onMeasure</span><span class="params">(<span class="type">int</span> widthMeasureSpec, <span class="type">int</span> heightMeasureSpec)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onMeasure: &quot;</span>);</span><br><span class="line">        params.height = getMeasuredHeight();</span><br><span class="line">        bottomView.setLayoutParams(params);</span><br><span class="line">        topViewHeight = topView.getMeasuredHeight();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">scrollTo</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (y &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            y = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (y &gt;= topViewHeight) &#123;</span><br><span class="line">            y = topViewHeight;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">super</span>.scrollTo(x, y);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onStartNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="type">int</span> nestedScrollAxes)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onStartNestedScroll: &quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNestedScrollAccepted</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="type">int</span> axes)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onNestedScrollAccepted: &quot;</span>);</span><br><span class="line">        mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNestedPreScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="type">int</span> dx, <span class="type">int</span> dy, <span class="meta">@NonNull</span> <span class="type">int</span>[] consumed)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onNestedPreScroll: getScrollY = &quot;</span> + getScrollY());</span><br><span class="line">        <span class="comment">//topView刚好要消失</span></span><br><span class="line">        <span class="type">boolean</span> <span class="variable">FLAG_TOP_ON</span> <span class="operator">=</span> dy &gt; <span class="number">0</span> &amp;&amp; getScrollY() &lt; topViewHeight;</span><br><span class="line">        <span class="comment">//topView刚好要出现</span></span><br><span class="line">        <span class="type">boolean</span> <span class="variable">FLAG_TOP_OFF</span> <span class="operator">=</span> dy &lt; <span class="number">0</span> &amp;&amp; getScrollY() &gt; <span class="number">0</span> &amp;&amp; !target.canScrollVertically(-<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span> (FLAG_TOP_ON || FLAG_TOP_OFF) &#123;</span><br><span class="line">            scrollBy(<span class="number">0</span>, dy);</span><br><span class="line">            consumed[<span class="number">1</span>] = dy;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="type">int</span> dxConsumed, <span class="type">int</span> dyConsumed, <span class="type">int</span> dxUnconsumed, <span class="type">int</span> dyUnconsumed)</span> &#123;</span><br><span class="line">         Log.d(TAG, <span class="string">&quot;onNestedScroll      dxConsumed: &quot;</span></span><br><span class="line">                + dxConsumed + <span class="string">&quot; dyConsumed:&quot;</span></span><br><span class="line">                + dyConsumed + <span class="string">&quot; dxUnconsumed:&quot;</span></span><br><span class="line">                + dxUnconsumed + <span class="string">&quot; dyUnconsumed:&quot;</span></span><br><span class="line">                + dyUnconsumed);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onNestedPreFling</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="type">float</span> velocityX, <span class="type">float</span> velocityY)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onNestedPreFling: &quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onNestedFling</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="type">float</span> velocityX, <span class="type">float</span> velocityY, <span class="type">boolean</span> consumed)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onNestedFling: velocityY = &quot;</span> + velocityY + <span class="string">&quot; consumed = &quot;</span> + consumed);</span><br><span class="line">        <span class="keyword">if</span> (velocityY &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            scrollBy(<span class="number">0</span>, topViewHeight - getScrollY());</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (velocityY &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            scrollBy(<span class="number">0</span>, -getScrollY());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onStopNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onStopNestedScroll: &quot;</span>);</span><br><span class="line">        mNestedScrollingParentHelper.onStopNestedScroll(target);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="NestedScrollingChild2与NestedScrollingParent2"><a href="#NestedScrollingChild2与NestedScrollingParent2" class="headerlink" title="NestedScrollingChild2与NestedScrollingParent2"></a>NestedScrollingChild2与NestedScrollingParent2</h3><p>在初代版本中，fling是无法传递给parent的，parent也知不知道child的fling何时结束<br>现在第二个版本可以传递fling了，和第一代相比，每个方法的参数都多了一个type（除了fling）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onStartNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="type">int</span> axes, <span class="type">int</span> type)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNestedScrollAccepted</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="type">int</span> axes, <span class="type">int</span> type)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNestedPreScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="type">int</span> dx, <span class="type">int</span> dy, <span class="meta">@NonNull</span> <span class="type">int</span>[] consumed, <span class="type">int</span> type)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="type">int</span> dxConsumed, <span class="type">int</span> dyConsumed, <span class="type">int</span> dxUnconsumed, <span class="type">int</span> dyUnconsumed, <span class="type">int</span> type)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onStopNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="type">int</span> type)</span></span><br></pre></td></tr></table></figure>
+
+<p>上述5个方法内部的逻辑和第一版本一样，另外如下两个fling方法都返回false</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onNestedPreFling</span><span class="params">(View target, <span class="type">float</span> velocityX, <span class="type">float</span> velocityY)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onNestedFling</span><span class="params">(View target, <span class="type">float</span> velocityX, <span class="type">float</span> velocityY, <span class="type">boolean</span> consumed)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><h6 id="1-正常滑动，非fling（具体可参考RecyclerView源码onTouchEvent中的具体细节）"><a href="#1-正常滑动，非fling（具体可参考RecyclerView源码onTouchEvent中的具体细节）" class="headerlink" title="1.正常滑动，非fling（具体可参考RecyclerView源码onTouchEvent中的具体细节）"></a>1.正常滑动，非fling（具体可参考RecyclerView源码onTouchEvent中的具体细节）</h6><p>NestedScrollingChild &#x2F; dispatchNestedPreScroll<br>对应<br>NestedScrollingParent &#x2F; onNestedPreScroll</p>
+<p>NestedScrollingChild &#x2F; dispatchNestedScroll<br>对应<br>NestedScrollingParent &#x2F; onNestedScroll</p>
+<p>一个正常的滑动（down&#x2F;move&#x2F;up）操作下来，比如竖直方向的，dispatchNestedPreScroll和dispatchNestedScroll都会调用到，先执行dispatchNestedPreScroll，把当前一帧（16ms）的滑动距离dy分发到parent的onNestedPreScroll，parent如果消费（滑动），则consume[1]&#x3D;dy，回到child，dy&#x3D;dy-consume[1]&#x3D;0，所以dispatchNestedScroll方法内没有进行滑动，即parent滑动，child自身不滑动，dispatchNestedPreScroll和dispatchNestedScroll这俩方法，各代表谁来滑动，关键条件就是onNestedPreScroll内写的自定义条件，条件用户自己来定</p>
+<h6 id="2-fling"><a href="#2-fling" class="headerlink" title="2.fling"></a>2.fling</h6><p>滑动速度达到阀值，手指up之后就会进行fling操作，在fling方法内先进行了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">startNestedScroll(nestedScrollAxis, TYPE_NON_TOUCH);</span><br><span class="line">ViewParentCompat.onStartNestedScroll(p, child, mView, axes, type)</span><br><span class="line"><span class="keyword">if</span> (parent <span class="keyword">instanceof</span> NestedScrollingParent2) &#123;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == ViewCompat.TYPE_TOUCH) &#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如果没有实现NestedScrollingParent2接口，比如第一个版本，那么就会返回false，也就不会进行<br>setNestedScrollingParentForType(type, p)，则在后续的fling操作中，具体细节：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">postOnAnimation</span><br><span class="line">internalPostOnAnimation</span><br><span class="line">ViewCompat.postOnAnimation(RecyclerView.<span class="built_in">this</span>, <span class="built_in">this</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这个this是一个runnable，具体操作在run方法中，run方法中也有一套dispatchNestedPreScroll和dispatchNestedScroll，只不过他的驱动力是循环internalPostOnAnimation，不断地去减速执行这个runnable，可以把它想象成一个自动的减速的【手动滑动】，接着分析，在dispatchNestedPreScroll内部：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="type">ViewParent</span> <span class="variable">parent</span> <span class="operator">=</span> getNestedScrollingParentForType(type);</span><br><span class="line"><span class="keyword">if</span> (parent == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于没有parent，则dispatchNestedPreScroll方法返回false，所以第一版本的NestedScrollingParent实现类是无法实现fling操作的，为了解决这个bug，谷歌推出来了NestedScrollingParent2，如果parent实现了NestedScrollingParent2，则child的dispatchNestedPreScroll方法就可以顺利的打达parent的onNestedPreScroll，然后再根据自定义的条件，来决定要不要消费fling的数据，滑动部分其实原理差不多，只不过驱动力是循环执行一个runnable，而正常滑动是靠手指滑动，多走几遍过程就熟悉了，不得不说谷歌兼容设计的很巧妙</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/08/13/Android%20Application/Android%E5%B5%8C%E5%A5%97%E6%BB%91%E5%8A%A8/" data-id="clhoa7k4r000wtlcahftj1w0k" data-title="Android嵌套滑动" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/08/30/Android%20Expansion/Android%E5%AD%98%E5%82%A8%E5%88%86%E5%8C%BA/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Android存储分区
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/08/10/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BAMS/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">系统服务之AMS</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

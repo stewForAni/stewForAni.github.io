@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>系统服务之PMS | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="PMS（PackageManagerService）是 Android 提供的包管理系统服务，它用来管理所有的包信息，包括应用安装、卸载、更新以及解析 AndroidManifest.xml。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统服务之PMS">
+<meta property="og:url" content="https://stewforani.github.io/2022/08/09/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BPMS/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="PMS（PackageManagerService）是 Android 提供的包管理系统服务，它用来管理所有的包信息，包括应用安装、卸载、更新以及解析 AndroidManifest.xml。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-08-09T15:25:53.000Z">
+<meta property="article:modified_time" content="2023-04-07T10:32:21.515Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/系统服务之PMS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/08/09/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BPMS/" class="article-date">
+  <time class="dt-published" datetime="2022-08-09T15:25:53.000Z" itemprop="datePublished">2022-08-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      系统服务之PMS
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="PMS（PackageManagerService）是-Android-提供的包管理系统服务，它用来管理所有的包信息，包括应用安装、卸载、更新以及解析-AndroidManifest-xml。"><a href="#PMS（PackageManagerService）是-Android-提供的包管理系统服务，它用来管理所有的包信息，包括应用安装、卸载、更新以及解析-AndroidManifest-xml。" class="headerlink" title="PMS（PackageManagerService）是 Android 提供的包管理系统服务，它用来管理所有的包信息，包括应用安装、卸载、更新以及解析 AndroidManifest.xml。"></a>PMS（PackageManagerService）是 Android 提供的包管理系统服务，它用来管理所有的包信息，包括应用安装、卸载、更新以及解析 AndroidManifest.xml。<br><span id="more"></span></h2><h3 id="打开app大致流程"><a href="#打开app大致流程" class="headerlink" title="打开app大致流程"></a>打开app大致流程</h3><ol>
+<li>遍历&#x2F;data&#x2F;app的文件夹</li>
+<li>解压apk文件</li>
+<li>dom解析AndroidManifest.xml文件</li>
+<li>定位到入口函数（想象成MainActivity）</li>
+<li>反射创建MainActivity</li>
+<li>MainActivity对象展示，接下来就是App看到的界面了。</li>
+</ol>
+<p>其中，1，2，3步由PMS来处理，4，5，6由AMS处理。</p>
+<h3 id="PMS主要功能"><a href="#PMS主要功能" class="headerlink" title="PMS主要功能"></a>PMS主要功能</h3><ol>
+<li>管理设备上安装的所有应用程序，并在系统启动时加载应用程序; </li>
+<li>根据请求的Intent匹配到对应的Activity、Provider、Service，提供包含包名和组件的信息对象; </li>
+<li>调用需要权限的系统函数时，检查程序是否具备相应权限从而保证系统安全; </li>
+<li>提供应用程序的安装、卸载的接口;</li>
+</ol>
+<h3 id="PMS包管理"><a href="#PMS包管理" class="headerlink" title="PMS包管理"></a>PMS包管理</h3><ol>
+<li>应用程序层:使用getPackageManager()获取包的管理对象PackageManager，PMS使用的也是Binder通信，PackageManager是从ServiceManager中获取注册的Binder对象，具体的实现为 PackageManagerService，PMS实现对所有程序的安装和加载; （所有系统程序的文件处于&#x2F;system&#x2F;app&#x2F;目录下，第三方程序文件处于&#x2F;data&#x2F;app&#x2F; 目录下，在程序安装过程中PMS会将要安装的apk文件复制到&#x2F;data&#x2F;app&#x2F;目录下）</li>
+<li>PMS服务层:PMS运行在SystemServer进程中，主要使用&#x2F;system&#x2F;etc&#x2F;permissions.xml 和&#x2F;data&#x2F;system&#x2F;packages.xml管理包信息; </li>
+<li>数据文件管理:PMS负责对系统的配置文件、apk安装文件、apk的数据文件执行管理、读写、创 建和删除等功能;</li>
+</ol>
+<h3 id="PMS的启动过程"><a href="#PMS的启动过程" class="headerlink" title="PMS的启动过程"></a>PMS的启动过程</h3><p>在Android系统启动过程中，程序会执行到SystemServer中，然后调用startBootstrapServices()方法启，动核心服务，在startBootstrapServices()方法中完成PMS的启动: </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">startBootstrapServices</span><br><span class="line">PackageManagerService.main</span><br><span class="line"><span class="type">PackageManagerService</span> <span class="variable">m</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PackageManagerService</span></span><br><span class="line">ServiceManager.addService(<span class="string">&quot;package&quot;</span>, m) </span><br></pre></td></tr></table></figure>
+
+<h3 id="PMS的工作过程"><a href="#PMS的工作过程" class="headerlink" title="PMS的工作过程"></a>PMS的工作过程</h3><p><code>ArrayMap&lt;String, PackageParser.Package&gt; mPackages</code><br>在扫描程序文件目录时会将信息保存 在Package对象中，然后将所有程序包名极其的package保存在此集合中;</p>
+<p><code>Settings mSettings</code><br>保存整个系统信息的Setting对象;</p>
+<ol>
+<li>创建Settings对象，将PMS中的mPackage集合传入，此集合保存所有apk的解析数据</li>
+<li>调用readLPw()方法解析系统配置文件package.xml（mSettings.readLPw() ）主要是操作mPackages，保存手机中所有app的应用信息</li>
+<li>调用scanDirTracedLI()扫描系统app(&#x2F;system&#x2F;app&#x2F;)</li>
+<li>调用scanDirTracedLI()扫描第三方app(&#x2F;data&#x2F;app&#x2F;)</li>
+<li>执行mSettings.writeLPr()将扫描后的结果，重新写入配置文件,将mPackages中的数据分别写入package.xml和package.list文件中</li>
+</ol>
+<p>简单来说系统在启动会会创建PMS对象，使用PMS对象读取配置文件， 然后扫描手机上所有的app程序，并将所有的程序的内容信息都封装在Package对象中，然后将Package 集合中信息转换为PMS的属性供系统使用，最后并更新配置文件; </p>
+<p><code>PackageInstaller 提供了 应用安装、更新、移除的能力，具体实现是PackageInstallerService</code></p>
+<hr>
+<h3 id="APK的包组成"><a href="#APK的包组成" class="headerlink" title="APK的包组成"></a>APK的包组成</h3><p>apk文件本质还是一个zip文件</p>
+<p><code>classes.dex</code>: Dex是DalvikVM executes的缩写，即Android Dalvik执行文件<br><code>Androidmanifest.xml</code>:Project中androidManifest.xml编译后得到的二进制xml文件<br><code>META-INF</code>：主要保存各个资源文件的SHA1 hash值，用于校验资源文件是否被修改，防止二次打包时资源文件被替换。该目录下主要包括三个文件：</p>
+<ul>
+<li>MANIFEST.MF:保存了 apk 所有文件的摘要信息（SHA-1+Base64）</li>
+<li>CERT.SF:保存了对 MANIFEST.MF 文件再进行一次 SHA-1 并 Base64 加密的信息，并同时保存了 MANIFEST.MF 文件的摘要信息</li>
+<li>CERT.RSA:使用私钥对CERT.SF签名，保存了签名结果、公钥和所采用的加密算法等信息</li>
+</ul>
+<p><code>res</code>: Project中res目录下资源文件编译后得到的二进制xml文件<br><code>resources.arsc</code>:包含了所有资源文件的映射，可以理解为资源索引，通过该文件能找到对应的资源文件<br><code>lib</code>：ndk编译出来的so库</p>
+<h3 id="APK打包流程"><a href="#APK打包流程" class="headerlink" title="APK打包流程"></a>APK打包流程</h3><ol>
+<li>通过aapt2打包res资源文件，生成R.java resources.arsc和res文件</li>
+<li>通过Javac编译R.java,Java接口文件，java源文件生成.class文件</li>
+<li>通过d8命令将.class文件和第三方库中的.class文件处理生成classes.dex</li>
+<li>通过aapt2工具将aapt生成的resources.arsc 和res文件，未编译的资源assets文件和classes.dex 一起打包生成apk（未签名）</li>
+<li>通过zipalign工具将未签名的apk进行对齐处理</li>
+<li>通过apksigner工具对上面的apk进行签名</li>
+</ol>
+<p><code>aapt2android</code>资源打包工具<br><code>Kotlinc</code>把.kt文件编译成.class文件<br><code>javac</code>把.java文件编译成.class文件<br><code>d8</code>新一代.class转化成.dex的工具<br><code>zipalign</code>字节码对齐工具<br><code>apksigner</code>apk签名工具</p>
+<h3 id="apk的安装方式"><a href="#apk的安装方式" class="headerlink" title="apk的安装方式"></a>apk的安装方式</h3><ol>
+<li><p>安装系统APK和预置的APK(第一次开机时安装,没有安装界)<br>PackageManagerService的构造中会扫描对应目录下的apk,完成安装</p>
+</li>
+<li><p>网络下载应用安装――通过market应用完成，没有安装界面<br>调用PackageManager的installPackage方法执行安装</p>
+</li>
+<li><p>ADB工具安装,没有安装界面<br>&#x2F;repo&#x2F;system&#x2F;core&#x2F;adb&#x2F;commandline.cpp中install_app方法,该方法调用pm_command通过send_shell_command方法将数据发送到手机端的adbd守护进程中,adbd在收到PC中Console发来的数据之后启动一个Shell,然后执行pm脚本(pm位于&#x2F;system&#x2F;bin目录下).<br>pm脚本通过app_process执行pm.jar包的main函数(\system\framework\pm.jar) 对应源码: &#x2F;repo&#x2F;frameworks&#x2F;base&#x2F;cmds&#x2F;pm&#x2F;src&#x2F;com&#x2F;android&#x2F;commands&#x2F;pm&#x2F;Pm.java</p>
+</li>
+<li><p>第三方应用安装,有安装界面</p>
+</li>
+</ol>
+<p><code>以上几种方式均通过PackageInstallObserver来监听安装是否成功。</code></p>
+<hr>
+<h3 id="安装APK的代码"><a href="#安装APK的代码" class="headerlink" title="安装APK的代码"></a>安装APK的代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">File</span> <span class="variable">file</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(getExternalFilesDir(<span class="literal">null</span>), <span class="string">&quot;xxx.apk&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(Intent.ACTION_VIEW);</span><br><span class="line">intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);</span><br><span class="line"><span class="type">Uri</span> <span class="variable">apkUri</span> <span class="operator">=</span>FileProvider.getUriForFile(<span class="built_in">this</span>, <span class="string">&quot;com.xxx.xxx.fileprovider&quot;</span>, file);</span><br><span class="line">intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);</span><br><span class="line">intent.setDataAndType(apkUri, <span class="string">&quot;application/vnd.android.package-archive&quot;</span>);</span><br><span class="line"></span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure>
+
+<h3 id="APK安装主体流程"><a href="#APK安装主体流程" class="headerlink" title="APK安装主体流程"></a>APK安装主体流程</h3><ol>
+<li>复制APK到&#x2F;data&#x2F;app目录下，解压并扫描安装包</li>
+<li>将APP的dex文件拷贝到&#x2F;data&#x2F;dalvik-cache目录，再在&#x2F;data&#x2F;data&#x2F;目录下创建应用程序的数据目录（以应用包名命令），用来存放应用的数据库、xml文件、cache、二进制的so动态库等</li>
+<li>解析apk的AndroidManifest.xml文件，注册四大组件，将apk的权限、应用包名、apk的安装位置、版本、userID等重要信息保存在&#x2F;data&#x2F;system&#x2F;packages.xml文件中。这些操作都是在PackageManagerService中完成。</li>
+<li>资源管理器解析APK里的资源文件。</li>
+<li>dex2oat操作，对dex文件进行优化，并保存在dalvik-cache目录下。</li>
+<li>更新权限信息。</li>
+<li>安装完成后，发送Intent.ACTION_PACKAGE_ADDED广播。</li>
+</ol>
+<ul>
+<li>PMS中先把APK拷贝到 &#x2F;data&#x2F;app，然后使用PackageParser2解析APK 获取 四大组件、搜集签名、PackageSetting等信息，并进行校验确保安装成功；</li>
+<li>接着提交信息包更新系统状态及PMS的内存数据；</li>
+<li>然后使用 Installer 准备在用户目录&#x2F;data&#x2F;user进行 dexOpt；</li>
+<li>最后发送安装结果通知UI层。</li>
+</ul>
+<p><code>复制</code>，<code>解析</code>、<code>验证</code>、<code>更新信息</code>，<code>dex优化</code></p>
+<hr>
+<h3 id="PMS和AMS关联"><a href="#PMS和AMS关联" class="headerlink" title="PMS和AMS关联"></a>PMS和AMS关联</h3><p>无论是Android系统启动后执行的PMS启动，还是使用PackageInstaller安装APK的过程，最终都会使用PackageParser扫描相应的apk文件，将扫描提取的信息保在Package对象中，扫描完成后会回调PMS中方法将扫描获取的四大组件信息转换保存在PMS属性中，主要使用ActivityIntentResolver（activity和br一样）、ServiceIntentResolver、ProviderIntentResolver保存信息 </p>
+<p>ActivityIntentResolver mActivities:<br>遍历所有程序的目录，并解析所有的注册清单文件，将提取 所有的Intent-filter数据保存在对应的集合中;<br>ActivityIntentResolver mReceivers:同上<br>ServiceIntentResolver mServices:同上<br>ProviderIntentResolver mProviders:同上</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ActivityStarter#startActivityMayWait</span></span><br><span class="line"><span class="comment">//ActivityInfo是ResolveInfo的成员变量</span></span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"><span class="type">ResolveInfo</span> <span class="variable">rInfo</span> <span class="operator">=</span> mSupervisor.resolveIntent(intent......);</span><br><span class="line">......</span><br><span class="line"><span class="type">ActivityInfo</span> <span class="variable">aInfo</span> <span class="operator">=</span> mSupervisor.resolveActivity(intent, rInfo......);</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>activity跳转时，会调用PMS获取对应activity的信息</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/08/09/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BPMS/" data-id="clhoa7k55002gtlca2rni1pma" data-title="系统服务之PMS" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/08/10/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BAMS/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          系统服务之AMS
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/08/08/Android%20Framework/%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E4%B9%8BWMS/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">系统服务之WMS</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

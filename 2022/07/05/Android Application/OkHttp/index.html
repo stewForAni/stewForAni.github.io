@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>OkHttp | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="OkHttp 是一套处理 HTTP 网络请求的依赖库，由 Square 公司设计研发并开源，目前可以在 Java 和 Kotlin 中使用。底层的IO读取是Okio库。它补充了Java.io和java.nio的不足，以便能够更加方便，快速的访问、存储和处理数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OkHttp">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/05/Android%20Application/OkHttp/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="OkHttp 是一套处理 HTTP 网络请求的依赖库，由 Square 公司设计研发并开源，目前可以在 Java 和 Kotlin 中使用。底层的IO读取是Okio库。它补充了Java.io和java.nio的不足，以便能够更加方便，快速的访问、存储和处理数据。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-05T11:06:14.000Z">
+<meta property="article:modified_time" content="2022-07-09T04:02:52.967Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/OkHttp" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/05/Android%20Application/OkHttp/" class="article-date">
+  <time class="dt-published" datetime="2022-07-05T11:06:14.000Z" itemprop="datePublished">2022-07-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      OkHttp
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="OkHttp-是一套处理-HTTP-网络请求的依赖库，由-Square-公司设计研发并开源，目前可以在-Java-和-Kotlin-中使用。底层的IO读取是Okio库。它补充了Java-io和java-nio的不足，以便能够更加方便，快速的访问、存储和处理数据。"><a href="#OkHttp-是一套处理-HTTP-网络请求的依赖库，由-Square-公司设计研发并开源，目前可以在-Java-和-Kotlin-中使用。底层的IO读取是Okio库。它补充了Java-io和java-nio的不足，以便能够更加方便，快速的访问、存储和处理数据。" class="headerlink" title="OkHttp 是一套处理 HTTP 网络请求的依赖库，由 Square 公司设计研发并开源，目前可以在 Java 和 Kotlin 中使用。底层的IO读取是Okio库。它补充了Java.io和java.nio的不足，以便能够更加方便，快速的访问、存储和处理数据。"></a>OkHttp 是一套处理 HTTP 网络请求的依赖库，由 Square 公司设计研发并开源，目前可以在 Java 和 Kotlin 中使用。底层的IO读取是Okio库。它补充了Java.io和java.nio的不足，以便能够更加方便，快速的访问、存储和处理数据。<br><span id="more"></span></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OkHttpClient</span> <span class="variable">client</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OkHttpClient</span>();</span><br><span class="line"><span class="type">Request</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Request</span>.Builder().url(url).build();</span><br><span class="line">client.newCall(request).enqueue(<span class="keyword">new</span> <span class="title class_">Callback</span>()&#123;</span><br><span class="line">	onResponse();</span><br><span class="line">	onFailure();</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>还可以使用Builder来创建OkHttpClient</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">OkHttpClient.<span class="type">Builder</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OkHttpClient</span>.Builder();</span><br><span class="line">builder.connectTimeout()</span><br><span class="line">	.addInterceptor()</span><br><span class="line">	.proxy()</span><br><span class="line">	.cache();</span><br><span class="line"><span class="type">OkHttpClient</span> <span class="variable">client</span> <span class="operator">=</span> builder.build();</span><br></pre></td></tr></table></figure>
+
+<h5 id="newCall方法"><a href="#newCall方法" class="headerlink" title="newCall方法"></a>newCall方法</h5><p>这个方法会返回一个 RealCall 类型的对象，通过RealCall可以将网络请求操作添加到请求队列中（即下方的Dispatcher方法）。<br><code>return RealCall.newRealCall(request);</code></p>
+<h5 id="enqueue方法"><a href="#enqueue方法" class="headerlink" title="enqueue方法"></a>enqueue方法</h5><p>调用 Dispatcher 的入队方法，执行一个异步网络请求的操作。<br><code>client.dispatcher().enqueue(new AsyncCall(responseCallback));</code><br><code>enqueue(call)</code><br><code>executorService().execute(call)</code></p>
+<p>可以看出，实际上就是使用线程池执行了一个 AsyncCall，而 AsyncCall 实现了 Runnable 接口，因此整个操作会在一个子线程（非 UI 线程）中执行。</p>
+<p>继续查看 AsyncCall 中的 run 方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">NamedRunnable</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">  <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">      execute();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">execute</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">AsyncCall</span> <span class="keyword">extends</span> <span class="title class_">NamedRunnable</span> &#123;</span><br><span class="line">     <span class="meta">@Override</span> </span><br><span class="line">     <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">execute</span><span class="params">()</span> &#123;</span><br><span class="line">     	 <span class="type">Response</span> <span class="variable">response</span> <span class="operator">=</span> getResponseWithInterceptorChain();</span><br><span class="line">      	<span class="keyword">if</span> (retryAndFollowUpInterceptor.isCanceled()) &#123;</span><br><span class="line">        		responseCallback.onFailure(RealCall.<span class="built_in">this</span>, <span class="keyword">new</span> <span class="title class_">IOException</span>(<span class="string">&quot;Canceled&quot;</span>));</span><br><span class="line">      	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        		responseCallback.onResponse(RealCall.<span class="built_in">this</span>, response);</span><br><span class="line">      	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="责任链"><a href="#责任链" class="headerlink" title="责任链"></a>责任链</h3><p>真正获取请求结果的方法是在 getResponseWithInterceptorChain 方法中，从名字也能看出其内部是一个拦截器的调用链，具体代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Response <span class="title function_">getResponseWithInterceptorChain</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">  <span class="comment">// Build a full stack of interceptors.</span></span><br><span class="line">  List&lt;Interceptor&gt; interceptors = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">  interceptors.addAll(client.interceptors());</span><br><span class="line">  interceptors.add(retryAndFollowUpInterceptor);</span><br><span class="line">  interceptors.add(<span class="keyword">new</span> <span class="title class_">BridgeInterceptor</span>(client.cookieJar()));</span><br><span class="line">  interceptors.add(<span class="keyword">new</span> <span class="title class_">CacheInterceptor</span>(client.internalCache()));</span><br><span class="line">  interceptors.add(<span class="keyword">new</span> <span class="title class_">ConnectInterceptor</span>(client));</span><br><span class="line">  <span class="keyword">if</span> (!forWebSocket) &#123;</span><br><span class="line">    interceptors.addAll(client.networkInterceptors());</span><br><span class="line">  &#125;</span><br><span class="line">  interceptors.add(<span class="keyword">new</span> <span class="title class_">CallServerInterceptor</span>(forWebSocket));</span><br><span class="line"></span><br><span class="line">  Interceptor.<span class="type">Chain</span> <span class="variable">chain</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RealInterceptorChain</span>(interceptors, <span class="literal">null</span>, <span class="literal">null</span>, <span class="literal">null</span>, <span class="number">0</span>,</span><br><span class="line">      originalRequest, <span class="built_in">this</span>, eventListener, client.connectTimeoutMillis(),</span><br><span class="line">      client.readTimeoutMillis(), client.writeTimeoutMillis());</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> chain.proceed(originalRequest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>client.interceptors ：自定义拦截器</li>
+<li>BridgeInterceptor：主要对 Request 中的 Head 设置默认值，比如 Content-Type、Keep-Alive、Cookie 等。</li>
+<li>CacheInterceptor：负责 HTTP 请求的缓存处理。</li>
+<li>ConnectInterceptor：负责建立与服务器地址之间的连接，也就是 TCP 链接。</li>
+<li>CallServerInterceptor：负责向服务器发送请求，并从服务器拿到远端数据结果。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Call the next interceptor in the chain.</span></span><br><span class="line"><span class="type">RealInterceptorChain</span> <span class="variable">next</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RealInterceptorChain</span>(interceptors, streamAllocation, httpCodec,</span><br><span class="line">    connection, index + <span class="number">1</span>, request, call, eventListener, connectTimeout, readTimeout,</span><br><span class="line">    writeTimeout);</span><br><span class="line"><span class="type">Interceptor</span> <span class="variable">interceptor</span> <span class="operator">=</span> interceptors.get(index);</span><br><span class="line"><span class="type">Response</span> <span class="variable">response</span> <span class="operator">=</span> interceptor.intercept(next);</span><br></pre></td></tr></table></figure>
+
+<p><font color=purple>这里首先去获取传入的interceptors（拦截器列表）取出下一个拦截器，并调用拦截器的intercept方法，并传入下一个RealInterceptorChain对象供当前拦截器调用。<br>然后每个拦截器根据会根据情况，拿到传入的RealInterceptorChain调用chain.proceed，调用下一个拦截器。</font></p>
+<hr>
+<h3 id="CacheInterceptor-缓存拦截器"><a href="#CacheInterceptor-缓存拦截器" class="headerlink" title="CacheInterceptor 缓存拦截器"></a>CacheInterceptor 缓存拦截器</h3><p>CacheInterceptor 主要做以下几件事情：</p>
+<ul>
+<li><p>根据 Request 获取当前已有缓存的 Response（有可能为 null），并根据获取到的缓存 Response，创建 CacheStrategy 对象。</p>
+</li>
+<li><p>通过 CacheStrategy 判断当前缓存中的 Response 是否有效（比如是否过期），如果缓存 Response 可用则直接返回，否则调用 chain.proceed() 继续执行下一个拦截器，也就是发送网络请求从服务器获取远端 Response。</p>
+</li>
+<li><p>如果从服务器端成功获取 Response，再判断是否将此 Response 进行缓存操作。</p>
+</li>
+</ul>
+<p>OkHttp 提供了一个默认的缓存类 Cache.java，我们可以在构建 OkHttpClient 时，直接使用 Cache 来实现缓存功能。只需要指定缓存的路径，以及最大可用空间即可，如下所示：</p>
+<p><code>builder.cache(new Cache(getCacheDir(),1024*1024*10))</code></p>
+<p>Cache 内部使用了 DiskLruCach 来实现具体的缓存功能，DiskLruCache 最终会以 journal 类型文件将需要缓存的数据保存在本地。</p>
+<h3 id="CallServerInterceptor"><a href="#CallServerInterceptor" class="headerlink" title="CallServerInterceptor"></a>CallServerInterceptor</h3><p>CallServerInterceptor 是 OkHttp 中最后一个拦截器，也是 OkHttp 中最核心的网路请求部分，其 intercept 方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> </span><br><span class="line"><span class="keyword">public</span> Response <span class="title function_">intercept</span><span class="params">(Chain chain)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"></span><br><span class="line">realChain.eventListener().requestHeadersStart(realChain.call());</span><br><span class="line">httpCodec.writeRequestHeaders(request);</span><br><span class="line">realChain.eventListener().requestHeadersEnd(realChain.call(), request);</span><br><span class="line"></span><br><span class="line">httpCodec.finishRequest();</span><br><span class="line"></span><br><span class="line"><span class="comment">//发送请求数据</span></span><br><span class="line">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span><br><span class="line"><span class="comment">//获取请求结果</span></span><br><span class="line"></span><br><span class="line">……</span><br><span class="line"></span><br><span class="line">response = response.newBuilder()</span><br><span class="line">    .body(httpCodec.openResponseBody(response))</span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="OkHttp-监听下载进度"><a href="#OkHttp-监听下载进度" class="headerlink" title="OkHttp 监听下载进度"></a>OkHttp 监听下载进度</h3><h5 id="retrofit-："><a href="#retrofit-：" class="headerlink" title="retrofit ："></a>retrofit ：</h5><p>在onNext中 直接监听文件的写入</p>
+<h5 id="okhttp："><a href="#okhttp：" class="headerlink" title="okhttp："></a>okhttp：</h5><p>自定义responseBody继承ResponseBody，初始化okhttp时添加自定义拦截器</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/05/Android%20Application/OkHttp/" data-id="clhoa7k4u001atlca6tarahqg" data-title="OkHttp" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/06/Android%20Application/Notification/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Notification
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/03/Algorithm/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">字符串匹配</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

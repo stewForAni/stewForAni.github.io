@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Binder之Java层Binder | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Java Binder要想和Native Binder进行通信，需要通过JNI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Binder之Java层Binder">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/22/Android%20Framework/Binder%E4%B9%8BJava%E5%B1%82Binder/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Java Binder要想和Native Binder进行通信，需要通过JNI">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-22T14:11:12.000Z">
+<meta property="article:modified_time" content="2023-04-13T08:19:51.472Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/Binder之Java层Binder" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/22/Android%20Framework/Binder%E4%B9%8BJava%E5%B1%82Binder/" class="article-date">
+  <time class="dt-published" datetime="2022-07-22T14:11:12.000Z" itemprop="datePublished">2022-07-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Binder之Java层Binder
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Java-Binder要想和Native-Binder进行通信，需要通过JNI"><a href="#Java-Binder要想和Native-Binder进行通信，需要通过JNI" class="headerlink" title="Java Binder要想和Native Binder进行通信，需要通过JNI"></a>Java Binder要想和Native Binder进行通信，需要通过JNI<br><span id="more"></span></h2><h3 id="JNI注册"><a href="#JNI注册" class="headerlink" title="JNI注册"></a>JNI注册</h3><p>Java Binder要想和Native Binder进行通信，需要通过JNI，JNI各种函数是在Zygote进程启动过程中注册的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/core/jni/AndroidRuntime.cpp</span></span><br><span class="line"><span class="keyword">void</span> AndroidRuntime::start()&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">/* start the virtual machine */</span></span><br><span class="line">    <span class="comment">//startVm启动java虚拟机（创建虚拟机）</span></span><br><span class="line">    <span class="keyword">if</span> (startVm(&amp;mJavaVM, &amp;env, zygote) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//执行onVmCreated方法，空方法</span></span><br><span class="line">    onVmCreated(env);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Register android functions.</span></span><br><span class="line">    <span class="keyword">if</span> (startReg(env) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        ALOGE(<span class="string">&quot;Unable to register all android natives\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Register android native functions with the VM.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> AndroidRuntime::startReg(JNIEnv* env)&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//register_jni_procs就是循环调用gRegJNI数组内的函数</span></span><br><span class="line">    <span class="keyword">if</span> (register_jni_procs(gRegJNI, NELEM(gRegJNI), env) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        env-&gt;PopLocalFrame(NULL);</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> AndroidRuntime::onVmCreated()&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//100多个函数</span></span><br><span class="line"><span class="comment">//REG_JNI是一个宏定义</span></span><br><span class="line"><span class="keyword">static</span> const RegJNIRec gRegJNI[] = &#123;</span><br><span class="line">    REG_JNI(register_com_android_internal_os_RuntimeInit),</span><br><span class="line">    REG_JNI(register_com_android_internal_os_ZygoteInit_nativeZygoteInit),</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//负责Java Binder和Native Binder通信的函数</span></span><br><span class="line">    REG_JNI(register_android_os_Binder),</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/jni/android_util_Binder.cpp</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">register_android_os_Binder</span><span class="params">(JNIEnv* env)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (int_register_android_os_Binder(env) &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (int_register_android_os_BinderInternal(env) &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (int_register_android_os_BinderProxy(env) &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>注册Binder类</li>
+<li>注册BinderInternal类</li>
+<li>注册BinderProxy类</li>
+</ol>
+<h3 id="Binder类的注册（BinderInternal类的注册-类似）"><a href="#Binder类的注册（BinderInternal类的注册-类似）" class="headerlink" title="Binder类的注册（BinderInternal类的注册 类似）"></a>Binder类的注册（BinderInternal类的注册 类似）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> const JNINativeMethod gBinderMethods[] = &#123;</span><br><span class="line">     <span class="comment">/* name, signature, funcPtr */</span></span><br><span class="line">     <span class="comment">//Binder的Native方法(Java层)与JNI层函数的对应关系</span></span><br><span class="line">    &#123; <span class="string">&quot;getCallingPid&quot;</span>, <span class="string">&quot;()I&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_getCallingPid &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;getCallingUid&quot;</span>, <span class="string">&quot;()I&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_getCallingUid &#125;,</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const <span class="type">char</span>* <span class="type">const</span> <span class="variable">kBinderPathName</span> <span class="operator">=</span> <span class="string">&quot;android/os/Binder&quot;</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="type">int</span> <span class="title function_">int_register_android_os_Binder</span><span class="params">(JNIEnv* env)</span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="type">jclass</span> <span class="variable">clazz</span> <span class="operator">=</span> FindClassOrDie(env, kBinderPathName);</span><br><span class="line">    gBinderOffsets.mClass = MakeGlobalRefOrDie(env, clazz);</span><br><span class="line">    gBinderOffsets.mExecTransact = GetMethodIDOrDie(env, clazz, <span class="string">&quot;execTransact&quot;</span>,</span><br><span class="line"><span class="string">&quot;(IJJI)Z&quot;</span>);</span><br><span class="line">    gBinderOffsets.mObject = GetFieldIDOrDie(env, clazz, <span class="string">&quot;mObject&quot;</span>, <span class="string">&quot;J&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//注册gBinderMethods中定义的函数</span></span><br><span class="line">    <span class="comment">//其中gBinderMethods 是JNINativeMethod类型的数组</span></span><br><span class="line">    <span class="comment">//里面存储的是(Java层)Binder的Native方法与JNI层函数的对应关系。</span></span><br><span class="line">    <span class="keyword">return</span> RegisterMethodsOrDie(</span><br><span class="line">        env, kBinderPathName,</span><br><span class="line">        gBinderMethods, NELEM(gBinderMethods));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用gBinderOffsets结构体，为了提升效率</span></span><br><span class="line"><span class="keyword">static</span> struct bindernative_offsets_t&#123;</span><br><span class="line">    jclass mClass;</span><br><span class="line">    jmethodID mExecTransact;</span><br><span class="line">    jfieldID mObject;</span><br><span class="line">&#125; gBinderOffsets;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AMS注册"><a href="#AMS注册" class="headerlink" title="AMS注册"></a>AMS注册</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/services/java/com/android/server/SystemServer.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;<span class="keyword">new</span> <span class="title class_">SystemServer</span>().run();&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">	……</span><br><span class="line">	startBootstrapServices();</span><br><span class="line">	……</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startBootstrapServices</span><span class="params">()</span> &#123;</span><br><span class="line">	……</span><br><span class="line">	<span class="comment">//844行</span></span><br><span class="line">	mActivityManagerService.setSystemProcess();</span><br><span class="line">	……</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//AMS继承自Bidner</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ActivityManagerService</span> <span class="keyword">extends</span> <span class="title class_">IActivityManager</span>.Stub</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setSystemProcess</span><span class="params">()</span> &#123;</span><br><span class="line">	……</span><br><span class="line">	<span class="comment">//这个this就是AMS</span></span><br><span class="line">	ServiceManager.addService(Context.ACTIVITY_SERVICE, <span class="built_in">this</span>, ……);</span><br><span class="line">	……</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/java/android/os/ServiceManager.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addService</span><span class="params">(String name, IBinder service)</span> &#123;</span><br><span class="line">    addService(name, service, <span class="literal">false</span>, IServiceManager.DUMP_FLAG_PRIORITY_DEFAULT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addService</span><span class="params">(String name, IBinder service, <span class="type">boolean</span> allowIsolated)</span> &#123;</span><br><span class="line">    addService(name, service, allowIsolated, IServiceManager.DUMP_FLAG_PRIORITY_DEFAULT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addService</span><span class="params">(String name, IBinder service, <span class="type">boolean</span> allowIsolated, <span class="type">int</span> dumpPriority)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        getIServiceManager().addService(name, service, allowIsolated, dumpPriority);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        Log.e(TAG, <span class="string">&quot;error in addService&quot;</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> IServiceManager <span class="title function_">getIServiceManager</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (sServiceManager != <span class="literal">null</span>) &#123;<span class="keyword">return</span> sServiceManager;&#125;</span><br><span class="line">    <span class="comment">// Find the service manager</span></span><br><span class="line">    sServiceManager = ServiceManagerNative</span><br><span class="line">            .asInterface(Binder.allowBlocking(BinderInternal.getContextObject()));</span><br><span class="line">    <span class="keyword">return</span> sServiceManager;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先处理getIServiceManager中的逻辑:</p>
+<ul>
+<li>BinderInternal.getContextObject()</li>
+<li>Binder.allowBlocking()</li>
+<li>ServiceManagerNative.asInterface()</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/core/java/com/android/internal/os/BinderInternal.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">native</span> IBinder <span class="title function_">getContextObject</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/jni/android_util_Binder.cpp</span></span><br><span class="line"><span class="keyword">static</span> jobject <span class="title function_">android_os_BinderInternal_getContextObject</span><span class="params">(JNIEnv* env, jobject clazz)</span>&#123;</span><br><span class="line">    <span class="comment">//这里返回一个 BpBinder</span></span><br><span class="line">    sp&lt;IBinder&gt; b = ProcessState::self()-&gt;getContextObject(NULL);</span><br><span class="line">    <span class="keyword">return</span> javaObjectForIBinder(env, b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sp&lt;IBinder&gt; ProcessState::getContextObject(const sp&lt;IBinder&gt;&amp;)&#123;</span><br><span class="line">    <span class="keyword">return</span> getStrongProxyForHandle(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sp&lt;IBinder&gt; ProcessState::getStrongProxyForHandle(int32_t handle)&#123;</span><br><span class="line">	……</span><br><span class="line">        <span class="keyword">if</span> (b == nullptr || !e-&gt;refs-&gt;attemptIncWeak(<span class="built_in">this</span>)) &#123;</span><br><span class="line">		……</span><br><span class="line">		 b = BpBinder::create(handle);</span><br><span class="line">		……</span><br><span class="line">        &#125;</span><br><span class="line">	……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得出ProcessState.getContextObject()返回BpBinder对象</p>
+<p>javaObjectForIBinder(env, b)返回一个BinderProxy对象，其中mObject（BinderProxy成员变量）记录了BpBinder对象</p>
+<p>得出BinderInternal.getContextObject()最终为BinderProxy对象（Java Binder的客户端的代表）</p>
+<p>Binder.allowBlocking的作用是将BinderProxy的sWarnOnBlocking值置为false</p>
+<h5 id="接着分析-ServiceManagerNative-asInterface"><a href="#接着分析-ServiceManagerNative-asInterface" class="headerlink" title="接着分析 ServiceManagerNative.asInterface()"></a>接着分析 ServiceManagerNative.asInterface()</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/core/java/android/os/ServiceManager.java</span></span><br><span class="line">sServiceManager = ServiceManagerNative</span><br><span class="line">                .asInterface(Binder.allowBlocking(BinderInternal.getContextObject()));</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/java/android/os/ServiceManagerNative.java</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">public</span> IServiceManager <span class="title function_">asInterface</span><span class="params">(IBinder obj)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="literal">null</span>) &#123;<span class="keyword">return</span> <span class="literal">null</span>;&#125;</span><br><span class="line">    <span class="type">IServiceManager</span> <span class="variable">in</span> <span class="operator">=</span> (IServiceManager)obj.queryLocalInterface(descriptor);</span><br><span class="line">    <span class="keyword">if</span> (in != <span class="literal">null</span>) &#123;<span class="keyword">return</span> in;&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ServiceManagerProxy</span>(obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以得出：<br>sServiceManager（getIServiceManager()）是ServiceManagerProxy对象，其中有addService方法</p>
+<h3 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Jave Binder 客户端的代表:BinderProxy</span><br><span class="line">Native Binder 客户端的代表:BpBinder</span><br><span class="line">Java：ServiceManagerProxy通过BinderProxy来实现通信</span><br><span class="line">Native：BpServiceManager通过BpBinder来实现通信</span><br></pre></td></tr></table></figure>
+
+<h5 id="接着分析addService"><a href="#接着分析addService" class="headerlink" title="接着分析addService()"></a>接着分析addService()</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/core/java/android/os/ServiceManagerNative.java#ServiceManagerProxy</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ServiceManagerProxy</span> <span class="keyword">implements</span> <span class="title class_">IServiceManager</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">ServiceManagerProxy</span><span class="params">(IBinder remote)</span> &#123;</span><br><span class="line">        <span class="comment">//remote为BinderProxy</span></span><br><span class="line">		mRemote = remote;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addService</span><span class="params">(String name, IBinder service, <span class="type">boolean</span> allowIsolated, <span class="type">int</span> dumpPriority)</span><span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        <span class="type">Parcel</span> <span class="variable">data</span> <span class="operator">=</span> Parcel.obtain();</span><br><span class="line">        <span class="type">Parcel</span> <span class="variable">reply</span> <span class="operator">=</span> Parcel.obtain();</span><br><span class="line">        <span class="comment">//将数据写入到Parcel类型的对象data中</span></span><br><span class="line">        data.writeInterfaceToken(IServiceManager.descriptor);</span><br><span class="line">        data.writeString(name);</span><br><span class="line">	    <span class="comment">//这里service是AMS</span></span><br><span class="line">        data.writeStrongBinder(service);</span><br><span class="line">        data.writeInt(allowIsolated ? <span class="number">1</span> : <span class="number">0</span>);</span><br><span class="line">        data.writeInt(dumpPriority);</span><br><span class="line">	    <span class="comment">//mRemote是BinderProxy对象</span></span><br><span class="line">        <span class="comment">//BinderProxy.transact是native函数</span></span><br><span class="line">        mRemote.transact(ADD_SERVICE_TRANSACTION, data, reply, <span class="number">0</span>);</span><br><span class="line">        reply.recycle();</span><br><span class="line">        data.recycle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/jni/android_util_Binder.cpp</span></span><br><span class="line"><span class="keyword">static</span> jboolean <span class="title function_">android_os_BinderProxy_transact</span><span class="params">()</span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//将Java层的Parcel对象转化成为Native层的Parcel对象</span></span><br><span class="line">    Parcel* data = parcelForJavaObject(env, dataObj);</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//将Java层的Parcel对象转化成为Native层的Parcel对象</span></span><br><span class="line">    Parcel* reply = parcelForJavaObject(env, replyObj);</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//获取保存在mObject内的BpBinder对象</span></span><br><span class="line">    IBinder* target = getBPNativeData(env, obj)-&gt;mObject.get();</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//最终调用BpBinder的transact方法</span></span><br><span class="line">    <span class="type">status_t</span> <span class="variable">err</span> <span class="operator">=</span> target-&gt;transact(code, *data, reply, flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出进行了 Framework -&gt; JNI -&gt; Native 这个过程</p>
+<p>接下来可参考【Binder之系统服务注册】一文，执行ioctl，像Binder驱动发送数据</p>
+<h5 id="分析-data-writeStrongBinder-service"><a href="#分析-data-writeStrongBinder-service" class="headerlink" title="分析 data.writeStrongBinder(service);"></a>分析 data.writeStrongBinder(service);</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/core/java/android/os/Parcel.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">writeStrongBinder</span><span class="params">(IBinder val)</span> &#123;</span><br><span class="line">    nativeWriteStrongBinder(mNativePtr, val);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/jni/android_os_Parcel.cpp</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">android_os_Parcel_writeStrongBinder</span><span class="params">(...)</span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    const <span class="type">status_t</span> <span class="variable">err</span> <span class="operator">=</span> parcel-&gt;writeStrongBinder(ibinderForJavaObject(env,object));</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/jni/android_util_Binder.cpp</span></span><br><span class="line">sp&lt;IBinder&gt; <span class="title function_">ibinderForJavaObject</span><span class="params">(JNIEnv* env, jobject obj)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (obj == NULL) <span class="keyword">return</span> NULL;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Instance of Binder?</span></span><br><span class="line">    <span class="keyword">if</span> (env-&gt;IsInstanceOf(obj, gBinderOffsets.mClass)) &#123;</span><br><span class="line">        JavaBBinderHolder* jbh = (JavaBBinderHolder*)</span><br><span class="line">            env-&gt;GetLongField(obj, gBinderOffsets.mObject);</span><br><span class="line">        <span class="keyword">return</span> jbh-&gt;get(env, obj);</span><br><span class="line">        <span class="comment">//查看源码可以看出jbh-&gt;get这里返回JavaBBinder</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Instance of BinderProxy?</span></span><br><span class="line">    <span class="keyword">if</span> (env-&gt;IsInstanceOf(obj, gBinderProxyOffsets.mClass)) &#123;</span><br><span class="line">        <span class="keyword">return</span> getBPNativeData(env, obj)-&gt;mObject;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ALOGW(<span class="string">&quot;ibinderForJavaObject: %p is not a Binder object&quot;</span>, obj);</span><br><span class="line">    <span class="keyword">return</span> NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得出：data.writeStrongBinder(service)<br>即 data.writeStrongBinder(JavaBBinder(Binder))<br>传入的不是AMS本身，而是JavaBBinder</p>
+<h5 id="JavaBBinder"><a href="#JavaBBinder" class="headerlink" title="JavaBBinder"></a>JavaBBinder</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/core/jni/android_util_Binder.cpp#JavaBBinderHolder#JavaBBinder</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">JavaBBinder</span> : <span class="keyword">public</span> BBinder&#123;<span class="comment">//可以看出继承BBinder</span></span><br><span class="line">    <span class="comment">//接受Binder驱动的响应</span></span><br><span class="line">    virtual status_t <span class="title function_">onTransact</span><span class="params">()</span>&#123;</span><br><span class="line">        ......</span><br><span class="line">        <span class="comment">//调用java层Binder的execTransact函数</span></span><br><span class="line">        <span class="comment">//这里结合【int_register_android_os_Binder】Binder注册来看</span></span><br><span class="line">        <span class="comment">//mObject就是Java层 Binder对象</span></span><br><span class="line">        <span class="type">jboolean</span> <span class="variable">res</span> <span class="operator">=</span> env-&gt;CallBooleanMethod(mObject,gBinderOffsets.mExecTransact,code, reinterpret_cast&lt;jlong&gt;(&amp;data), reinterpret_cast&lt;jlong&gt;(reply),flags);</span><br><span class="line">        ......</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/core/java/android/os/Binder.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">execTransact</span><span class="params">(<span class="type">int</span> code, <span class="type">long</span> dataObj, <span class="type">long</span> replyObj, <span class="type">int</span> flags)</span> &#123;</span><br><span class="line">    ......</span><br><span class="line">    execTransactInternal(code, dataObj, replyObj, flags, callingUid);</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">execTransactInternal</span><span class="params">(<span class="type">int</span> code, <span class="type">long</span> dataObj, <span class="type">long</span> replyObj, <span class="type">int</span> flags, <span class="type">int</span> callingUid)</span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    res = onTransact(code, data, reply, flags);</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//由于AMS实现了onTransact函数，逻辑回到AMS的onTransact方法</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/22/Android%20Framework/Binder%E4%B9%8BJava%E5%B1%82Binder/" data-id="clhoa7k4y001ptlcadqgf5xok" data-title="Binder之Java层Binder" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/31/Algorithm/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          依赖注入
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/21/Android%20Framework/Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E8%8E%B7%E5%8F%96/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Binder之系统服务获取</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

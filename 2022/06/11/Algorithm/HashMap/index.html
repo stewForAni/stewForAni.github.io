@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>HashMap知识点记录 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="HashMap 默认的初始大小是 16，最大装载因子默认是 0.75，底层采用链表法来解决冲突。在 JDK1.8 版本中，为了对 HashMap 做进一步优化，引入了红黑树。而当链表长度太长（默认超过 8）时，链表就转换为红黑树。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HashMap知识点记录">
+<meta property="og:url" content="https://stewforani.github.io/2022/06/11/Algorithm/HashMap/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="HashMap 默认的初始大小是 16，最大装载因子默认是 0.75，底层采用链表法来解决冲突。在 JDK1.8 版本中，为了对 HashMap 做进一步优化，引入了红黑树。而当链表长度太长（默认超过 8）时，链表就转换为红黑树。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://stewforani.github.io/images/hashmap1.png">
+<meta property="og:image" content="https://stewforani.github.io/images/hashmap2.png">
+<meta property="article:published_time" content="2022-06-11T15:22:16.000Z">
+<meta property="article:modified_time" content="2022-06-11T15:44:58.689Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stewforani.github.io/images/hashmap1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Algorithm/HashMap" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/06/11/Algorithm/HashMap/" class="article-date">
+  <time class="dt-published" datetime="2022-06-11T15:22:16.000Z" itemprop="datePublished">2022-06-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      HashMap知识点记录
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="HashMap-默认的初始大小是-16，最大装载因子默认是-0-75，底层采用链表法来解决冲突。在-JDK1-8-版本中，为了对-HashMap-做进一步优化，引入了红黑树。而当链表长度太长（默认超过-8）时，链表就转换为红黑树。"><a href="#HashMap-默认的初始大小是-16，最大装载因子默认是-0-75，底层采用链表法来解决冲突。在-JDK1-8-版本中，为了对-HashMap-做进一步优化，引入了红黑树。而当链表长度太长（默认超过-8）时，链表就转换为红黑树。" class="headerlink" title="HashMap 默认的初始大小是 16，最大装载因子默认是 0.75，底层采用链表法来解决冲突。在 JDK1.8 版本中，为了对 HashMap 做进一步优化，引入了红黑树。而当链表长度太长（默认超过 8）时，链表就转换为红黑树。"></a>HashMap 默认的初始大小是 16，最大装载因子默认是 0.75，底层采用链表法来解决冲突。在 JDK1.8 版本中，为了对 HashMap 做进一步优化，引入了红黑树。而当链表长度太长（默认超过 8）时，链表就转换为红黑树。<br><span id="more"></span></h2><h3 id="基础知识准备"><a href="#基础知识准备" class="headerlink" title="基础知识准备"></a>基础知识准备</h3><ul>
+<li><p>^（异或运算符）<br>^是针对二进制的二目运算符。运算规则：两个二进制数值如果在同一位上相同，则结果中该位为0，否则为1，比如1011 &amp; 0010 &#x3D; 1001。</p>
+</li>
+<li><p>|（或运算符）<br>|是针对二进制的二目运算符。运算规则：两个二进制数值如果在同一位上至少有一个1，则结果中该位为1，否则为0，比如1011 &amp; 0010 &#x3D; 1011。</p>
+</li>
+<li><p>&amp;（与运算符）<br>&amp;是是针对二进制的二目运算符。需要注意的是&amp;&amp;是java中判断条件之间表示“和”的标识符，&amp;是一个二目运算符，两个二进制数值如果在同一位上都是1，则结果中该位为1，否则为0，可以认为两个都是true(1)，结果也为true(1)，比如1011 &amp; 0110 &#x3D; 0010。</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li><p>HashMap 默认的初始大小是 16，当然这个默认值是可以设置的，如果事先知道大概的数据量有多大，可以通过修改默认初始大小，减少动态扩容的次数，这样会大大提高 HashMap 的性能。</p>
+</li>
+<li><p>最大装载因子默认是 0.75，当 HashMap 中元素个数超过 0.75*capacity（capacity 表示散列表的容量）的时候，就会启动扩容，每次扩容都会扩容为原来的两倍大小。</p>
+</li>
+<li><p>HashMap 底层采用链表法来解决冲突。</p>
+</li>
+</ul>
+<p>于是，在 JDK1.8 版本中，为了对 HashMap 做进一步优化，我们引入了红黑树。而当链表长度太长（默认超过 8）时，链表就转换为红黑树。我们可以利用红黑树快速增删改查的特点，提高 HashMap 的性能。当红黑树结点个数少于 8 个的时候，又会将红黑树转化为链表。因为在数据量较小的情况下，红黑树要维护平衡，比起链表来，性能上的优势并不明显。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">hash</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">h</span> <span class="operator">=</span> key.hashCode()；</span><br><span class="line">    <span class="keyword">return</span> (h ^ (h &gt;&gt;&gt; <span class="number">16</span>)) &amp; (capicity -<span class="number">1</span>); <span class="comment">//capicity表示散列表的大小</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//String的hashcode（其中的charAt取得是字符的ascii码值）</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">h</span> <span class="operator">=</span> hash;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> length();</span><br><span class="line">    <span class="keyword">if</span> (h == <span class="number">0</span> &amp;&amp; len &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            h = <span class="number">31</span> * h + charAt(i);</span><br><span class="line">        &#125;</span><br><span class="line">        hash = h;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>hash方法内的逻辑可以称为扰动函数</code></p>
+<ul>
+<li><p><font color = purple>hashcode返回的是int最高32位，如果直接作为下标，大概40亿映射空间，如果散列函数设计的比较均匀，一般很难出现碰撞，但是一个40亿长度的数组，内存放不下</font></p>
+</li>
+<li><p><font color = purple>32位int型数据，右移16位，相当于用自己的高半位和低半位进行异或，以此来加大低位的随机性</font></p>
+</li>
+<li><p><font color = purple>这样设计，可以使高位的变化反应到低位，而且保证了随机性</font></p>
+</li>
+<li><p><font color = purple>A%B &#x3D; A&amp;(B-1)，当B（散列表长度）为2的整次幂，相当于取模（位与运算的效率比求余高得多，从而提升了性能），可以保证index的位置分布均匀，以默认长度16为例，16-1&#x3D;15，即00001111，“与”操作结果相当于截取最低四位，四位有0-15的16种可能性，相当于取模了，一切为了分布均匀！</font></p>
+</li>
+</ul>
+<hr>
+<h3 id="HashMap如何控制数组的长度为2的整数次幂？"><a href="#HashMap如何控制数组的长度为2的整数次幂？" class="headerlink" title="HashMap如何控制数组的长度为2的整数次幂？"></a>HashMap如何控制数组的长度为2的整数次幂？</h3><h5 id="初始化指定长度"><a href="#初始化指定长度" class="headerlink" title="初始化指定长度"></a>初始化指定长度</h5><p>HashMap的数组长度为2的整数次幂，有利于上述[4]中的位与运算<br>如果指定一个非2的整数次幂，会自动转化成大于该指定数的最小2的整数次幂。如指定6则转化为8，指定11则转化为16。结合源码来分析，当我们初始化指定一个非2的整数次幂长度时，HashMap会调用tableSizeFor()方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">tableSizeFor</span><span class="params">(<span class="type">int</span> cap)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> cap - <span class="number">1</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">2</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">4</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">8</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">return</span> (n &lt; <span class="number">0</span>) ? <span class="number">1</span> : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">举例：cap = <span class="number">7</span>-<span class="number">1</span> = <span class="number">0000</span> <span class="number">0110</span></span><br><span class="line"><span class="number">0000</span> <span class="number">0110</span> 或运算 <span class="number">0000</span> <span class="number">0011</span> = <span class="number">0000</span> <span class="number">0111</span></span><br><span class="line"><span class="number">0000</span> <span class="number">0111</span> 或运算 <span class="number">0000</span> <span class="number">0001</span> = <span class="number">0000</span> <span class="number">0111</span></span><br><span class="line"><span class="number">0000</span> <span class="number">0111</span> 或运算 <span class="number">0000</span> <span class="number">0000</span> = <span class="number">0000</span> <span class="number">0111</span></span><br><span class="line"><span class="number">0000</span> <span class="number">0111</span> 或运算 <span class="number">0000</span> <span class="number">0000</span> = <span class="number">0000</span> <span class="number">0111</span></span><br><span class="line">…...</span><br><span class="line">最终 = <span class="number">0000</span> <span class="number">1000</span> = <span class="number">8</span>   即验证正确！</span><br></pre></td></tr></table></figure>
+
+<p>为什么必须要对cap进行-1之后再进行运算呢？如果指定的数刚好是2的整数次幂，如果没有-1结果会变成比他大两倍的数，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">举例：cap = <span class="number">8</span> = <span class="number">0000</span> <span class="number">1000</span></span><br><span class="line"><span class="number">0000</span> <span class="number">1000</span> 或运算 <span class="number">0000</span> <span class="number">0100</span> = <span class="number">0000</span> <span class="number">1100</span></span><br><span class="line"><span class="number">0000</span> <span class="number">1100</span> 或运算 <span class="number">0000</span> <span class="number">0011</span> = <span class="number">0000</span> <span class="number">1111</span></span><br><span class="line"><span class="number">0000</span> <span class="number">1111</span> 或运算 <span class="number">0000</span> <span class="number">0000</span> = <span class="number">0000</span> <span class="number">1111</span></span><br><span class="line">......</span><br><span class="line">最终 = <span class="number">0000</span> <span class="number">1111</span> + <span class="number">1</span> = <span class="number">16</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="扩容时的长度增量"><a href="#扩容时的长度增量" class="headerlink" title="扩容时的长度增量"></a>扩容时的长度增量</h5><p>HashMap每次扩容的大小都是原来的两倍，控制了数组大小一定是2的整数次幂</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newThr = oldThr &lt;&lt; <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>小结：<br>1.HashMap通过高16位和低16位异或运算来让高16位参与散列，且增加了低16位的随机性，提高了散列的效果<br>2.控制数组初始化的长度为2的整数次幂来简化取模运算，提高性能<br>3.扩容时也是翻倍处理，保证长度一直是2的整数次幂</p>
+<hr>
+<h3 id="哈希冲突解决方案"><a href="#哈希冲突解决方案" class="headerlink" title="哈希冲突解决方案"></a>哈希冲突解决方案</h3><p>再优秀的hash算法永远无法避免出现hash冲突。hash冲突指的是两个不同的key经过hash计算之后得到的数组下标是相同的。解决hash冲突的方式很多，如开放定址法、再哈希法、公共溢出表法、链地址法。HashMap采用的是链地址法，jdk1.8之后还增加了红黑树的优化</p>
+<p>出现冲突后，会在当前结点形成链表，当链表过长之后，会转化为红黑树（ 时间复杂度 &#x3D; O(logN) ），来提高效率，但红黑树只有在数据量较大时才能发挥它的优势。关于红黑树的转化，HashMap做了以下限制。</p>
+<ul>
+<li>当链表的长度&gt;&#x3D;8且数组长度&gt;&#x3D;64时，会把链表转化成红黑树。</li>
+<li>当链表长度&gt;&#x3D;8，但数组长度&lt;64时，会优先进行扩容，而不是转化成红黑树。</li>
+<li>当红黑树节点数&lt;&#x3D;6，自动转化成链表。</li>
+</ul>
+<h5 id="问题1-为什么需要数组大于64？"><a href="#问题1-为什么需要数组大于64？" class="headerlink" title="问题1:为什么需要数组大于64？"></a>问题1:为什么需要数组大于64？</h5><p>数组长度较短时，过早地使用红黑树，当发生扩容时，红黑树会被拆分，反而降低性能，所以一般长度低于64时，优先扩容</p>
+<h5 id="问题2-为什么大于等于8才转换红黑树？"><a href="#问题2-为什么大于等于8才转换红黑树？" class="headerlink" title="问题2:为什么大于等于8才转换红黑树？"></a>问题2:为什么大于等于8才转换红黑树？</h5><p>树结点比普通结点大，在数据较少的情况下，体现不出优势，而且浪费空间，在理论数学计算中，链表长度达到8的概率是百万分之一。</p>
+<h3 id="扩容方案"><a href="#扩容方案" class="headerlink" title="扩容方案"></a>扩容方案</h3><p>扩容之后需要进行数据迁移：<br>JDK1.7之前的数据迁移比较简单，就是遍历所有的节点，把所有的节点依次通过hash函数计算新的下标，再插入到新数组的链表中。<br>这样会有两个缺点：</p>
+<p>1、每个节点都需要进行一次求余计算；<br>2、插入到新的数组时候采用的是头插入法，在多线程环境下会形成链表环。</p>
+<p><code>jdk1.8之后进行了优化，原因在于他控制数组的长度始终是2的整数次幂，每次扩展数组都是原来的2倍，带来的好处是key在新的数组的hash结果只有两种：在原来的位置，或者在原来位置+原数组长度。</code></p>
+<img src="/images/hashmap1.png" width=512 height=450>
+
+<p>从图中我们可以看到，在新数组中的hash结果，仅仅取决于高一位的数值。如果高一位是0，那么计算结果就是在原位置，而如果是1，则加上原数组的长度即可。这样我们只需要判断一个节点的高一位是1 or 0就可以得到他在新数组的位置，而不需要重复hash计算。HashMap把每个链表拆分成两个链表，对应原位置或原位置+原数组长度，再分别插入到新的数组中，保留原来的节点顺序，如下：</p>
+<img src="/images/hashmap2.png" width=512 height=160>
+
+<p>小结：</p>
+<ul>
+<li>装载因子决定了HashMap扩容的阈值，需要权衡时间与空间，一般情况下保持0.75不作改动；</li>
+<li>HashMap扩容机制结合了数组长度为2的整数次幂的特点，以一种更高的效率完成数据迁移，同时避免头插法造成链表环。</li>
+</ul>
+<hr>
+<h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><p>HashMap并不是线程安全的，在多线程的情况下无法保证数据的一致性。举个例子：HashMap下标2的位置为null，线程A需要将节点X插入下标2的位置，在判断是否为null之后，线程被挂起；此时线程B把新的节点Y插入到下标2的位置；恢复线程A，节点X会直接插入到下标2，覆盖节点Y，导致数据丢失</p>
+<p>jdk1.7及以前扩容时采用的是头插法，这种方式插入速度快，但在多线程环境下会造成链表环，而链表环会在下一次插入时找不到链表尾而发生死循环。jdk1.8之后扩容采用了尾插法，解决了这个问题，但并没有解决数据的一致性问题。</p>
+<p>解决这个问题有三个方案：</p>
+<ul>
+<li>采用Hashtable</li>
+<li>调用Collections.synchronizeMap()方法来让HashMap具有多线程能力</li>
+<li>采用ConcurrentHashMap</li>
+</ul>
+<p>前两个方案的思路是相似的，均是每个方法中，对整个对象进行上锁。</p>
+<p>Hashtable是老一代的集合框架，很多的设计均以及落后，他在每一个方法中均加上了synchronize关键字保证线程安全。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Hashtable</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> V <span class="title function_">get</span><span class="params">(Object key)</span> &#123;...&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> V <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;...&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> V <span class="title function_">remove</span><span class="params">(Object key)</span> &#123;...&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> V <span class="title function_">replace</span><span class="params">(K key, V value)</span> &#123;...&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>这种简单粗暴锁整个对象的方式造成的后果是：<br>锁是非常重量级的，会严重影响性能。<br>同一时间只能有一个线程进行读写，限制了并发效率。</p>
+<p>ConcurrentHashMap的设计就是为了解决此问题。他通过降低锁粒度+CAS的方式来提高效率。简单来说，ConcurrentHashMap锁的并不是整个对象，而是一个数组的一个节点，那么其他线程访问数组其他节点是不会互相影响，极大提高了并发效率；同时ConcurrentHashMap读操作并不需要获取锁</p>
+<hr>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ConcurrentHashMap&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;abc&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line">Thread1:</span><br><span class="line"><span class="keyword">if</span> (map.containsKey(<span class="string">&quot;abc&quot;</span>))&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> map.get(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Thread2:</span><br><span class="line">map.remove(<span class="string">&quot;abc&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>当Thread1调用containsKey之后释放锁，Thread2获得锁并把“abc”移除再释放锁，这个时候Thread1读取到的s就是一个null了，也就出现了问题了。所以ConcurrentHashMap类或者Collections.synchronizeMap()方法或者Hashtable都只能在一定的限度上保证线程安全，而无法保证绝对线程安全。</p>
+<p>关于线程安全，还有一个fast-fail问题，即快速失败。当使用HashMap的迭代器遍历HashMap时，如果此时HashMap发生了结构性改变，如插入新数据、移除数据、扩容等，那么Iteractor会抛出fast-fail异常，防止出现并发异常，在一定限度上保证了线程安全</p>
+<hr>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li><code>HashMap并不能保证线程安全，在多线程并发访问下会出现意想不到的问题，如数据丢失等</code></li>
+<li><code>HashMap1.8采用尾插法进行扩容，防止出现链表环导致的死循环问题</code></li>
+<li><code>解决并发问题的的方案有Hashtable、Collections.synchronizeMap()、ConcurrentHashMap。其中最佳解决方案是ConcurrentHashMap</code></li>
+<li><code>上述解决方案并不能完全保证线程安全</code></li>
+<li><code>快速失败是HashMap迭代机制中的一种并发安全保证</code></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/06/11/Algorithm/HashMap/" data-id="clhoa7k4j0008tlcacohzawyp" data-title="HashMap知识点记录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/06/15/Algorithm/BinaryTree/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          二叉树（BinaryTree）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/06/10/Algorithm/HashTable/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">哈希表（HashTable）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RecyclerView动画 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="RecyclerView动画知识点记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecyclerView动画">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/03/Android%20Application/RecyclerView%E5%8A%A8%E7%94%BB/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="RecyclerView动画知识点记录">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-03T03:15:50.000Z">
+<meta property="article:modified_time" content="2023-03-15T10:05:33.774Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/RecyclerView动画" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/03/Android%20Application/RecyclerView%E5%8A%A8%E7%94%BB/" class="article-date">
+  <time class="dt-published" datetime="2022-07-03T03:15:50.000Z" itemprop="datePublished">2022-07-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RecyclerView动画
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="RecyclerView动画知识点记录"><a href="#RecyclerView动画知识点记录" class="headerlink" title="RecyclerView动画知识点记录"></a>RecyclerView动画知识点记录<br><span id="more"></span></h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>列表中有两个表项（1、2），删除 2，此时 3 会从屏幕底部平滑地移入并占据原来 2 的位置。</p>
+<p><code>item1</code><br><code>item2</code><br><code>删除item2，item3自动补位</code><br><code>item1</code><br><code>item3</code></p>
+<p>RecyclerView的策略是：<br>为动画前的表项先执行一次pre-layout，将不可见的表项 3 也加载到布局中，形成（1、2、3）<br>再为动画后的表项执行一次post-layout，同样形成（1、3）</p>
+<h3 id="pre-layout预布局"><a href="#pre-layout预布局" class="headerlink" title="pre-layout预布局"></a>pre-layout预布局</h3><ul>
+<li>RecyclerView为了实现表项动画，进行了 2 次布局（预布局 + 后布局），在源码上表现为LayoutManager.onLayoutChildren()被调用 2 次。</li>
+<li>预布局的过程始于RecyclerView.dispatchLayoutStep1()，终于RecyclerView.dispatchLayoutStep2()。</li>
+<li>在预布局阶段，循环填充表项时，若遇到被移除的表项，则会忽略它占用的空间，多余空间被用来加载额外的表项，这些表项在屏幕之外，本来不会被加载。（导致while循环多执行一次，这样表项 3 就被填充进列表。）</li>
+</ul>
+<h5 id="先清空表项再填充"><a href="#先清空表项再填充" class="headerlink" title="先清空表项再填充"></a>先清空表项再填充</h5><ol>
+<li><p>detach表项<br>detachViewAt(index)<br>……<br>RecyclerView.this.detachViewFromParent(offset);<br>ViewGroup.removeFromArray()是容器控件移除子控件的最后一步（ViewGroup.removeView()也会调用这个方法）</p>
+</li>
+<li><p>scrap表项<br>recycler.scrapView(view)<br>&#x2F;&#x2F; 表项不需要更新，或被移除，或者表项索引无效时，将被会收到 mAttachedScrap<br>mAttachedScrap.add(holder);<br>&#x2F;&#x2F; 只有当表项没有被移除且有效且需要更新时才会被回收到 mChangedScrap<br>mChangedScrap.add(holder);</p>
+</li>
+</ol>
+<h3 id="与-scrap-缓存的关系"><a href="#与-scrap-缓存的关系" class="headerlink" title="与 scrap 缓存的关系"></a>与 scrap 缓存的关系</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 scrap 结构中获取指定 position 的 ViewHolder 实例 </span></span><br><span class="line"><span class="keyword">if</span> (holder == <span class="literal">null</span>) &#123;</span><br><span class="line">    holder = getScrapOrHiddenOrCachedHolderForPosition(position, dryRun);</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从mAttachedScrap列表中获取的ViewHolder实例后，得进行校验。校验的内容很多，其中最重要的的是：ViewHolder索引值和当前填充表项的位置值是否相等，即：<br><code>scrap 结构缓存的 ViewHolder 实例，只能复用于和它回收时相同位置的表项。</code></p>
+<h5 id="“何必这样折腾？即先-detach-并-缓存表项到-scrap-结构中，然后紧接着又在填充表项时从中取出？”"><a href="#“何必这样折腾？即先-detach-并-缓存表项到-scrap-结构中，然后紧接着又在填充表项时从中取出？”" class="headerlink" title="“何必这样折腾？即先 detach 并 缓存表项到 scrap 结构中，然后紧接着又在填充表项时从中取出？”"></a>“何必这样折腾？即先 detach 并 缓存表项到 scrap 结构中，然后紧接着又在填充表项时从中取出？”</h5><p>因为 RecyclerView 要做表项动画，</p>
+<p>为了确定动画的种类和起终点，需要比对动画前和动画后的两张“表项快照”，</p>
+<p>为了获得两张快照，就得布局两次，分别是预布局和后布局（布局即是往列表中填充表项），</p>
+<p>为了让两次布局互不影响，就不得不在每次布局前先清除上一次布局的内容（就好比先清除画布，重新作画），</p>
+<p>但是两次布局中所需的某些表项大概率是一摸一样的，若在清除画布时，把表项的所有信息都一并清除，那重新作画时就会花费更多时间（重新创建 ViewHolder 并绑定数据），</p>
+<p>RecyclerView 采取了用空间换时间的做法：在清除画布时把表项缓存在 scrap 结构中，以便在填充表项可以命中缓存，以缩短填充表项耗时。</p>
+<h3 id="阻止回收"><a href="#阻止回收" class="headerlink" title="阻止回收"></a>阻止回收</h3><p>并不是所有的表项动画都会阻止表项被回收，只有通过ViewPropertyAnimator做动画才会。<br>只要在onFailedToRecycleView()回调中取消动画，并且返回 true 表示强制回收即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">adapter.onFailedToRecycleView = &#123; holder -&gt;</span><br><span class="line">    <span class="comment">// 在回收表项之前取消动画</span></span><br><span class="line">    (holder as? TextViewHolder)?.tv?.animate()?.cancel()</span><br><span class="line">    <span class="comment">// 返回 true 表示强制回收表项</span></span><br><span class="line">    <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/03/Android%20Application/RecyclerView%E5%8A%A8%E7%94%BB/" data-id="clhoa7k4w001gtlcahmprcyvs" data-title="RecyclerView动画" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/03/Algorithm/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          字符串匹配
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/03/Android%20Application/RecyclerView%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">RecyclerView知识点</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

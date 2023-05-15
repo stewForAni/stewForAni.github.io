@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Android项目架构知识点记录 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="开发架构就是描述视图层、逻辑层、数据层三者之间的关系">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android项目架构知识点记录">
+<meta property="og:url" content="https://stewforani.github.io/2022/05/09/Android%20Application/Android%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="开发架构就是描述视图层、逻辑层、数据层三者之间的关系">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://stewforani.github.io/images/mvc.png">
+<meta property="og:image" content="https://stewforani.github.io/images/mvp.png">
+<meta property="og:image" content="https://stewforani.github.io/images/my_project_mvp.png">
+<meta property="og:image" content="https://stewforani.github.io/images/mvvm.png">
+<meta property="og:image" content="https://stewforani.github.io/images/jetpack_mvvm.png">
+<meta property="article:published_time" content="2022-05-09T08:45:28.000Z">
+<meta property="article:modified_time" content="2023-04-21T09:55:54.540Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stewforani.github.io/images/mvc.png">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/Android项目架构" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/09/Android%20Application/Android%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84/" class="article-date">
+  <time class="dt-published" datetime="2022-05-09T08:45:28.000Z" itemprop="datePublished">2022-05-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Android项目架构知识点记录
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="开发架构就是描述视图层、逻辑层、数据层三者之间的关系-视图层：用户界面，即界面的展示、以及交互事件的响应。-逻辑层：为了实现系统功能而进行的必要逻辑。-数据层：数据的获取和存储，含本地、server。"><a href="#开发架构就是描述视图层、逻辑层、数据层三者之间的关系-视图层：用户界面，即界面的展示、以及交互事件的响应。-逻辑层：为了实现系统功能而进行的必要逻辑。-数据层：数据的获取和存储，含本地、server。" class="headerlink" title="开发架构就是描述视图层、逻辑层、数据层三者之间的关系+ 视图层：用户界面，即界面的展示、以及交互事件的响应。+ 逻辑层：为了实现系统功能而进行的必要逻辑。+ 数据层：数据的获取和存储，含本地、server。"></a>开发架构就是描述视图层、逻辑层、数据层三者之间的关系<br><span id="more"></span><br>+ 视图层：用户界面，即界面的展示、以及交互事件的响应。<br>+ 逻辑层：为了实现系统功能而进行的必要逻辑。<br>+ 数据层：数据的获取和存储，含本地、server。</h2><h3 id="MVC-Model-View-Controller"><a href="#MVC-Model-View-Controller" class="headerlink" title="MVC : Model-View-Controller"></a>MVC : Model-View-Controller</h3><ul>
+<li>Model：模型层，即数据模型，用于获取和存储数据。</li>
+<li>View：视图层，即xml布局</li>
+<li>Controller：控制层，负责业务逻辑</li>
+</ul>
+<img src="/images/mvc.png" width=256 height=128>
+
+<p>View层接收到用户操作事件，通知到 Controller 进行对应的逻辑处理，然后通知 Model去获取&#x2F;更新数据，Model再把新的数据 通知到View更新界面。这就是一个完整 MVC 的数据流向。但在Android中，因为xml布局能力很弱，View的很多操作是在Activity&#x2F;Fragment中的，而业务逻辑同样也是写在Activity&#x2F;Fragment中。</p>
+<h2 id="所以，MVC的问题点-如下：1-Activity-x2F-Fragment-责任不明，同时负责View、Controller，就会导致其中代码量大，不满足单一职责。2-Model耦合View，View-的修改会导致-Controller-和-Model-都进行改动，不满足最少知识原则。"><a href="#所以，MVC的问题点-如下：1-Activity-x2F-Fragment-责任不明，同时负责View、Controller，就会导致其中代码量大，不满足单一职责。2-Model耦合View，View-的修改会导致-Controller-和-Model-都进行改动，不满足最少知识原则。" class="headerlink" title="所以，MVC的问题点 如下：1.Activity&#x2F;Fragment 责任不明，同时负责View、Controller，就会导致其中代码量大，不满足单一职责。2.Model耦合View，View 的修改会导致 Controller 和 Model 都进行改动，不满足最少知识原则。"></a>所以，MVC的问题点 如下：<br>1.Activity&#x2F;Fragment 责任不明，同时负责View、Controller，就会导致其中代码量大，不满足单一职责。<br>2.Model耦合View，View 的修改会导致 Controller 和 Model 都进行改动，不满足最少知识原则。</h2><h3 id="MVP-Model-View-Presenter"><a href="#MVP-Model-View-Presenter" class="headerlink" title="MVP : Model-View-Presenter"></a>MVP : Model-View-Presenter</h3><ul>
+<li>Model，模型层，即数据模型，用于获取和存储数据。</li>
+<li>View，视图层，即Activity&#x2F;Fragment</li>
+<li>Presenter，控制层，负责业务逻辑。</li>
+</ul>
+<img src="/images/mvp.png" width=256 height=128>
+
+<p>MVP解决了MVC的问题：<br>1.View责任明确，逻辑不再写在Activity中，而是在Presenter中；<br>2.Model不再持有View。</p>
+<p>View层 接收到用户操作事件，通知到Presenter，Presenter进行逻辑处理，然后通知Model更新数据，Model 把更新的数据给到Presenter，Presenter再通知到 View 更新界面。</p>
+<p>自有项目MVP架构总结图，MVP有很多种，每个项目多多少少都会不一样</p>
+<img src="/images/my_project_mvp.png" width=1440 height=858>
+
+<p>所以 MVP 有问题点 如下：<br>MVP解决了View层责任不明的问题，但并没有解决代码耦合的问题，View和Presenter之间相互持有。<br>1.会引入大量的IView、IPresenter接口，增加实现的复杂度。<br>2.View和Presenter相互持有，形成耦合。</p>
+<hr>
+<h3 id="MVVM-Model-View-ViewModel"><a href="#MVVM-Model-View-ViewModel" class="headerlink" title="MVVM : Model-View-ViewModel"></a>MVVM : Model-View-ViewModel</h3><p>Model，模型层，即数据模型，用于获取和存储数据。<br>View，视图，即Activity&#x2F;Fragment<br>ViewModel，视图模型，负责业务逻辑。</p>
+<img src="/images/mvvm.png" width=256 height=128>
+
+<p>注意，MVVM这里的ViewModel就是一个名称，可以理解为MVP中的Presenter。不等同于上一篇中的 ViewModel组件 ，Jetpack ViewModel组件是 对 MVVM的ViewModel 的具体实施方案</p>
+<p>MVVM 的本质是 数据驱动，把解耦做的更彻底，viewModel不持有view 。<br>View 产生事件，使用 ViewModel进行逻辑处理后，通知Model更新数据，Model把更新的数据给ViewModel，ViewModel自动通知View更新界面，而不是主动调用View的方法。</p>
+<p>Jetpack MVVM 是 MVVM 模式在 Android 开发中的一个具体实现，是 Android中 Google 官方提供并推荐的 MVVM实现方式。不仅通过数据驱动完成彻底解耦，还兼顾了 Android 页面开发中其他不可预期的错误，例如Lifecycle 能在妥善处理 页面生命周期 避免view空指针问题，ViewModel使得UI发生重建时 无需重新向后台请求数据，节省了开销，让视图重建时更快展示数据。首先，请查看下图，该图显示了所有模块应如何彼此交互：</p>
+<img src="/images/jetpack_mvvm.png" width=512 height=474>
+
+<p>各模块对应MVVM架构：</p>
+<ul>
+<li>View层：Activity&#x2F;Fragment</li>
+<li>ViewModel层：Jetpack ViewModel + Jetpack LivaData</li>
+<li>Model层：Repository仓库，包含 本地持久性数据 和 服务端数据</li>
+</ul>
+<p>View层：包含了我们平时写的Activity&#x2F;Fragment&#x2F;布局文件等与界面相关的东西。</p>
+<p>ViewModel层：用于持有和UI元素相关的数据，以保证这些数据在屏幕旋转时不会丢失，并且还要提供接口给View层调用以及和仓库层进行通信。</p>
+<p>Repository层：要做的主要工作是判断调用方请求的数据应该是从本地数据源中获取还是从网络数据源中获取，并将获取到的数据返回给调用方。本地数据源可以使用数据库、SharedPreferences等持久化技术来实现，而网络数据源则通常使用Retrofit访问服务器提供的Webservice接口来实现。</p>
+<hr>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#DataCallBack.kt</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">DataCallBack</span>&lt;<span class="type">T</span>&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">onSuccess</span><span class="params">(<span class="keyword">data</span>: <span class="type">T</span>)</span></span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">onFailed</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br/>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#User.kt</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> name:String = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">var</span> age:String = <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br/>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#UserRepository.kt</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">        <span class="keyword">lateinit</span> <span class="keyword">var</span> sInstance: UserRepository</span><br><span class="line">        <span class="meta">@MainThread</span></span><br><span class="line">        <span class="function"><span class="keyword">fun</span> <span class="title">get</span><span class="params">()</span></span>: UserRepository &#123;</span><br><span class="line">            sInstance = <span class="keyword">if</span> (<span class="keyword">this</span>::sInstance.isInitialized) sInstance <span class="keyword">else</span> UserRepository()</span><br><span class="line">            <span class="keyword">return</span> sInstance</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getUserFromServer</span><span class="params">(c: <span class="type">DataCallBack</span>&lt;<span class="type">List</span>&lt;<span class="type">User</span>&gt;&gt;)</span></span> &#123;</span><br><span class="line">        Thread &#123;</span><br><span class="line">            Thread.sleep(<span class="number">2000</span>)</span><br><span class="line">            <span class="keyword">val</span> list = ArrayList&lt;User&gt;()</span><br><span class="line">            <span class="keyword">for</span> (index <span class="keyword">in</span> <span class="number">1.</span><span class="number">.10</span>) &#123;</span><br><span class="line">                <span class="keyword">val</span> a = User()</span><br><span class="line">                a.name = <span class="string">&quot;stew&quot;</span></span><br><span class="line">                a.age = <span class="string">&quot;30&quot;</span></span><br><span class="line">                list.add(a)</span><br><span class="line">            &#125;</span><br><span class="line">            c.onSuccess(list)</span><br><span class="line">            <span class="comment">//存本地数据库</span></span><br><span class="line">            <span class="comment">//saveUsersToLocal(users);</span></span><br><span class="line">        &#125;.start()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//从本地数据库获取</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getUsersFromLocal</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">    <span class="comment">//存入本地数据库 (从服务端获取数据后可以调用)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">saveUsersToLocal</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br/>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#UserListViewModel.kt</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserListViewModel</span> : <span class="type">ViewModel</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userList: MutableLiveData&lt;List&lt;User&gt;&gt; <span class="keyword">by</span> lazy &#123;</span><br><span class="line">        MutableLiveData&lt;List&lt;User&gt;&gt;()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> isLoading: MutableLiveData&lt;<span class="built_in">Boolean</span>&gt; <span class="keyword">by</span> lazy &#123;</span><br><span class="line">        MutableLiveData&lt;<span class="built_in">Boolean</span>&gt;()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getUserLiveData</span><span class="params">()</span></span>: MutableLiveData&lt;List&lt;User&gt;&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> userList</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getLoadingLiveData</span><span class="params">()</span></span>: MutableLiveData&lt;<span class="built_in">Boolean</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> isLoading</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getUserData</span><span class="params">()</span></span> &#123;</span><br><span class="line">        isLoading.value = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">        UserRepository.<span class="keyword">get</span>().getUserFromServer(<span class="keyword">object</span> :DataCallBack&lt;List&lt;User&gt;&gt;&#123;</span><br><span class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onSuccess</span><span class="params">(<span class="keyword">data</span>: <span class="type">List</span>&lt;<span class="type">User</span>&gt;)</span></span> &#123;</span><br><span class="line">                userList.postValue(<span class="keyword">data</span>)</span><br><span class="line">                isLoading.postValue(<span class="literal">false</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onFailed</span><span class="params">()</span></span> &#123;</span><br><span class="line">                isLoading.postValue(<span class="literal">false</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br/>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#TestUserActivity.kt</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TestUserActivity</span> : <span class="type">AppCompatActivity</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> userModel: UserListViewModel <span class="keyword">by</span> viewModels()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_user)</span><br><span class="line"></span><br><span class="line">        userModel.getUserLiveData().observe(<span class="keyword">this</span>, &#123;</span><br><span class="line">            findViewById&lt;TextView&gt;(R.id.user).text = it.toString()</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        userModel.getLoadingLiveData().observe(<span class="keyword">this</span>, &#123;</span><br><span class="line">            findViewById&lt;ProgressBar&gt;(R.id.progressBar).visibility = <span class="keyword">if</span> (it) View.VISIBLE <span class="keyword">else</span> View.GONE</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        userModel.getUserData()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6921321173661777933#heading-8">https://juejin.cn/post/6921321173661777933#heading-8</a><br><a target="_blank" rel="noopener" href="https://github.com/stewForAni/Kotlin-Jetpack">https://github.com/stewForAni/Kotlin-Jetpack</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/05/09/Android%20Application/Android%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84/" data-id="clhoa7k4r000ytlca5llk7nbm" data-title="Android项目架构知识点记录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/05/11/Android%20Kotlin%20Jetpack/DataBinding/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Jetpack 之 DataBinding使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/01/01/Android%20Application/Handler/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Handler</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

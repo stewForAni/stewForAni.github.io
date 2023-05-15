@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RecyclerView知识点 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="RecyclerView知识点记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecyclerView知识点">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/03/Android%20Application/RecyclerView%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="RecyclerView知识点记录">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-03T03:15:50.000Z">
+<meta property="article:modified_time" content="2023-03-15T11:30:05.162Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/RecyclerView知识点记录" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/03/Android%20Application/RecyclerView%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time class="dt-published" datetime="2022-07-03T03:15:50.000Z" itemprop="datePublished">2022-07-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RecyclerView知识点
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="RecyclerView知识点记录"><a href="#RecyclerView知识点记录" class="headerlink" title="RecyclerView知识点记录"></a>RecyclerView知识点记录<br><span id="more"></span></h2><h3 id="获取缓存"><a href="#获取缓存" class="headerlink" title="获取缓存"></a>获取缓存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mLayout.onLayoutChildren()</span><br><span class="line">fill()</span><br><span class="line"><span class="comment">//循环条件 = 剩余空间大于0</span></span><br><span class="line"><span class="keyword">while</span>()&#123; layoutChunk() &#125;</span><br><span class="line"><span class="comment">//layoutChunk获取表项</span></span><br><span class="line"><span class="type">View</span> <span class="variable">view</span> <span class="operator">=</span> layoutState.next(recycler);</span><br><span class="line"><span class="type">View</span> <span class="variable">view</span> <span class="operator">=</span> recycler.getViewForPosition(mCurrentPosition)</span><br><span class="line">tryGetViewHolderForPositionByDeadline()</span><br><span class="line"></span><br><span class="line"><span class="comment">//取到之后，使view成为rv子视图</span></span><br><span class="line">addView(view);</span><br><span class="line"><span class="comment">//测量</span></span><br><span class="line">measureChildWithMargins(view, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//布局</span></span><br><span class="line">layoutDecoratedWithMargins(view, left, top, right, bottom);</span><br><span class="line"></span><br><span class="line"><span class="comment">//其中addView()的最终落脚点是ViewGroup.attachViewToParent()</span></span><br></pre></td></tr></table></figure>
+
+<p>Recycler有4个层次用于缓存 ViewHolder 对象，优先级从高到底依次为:</p>
+<ul>
+<li>ArrayList<ViewHolder> mAttachedScrap</li>
+<li>ArrayList<ViewHolder> mCachedViews &#x2F;&#x2F;只有“列表回滚”这一种场景</li>
+<li>ViewCacheExtension mViewCacheExtension</li>
+<li>RecycledViewPool mRecyclerPool</li>
+</ul>
+<p>如果四层缓存都未命中，则重新创建并绑定 ViewHolder 对象。</p>
+<hr>
+<h3 id="RecycledViewPool"><a href="#RecycledViewPool" class="headerlink" title="RecycledViewPool"></a>RecycledViewPool</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SparseArray&lt;ScrapData&gt; mScrap = <span class="keyword">new</span> <span class="title class_">SparseArray</span>&lt;&gt;();</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ScrapData</span> &#123;</span><br><span class="line">    <span class="comment">//同类ViewHolder存储在ArrayList中</span></span><br><span class="line">    ArrayList&lt;ViewHolder&gt; mScrapHeap = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="comment">//每种类型的ViewHolder最多存5个</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">mMaxScrap</span> <span class="operator">=</span> DEFAULT_MAX_SCRAP;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="填充-gt-回收-gt-滚动"><a href="#填充-gt-回收-gt-滚动" class="headerlink" title="填充-&gt;回收-&gt;滚动"></a>填充-&gt;回收-&gt;滚动</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//RecyclerView.java</span></span><br><span class="line"><span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">        <span class="comment">//父控件优先</span></span><br><span class="line">        dispatchNestedPreScroll()</span><br><span class="line">        scrollByInternal()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//自身滚动</span></span><br><span class="line">scrollStep()</span><br><span class="line"><span class="comment">//将列表未消耗的滚动距离继续留给其父控件消耗</span></span><br><span class="line">dispatchNestedScroll()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//下面scrollStep()调用链</span></span><br><span class="line"><span class="keyword">if</span> (y != <span class="number">0</span>) &#123; </span><br><span class="line">    <span class="comment">// 垂直滚动</span></span><br><span class="line">    consumedY = mLayout.scrollVerticallyBy(y, mRecycler, mState);</span><br><span class="line">    unconsumedY = y - consumedY;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//LayoutManager.java</span></span><br><span class="line">scrollVerticallyBy()</span><br><span class="line">scrollBy()</span><br><span class="line">fill()<span class="comment">//先填充再滚动</span></span><br><span class="line">mOrientationHelper.offsetChildren(-scrolled);</span><br><span class="line"></span><br><span class="line"><span class="comment">//OrientationHelper.java</span></span><br><span class="line">mLayoutManager.offsetChildrenVertical(amount);</span><br><span class="line"></span><br><span class="line"><span class="comment">//RecyclerView.java</span></span><br><span class="line">mRecyclerView.offsetChildrenVertical(dy);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; childCount; i++) &#123;</span><br><span class="line">    mChildHelper.getChildAt(i).offsetTopAndBottom(dy);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//View.java</span></span><br><span class="line"><span class="comment">//该方法会修改 View 的 mTop 和 mBottom 值,并触发轻量级的重绘</span></span><br><span class="line">offsetTopAndBottom()</span><br></pre></td></tr></table></figure>
+<p>接着看fill</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">fill()</span><br><span class="line"></span><br><span class="line"><span class="comment">//不断获取新表项用于填充的同时也在回收表项，就好比滚动着的列表，有表项插入的同时也有表项被移出</span></span><br><span class="line"><span class="comment">//循环条件 = 剩余空间大于0</span></span><br><span class="line"><span class="keyword">while</span>()&#123;</span><br><span class="line">    <span class="comment">//填充新的表项</span></span><br><span class="line">    layoutChunk()</span><br><span class="line">    <span class="comment">//回收表项</span></span><br><span class="line">    recycleByLayoutState(recycler, layoutState);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">recycleByLayoutState</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (layoutState.mLayoutDirection == LayoutState.LAYOUT_START) &#123;</span><br><span class="line">        recycleViewsFromEnd();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        recycleViewsFromStart();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">recycleViewsFromStart()&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//其中noRecycleSpace的值为 0</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> <span class="variable">limit</span> <span class="operator">=</span> scrollingOffset - noRecycleSpace;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; childCount; i++) &#123;</span><br><span class="line">        <span class="type">View</span> <span class="variable">child</span> <span class="operator">=</span> getChildAt(i);</span><br><span class="line">        <span class="keyword">if</span> (mOrientationHelper.getDecoratedEnd(child) &gt; limit || ......) &#123;</span><br><span class="line">            <span class="comment">//回收索引为 0 到 i-1 的表项</span></span><br><span class="line">            recycleChildren(recycler, <span class="number">0</span>, i);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//回收索引为 0 到 i-1 的表项</span></span><br><span class="line">recycleChildren()&#123;</span><br><span class="line">    <span class="keyword">for</span>()&#123;</span><br><span class="line">        removeAndRecycleViewAt(i, recycler);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中scrollingOffset定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">updateLayoutState()&#123;</span><br><span class="line">    <span class="comment">//计算出该表项底部到列表顶部的距离，然后在减去列表长度。这个差值可以理解为在不往列表里填充新表项的情况下，列表最多可以滚动多少像素</span></span><br><span class="line">    scrollingOffset = mOrientationHelper.getDecoratedEnd(child) - mOrientationHelper.getEndAfterPadding();</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 将列表因滚动而需要的额外空间存储在 mLayoutState.mAvailable</span></span><br><span class="line">    mLayoutState.mAvailable = requiredSpace;</span><br><span class="line">    mLayoutState.mScrollingOffset = scrollingOffset;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>逻辑是关键：mOrientationHelper.getDecoratedEnd(child) &gt; limit，mOrientationHelper.getDecoratedEnd(child)计算出该表项底部到列表顶部的距离，在纵向列表中，“表项底部纵坐标 &gt; 某个值”意味着表项位于某条线的下方，即 limit 是列表中隐形的线，所有在这条线上方的表项都应该被回收。limit &#x3D; 在不往列表里填充新表项的情况下，列表最多可以滚动多少像素，比如：列表底部露出半个表现6.则limit &#x3D; 表现6bottom - 列表height &#x3D; 一半的表现6height</p>
+<p>回到代码可知，如果第一个表项的getDecoratedEnd值 大于  limit，则回收 recycleChildren(recycler, 0, 0)，即没有任何回收</p>
+<h5 id="再回到fill"><a href="#再回到fill" class="headerlink" title="再回到fill()"></a>再回到fill()</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fill()&#123;</span><br><span class="line">    <span class="keyword">while</span>()&#123;</span><br><span class="line">        ......</span><br><span class="line">        layoutChunk();</span><br><span class="line">        ......</span><br><span class="line">        <span class="comment">// 在 limit 上追加新表项所占像素值</span></span><br><span class="line">        layoutState.mScrollingOffset += layoutChunkResult.mConsumed;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见每一次while，mScrollingOffset是变大的<br>【这里逻辑有待研究……】</p>
+<h5 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h5><ul>
+<li>RecyclerView 在滚动发生之前，会根据滚动位移大小来决定需要向列表中填充多少新的表项。</li>
+<li>RecyclerView 在滚动发生之前，会计算出一条limit 隐形线，它是决定哪些表项该被回收的重要依据。触发回收逻辑时，会遍历当前所有表项，若某表项的底部位于limit 隐形线下方，则该表项上方的所有表项都会被回收。</li>
+</ul>
+<hr>
+<h3 id="fling"><a href="#fling" class="headerlink" title="fling"></a>fling</h3><p>RecyclerView 的脱手滚动不是立刻执行的，触发脱手滚动时，一个叫ViewFlinger的Runnable会被抛到Choreographer中，它被包装成一个动画任务。等待下一个垂直同步信号到来时，这个任务就在主线程被执行。</p>
+<p>OverScroller来计算每一段的滑动距离</p>
+<hr>
+<h3 id="mAttachedScrap"><a href="#mAttachedScrap" class="headerlink" title="mAttachedScrap"></a>mAttachedScrap</h3><p>在将表项一个个填充到列表之前会先将其先回收到mAttachedScrap中</p>
+<p>mAttachedScrap生命周期起始于RecyclerView布局开始(dispatchLayoutStep2)，终止于RecyclerView布局结束(dispatchLayoutStep3)。</p>
+<p>mAttachedScrap用于屏幕中可见表项的回收和复用</p>
+<p><code>举个简单的例子，列表有1-4个表项，现删除了第3个表项，这会触发layout过程，RecyclerView的layout有好多个阶段，第一阶段列表的4个表项对应的ViewHolder都会被存入scrap列表，layout的最后阶段会去取用于用于展示的表项（1，2，4，5），此时1，2，4表项就可以从scap中获取，而5从recycler pool中获取</code></p>
+<hr>
+<h3 id="RV预加载"><a href="#RV预加载" class="headerlink" title="RV预加载"></a>RV预加载</h3><h5 id="监听列表滚动状态"><a href="#监听列表滚动状态" class="headerlink" title="监听列表滚动状态"></a>监听列表滚动状态</h5> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(layoutManager.findLastVisibleItemPosition() &gt; 某个值)&#123;</span><br><span class="line">    loaddata();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>容易出现bug，不准确，而且和LayoutManager类型耦合</p>
+<h5 id="类型无关预加载"><a href="#类型无关预加载" class="headerlink" title="类型无关预加载"></a>类型无关预加载</h5><p>可以把刚才的判断逻辑移到</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">override fun <span class="title function_">onBindViewHolder</span><span class="params">(holder: ViewHolder, position: Int)</span>&#123;</span><br><span class="line">    <span class="comment">//根据position来决定是否加载数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>不需要关心列表滑动的快慢，因为所有表项都会经历onBindViewHolder()，索引值和预加载阈值就可以用&#x3D;&#x3D;做判断。</li>
+<li>不要担心用户在列表底部多次上拉导致回调多次预加载，因为这种情况下onBindViewHolder()不会执行多次。<br>（如果滑动过长，触发了onBindViewHolder，可以用标识位）</li>
+<li>当RecyclerView更换LayoutManager时，也不需要修改代码。</li>
+</ol>
+<hr>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><ol>
+<li>onCreateViewHolder中的加载xml布局，可以换成动态代码，弃用xml</li>
+<li>也可以使用异步加载布局 AsyncLayoutInflater</li>
+<li>ConstraintLayout没有性能优势</li>
+<li>Glide初始化比较耗时，可以提前初始化</li>
+</ol>
+<hr>
+<h3 id="notifyDataSetChanged"><a href="#notifyDataSetChanged" class="headerlink" title="notifyDataSetChanged"></a>notifyDataSetChanged</h3><p>RecyclerView 在真正刷新列表之前，将一切都无效化了。包括当前所有被填充表项及离屏缓存中的 ViewHolder 实例。无效化体现在代码上即是为 ViewHolder 添加 FLAG_UPDATE 和 FLAG_INVALID 标志位。</p>
+<p>因为在上一节的“无效化”阶段，ViewHolder 被添加了 FLAG_UPDATE 和 FLAG_INVALID 标志位，所以就满足了!holder.isBound() || holder.needsUpdate() || holder.isInvalid()这个条件，从缓存池命中的 ViewHolder 就得重新绑定数据。</p>
+<hr>
+<h3 id="参考文章："><a href="#参考文章：" class="headerlink" title="参考文章："></a>参考文章：</h3><p><a target="_blank" rel="noopener" href="https://juejin.cn/column/6962854213718130701?share_token=6f2049ad-b27c-44bc-87c1-476b0894fd13">https://juejin.cn/column/6962854213718130701?share_token=6f2049ad-b27c-44bc-87c1-476b0894fd13</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/03/Android%20Application/RecyclerView%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" data-id="clhoa7k4x001itlcaaeoj8pyd" data-title="RecyclerView知识点" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/03/Android%20Application/RecyclerView%E5%8A%A8%E7%94%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          RecyclerView动画
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/03/Android%20Application/RecyclerView/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">RecyclerView</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

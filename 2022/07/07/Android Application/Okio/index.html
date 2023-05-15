@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>java-io / Okio | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Okio是对java.io和java.nio的补充，它使访问，存储和处理数据变得更加容易。Sink代表的输出流，Source代表的是输入流。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java-io &#x2F; Okio">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/07/Android%20Application/Okio/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Okio是对java.io和java.nio的补充，它使访问，存储和处理数据变得更加容易。Sink代表的输出流，Source代表的是输入流。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-07T10:18:44.000Z">
+<meta property="article:modified_time" content="2023-03-23T10:42:19.661Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/Okio" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/07/Android%20Application/Okio/" class="article-date">
+  <time class="dt-published" datetime="2022-07-07T10:18:44.000Z" itemprop="datePublished">2022-07-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      java-io / Okio
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Okio是对java-io和java-nio的补充，它使访问，存储和处理数据变得更加容易。Sink代表的输出流，Source代表的是输入流。"><a href="#Okio是对java-io和java-nio的补充，它使访问，存储和处理数据变得更加容易。Sink代表的输出流，Source代表的是输入流。" class="headerlink" title="Okio是对java.io和java.nio的补充，它使访问，存储和处理数据变得更加容易。Sink代表的输出流，Source代表的是输入流。"></a>Okio是对java.io和java.nio的补充，它使访问，存储和处理数据变得更加容易。Sink代表的输出流，Source代表的是输入流。<br><span id="more"></span></h2><h3 id="传统io"><a href="#传统io" class="headerlink" title="传统io"></a>传统io</h3><p>InputStream 和 OutputStream 区别:<br>内存 ———OutputStream——&gt; （write写入到）外部存储(文件)<br>外部存储(文件) ———IntputStream——&gt; （read读出到）内存</p>
+<p>装饰器设计模式应用场景有个很重要的特点：装饰器类会附加跟原始类相关的增强功能</p>
+<p>实现机制：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FileInputStream</span> <span class="keyword">extends</span> <span class="title class_">InputStream</span>&#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BufferedInputStream</span> <span class="keyword">extends</span> <span class="title class_">FilterInputStream</span> &#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FilterInputStream</span> <span class="keyword">extends</span> <span class="title class_">InputStream</span> &#123;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">volatile</span> InputStream in;</span><br><span class="line">  <span class="keyword">protected</span> <span class="title function_">FilterInputStream</span><span class="params">(InputStream in)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.in = in;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">return</span> in.read();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    in.close();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>BufferedInputStream就是这个装饰器类，它提供的增强功能：增加缓存功能。通过提供一块缓冲区，输入流可以先放到这个缓冲区里面，然后再输出到目的地（内存或网络）。它的好处就减少和内存的读取交互次数，毕竟频繁的读取交互是比较耗费性能的。</p>
+<p><code>举个例子解释下缓冲区是如何提升性能的：</code><br><code>假设有一个8K大小的文件，如果仅使用InputStream来读取，每次读取1K，则需要读取8次，也就需要和文件交互8次。但如果使用缓冲流BufferedInputStream来读取，在第一次读取文件的时候，就会从文件中一次性读取8K（BufferedInputStream中默认缓冲区大小）数据到缓冲区中，虽然最后还是得会从缓冲区每次读取1K，共读取8次，但是这8次是从缓冲区读，远比直接与文件交互的性能高。另外可见的是，当文件数据越大，通过缓冲区的方式效率提升越明显。</code></p>
+<hr>
+<h3 id="OKio代码示例："><a href="#OKio代码示例：" class="headerlink" title="OKio代码示例："></a>OKio代码示例：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(<span class="meta">@Nullable</span> Bundle savedInstanceState)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_okio);</span><br><span class="line">    createFile();</span><br><span class="line">    readFromFile();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readFromFile</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (file.exists()) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            source = Okio.source(file);</span><br><span class="line">            bufferedSource = Okio.buffer(source);</span><br><span class="line">            <span class="type">String</span> <span class="variable">data</span> <span class="operator">=</span> bufferedSource.readString(StandardCharsets.UTF_8);</span><br><span class="line">            source.close();</span><br><span class="line">            Log.d(TAG, <span class="string">&quot;readFromFile: &quot;</span> + data);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">createFile</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">File</span> <span class="variable">f</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(pathName);</span><br><span class="line">    <span class="keyword">if</span> (!f.exists()) &#123;</span><br><span class="line">        f.mkdirs();</span><br><span class="line">    &#125;</span><br><span class="line">    writeData(<span class="keyword">new</span> <span class="title class_">File</span>(fileName));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeData</span><span class="params">(File file)</span> &#123;</span><br><span class="line">    Log.d(TAG, <span class="string">&quot;writeData: &quot;</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        sink = Okio.appendingSink(file);</span><br><span class="line">        bufferedSink = Okio.buffer(sink);</span><br><span class="line">        bufferedSink.writeUtf8(<span class="string">&quot;stew1&quot;</span>);</span><br><span class="line">        bufferedSink.writeUtf8(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        bufferedSink.writeUtf8(<span class="string">&quot;stew2&quot;</span>);</span><br><span class="line">        bufferedSink.flush();</span><br><span class="line">        sink.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从代码中可以看出，读写文件关键一步要创建出 BufferedSource 或 BufferedSink 对象。有了这两个对象，就可以直接读写文件了。</p>
+<p>不过也没比传统IO使用简洁到哪里去。其实是因为这个例子比较简单，前面提到传统IO使用了装饰者设计模式来可以提供增强能力。</p>
+<p>把场景稍微变复杂点，那假设需要读取一个整数或浮点数，就需要用DataInputStream来增强，同时为了效率还需要缓存功能，就还要装饰一层BufferInputStream。类似下面这样（核心代码）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fileStream = <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(path); </span><br><span class="line">binStream = <span class="keyword">new</span> <span class="title class_">BufferedInputStream</span>(fileStream); </span><br><span class="line">dataInputStream = <span class="keyword">new</span> <span class="title class_">DataInputStream</span>(binStream); </span><br><span class="line">dataInputStream.readInt();</span><br></pre></td></tr></table></figure>
+
+<p>但Okio为我们提供的BufferedSink和BufferedSource就具有以上基本所有的功能，不需要再串上一系列的装饰类。类似下面这样（核心代码）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Source</span> <span class="variable">source</span> <span class="operator">=</span> Okio.source(<span class="keyword">new</span> <span class="title class_">File</span>(path));</span><br><span class="line"><span class="type">BufferedSource</span> <span class="variable">bufferedSource</span> <span class="operator">=</span> Okio.buffer(source)) &#123;</span><br><span class="line">bufferedSource.readInt()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Sink"><a href="#Sink" class="headerlink" title="Sink"></a>Sink</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Sink</span> <span class="keyword">extends</span> <span class="title class_">Closeable</span>, Flushable&#123;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">write</span><span class="params">(Buffer source, <span class="type">long</span> byteCount)</span> <span class="keyword">throws</span> IOException;</span><br><span class="line">	<span class="meta">@Override</span> <span class="keyword">void</span> <span class="title function_">flush</span><span class="params">()</span> <span class="keyword">throws</span> IOException;</span><br><span class="line">	Timeout <span class="title function_">timeout</span><span class="params">()</span>;</span><br><span class="line">	<span class="meta">@Override</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BufferedSink</span> <span class="keyword">extends</span> <span class="title class_">Sink</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">RealBufferedSink</span> <span class="keyword">implements</span> <span class="title class_">BufferedSink</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Source</span> <span class="keyword">extends</span> <span class="title class_">Closeable</span> &#123;</span><br><span class="line">	<span class="type">long</span> <span class="title function_">read</span><span class="params">(Buffer sink, <span class="type">long</span> byteCount)</span> <span class="keyword">throws</span> IOException;</span><br><span class="line">	Timeout <span class="title function_">timeout</span><span class="params">()</span>;</span><br><span class="line">	<span class="meta">@Override</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BufferedSource</span> <span class="keyword">extends</span> <span class="title class_">Source</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">RealBufferedSource</span> <span class="keyword">implements</span> <span class="title class_">BufferedSource</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Timeout-Okio中的超时机制"><a href="#Timeout-Okio中的超时机制" class="headerlink" title="Timeout(Okio中的超时机制)"></a>Timeout(Okio中的超时机制)</h3><h5 id="同步超时："><a href="#同步超时：" class="headerlink" title="同步超时："></a>同步超时：</h5><p>例如当从输入流 Source 读取数据超时后，输入流将被关闭，任务到此结束</p>
+<p>主要使用两个判断条件来判断任务是否超时了：<br>任务设置了结束时间( hasDeadline &#x3D; true )并且当前已经过了结束时间( deadlineNanoTime )<br>任务已经过了超时时间( timeoutNanos )</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Timeout</span> &#123;</span><br><span class="line">    .....</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> hasDeadline;<span class="comment">//是否设置了结束时间</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">long</span> deadlineNanoTime;<span class="comment">//结束时间</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">long</span> timeoutNanos;<span class="comment">//超时时间</span></span><br><span class="line">    .....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>sink和source方法中都有timeout.throwIfReached();</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">throwIfReached</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">  <span class="keyword">if</span> (Thread.interrupted()) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InterruptedIOException</span>(<span class="string">&quot;thread interrupted&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (hasDeadline &amp;&amp; deadlineNanoTime - System.nanoTime() &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InterruptedIOException</span>(<span class="string">&quot;deadline reached&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>waitUntilNotified方法中用到了timeoutNanos</p>
+<h5 id="异步超时："><a href="#异步超时：" class="headerlink" title="异步超时："></a>异步超时：</h5><p>Okio对于socket的封装，使用了AsyncTimeout，是继承于Timeout所实现的一个异步超时类，用于任务超时后，关闭 Socket</p>
+<hr>
+<h3 id="Segment"><a href="#Segment" class="headerlink" title="Segment"></a>Segment</h3><p>Segment字面翻译就是片段，Okio将数据也就是Buffer分割成一块块的片段，同时segment拥有前置节点和后置节点，构成一个双向循环链表</p>
+<p><code>这样采取分片使用链表连接，片中使用数组存储，兼具读的连续性，以及写的可插入性，对比单一使用链表或者数组，是一种折中的方案，读写更快，而且有个好处根据需求改动分片的大小来权衡读写的业务操作</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">SIZE</span> <span class="operator">=</span> <span class="number">8192</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">SHARE_MINIMUM</span> <span class="operator">=</span> <span class="number">1024</span>;</span><br><span class="line"><span class="keyword">final</span> <span class="type">byte</span>[] data;</span><br><span class="line"><span class="type">int</span> pos;</span><br><span class="line"><span class="type">int</span> limit;</span><br><span class="line"><span class="type">boolean</span> shared;</span><br><span class="line"><span class="type">boolean</span> owner;</span><br><span class="line">Segment pre;</span><br><span class="line">Segment next;</span><br></pre></td></tr></table></figure>
+
+<p>SIZE就是一个segment的最大字节数<br>SHARE_MINIMUM和共享内存有关<br>data就是保存的字节数组<br>pos，limit就是开始和结束点的index<br>shared和owner用来设置状态判断是否可写，一个有共享内存的segment是不能写入的<br>pre，next就是前置后置节点。</p>
+<h3 id="SegmentPool-，segment的对象池"><a href="#SegmentPool-，segment的对象池" class="headerlink" title="SegmentPool ，segment的对象池"></a>SegmentPool ，segment的对象池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">MAX_SIZE</span> <span class="operator">=</span> <span class="number">64</span> * <span class="number">1024</span>;</span><br><span class="line"><span class="keyword">static</span> Segment next;</span><br><span class="line"><span class="keyword">static</span> <span class="type">long</span> byteCount;</span><br></pre></td></tr></table></figure>
+
+<p>池子的上限是64k，相当于8个segment，next这个节点可以看出SegmentPool是按照单链表的方式进行存储的，byteCount则是目前已有的大小。</p>
+<p><code>take()，recycle(Segment segment)，操作中都有加锁逻辑</code></p>
+<p>如果要回收的segment有前后引用或者是共享的，就不能被回收，所以要回收前先将引用置空，同样这里也加了锁，以免那个同时回收超过池子最大的大小，然后就是将回收的插到表头的操作。所以SegmentPool无论是回收和取对象都是在表头操作。</p>
+<hr>
+<p><code>Okio围绕着两个封装了许多功能的类型来组建的：——ByteStrings和Buffers</code></p>
+<h3 id="不可变的ByteString"><a href="#不可变的ByteString" class="headerlink" title="不可变的ByteString"></a>不可变的ByteString</h3><p>ByteString不仅是不可变的，同时在内部有两个filed，分别是byte数据，以及String的数据，这样能够让这个类在Byte和String转换上基本没有开销，同样的也需要保存两份引用，这是明显的空间换时间的方式</p>
+<h3 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a>Buffer</h3><p>Buffer这个类实际上就是整个读和写的核心，括 RealBufferedSource和RealBufferedSink 实际上都只是一个代理，里面的操作全部都是通过Buffer来完成的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Buffer</span> <span class="keyword">implements</span> <span class="title class_">BufferedSource</span>, BufferedSink, Cloneable &#123; </span><br><span class="line"><span class="type">long</span> size;</span><br><span class="line">Segment head;</span><br></pre></td></tr></table></figure>
+
+<p>Buffer一共实现了三个接口，读，写，以及clone。<br>clone是一种对象生成的方式，是除了常规的new·关键字以及反序列化之外的一种方式，主要分为深拷贝和浅拷贝两种，Buffer采用的是深拷贝的方式</p>
+<p>对应实现的clone方法，如果整个Buffer的size为null，也就是没有数据，那么就返回一个新建的Buffer对象，如果不为空就是遍历所有的segment并且都创建一个对应的Segment，这样clone出来的对象就是一个全新的毫无关系的对象。</p>
+<p>举例：</p>
+<p>writeShort用来给Buffer中写入一个short的数据，首先通过writableSegment拿到一个能够有2个字节空间的segment，tail中的data就是字节数组，limit则是数据的尾部索引，写数据就是在尾部继续往后写，直接设置在data通过limit自增后的index，然后重置尾部索引，并且buffer的size大小加2。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//整型：</span></span><br><span class="line"><span class="comment">//byte:1个字节 8位 -128~127</span></span><br><span class="line"><span class="comment">//short ：2个字节 16位</span></span><br><span class="line"><span class="comment">//int ：4个字节 32位</span></span><br><span class="line"><span class="comment">//long：8个字节 64位</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//浮点型：</span></span><br><span class="line"><span class="comment">//float：4个字节 32 位</span></span><br><span class="line"><span class="comment">//double ：8个字节 64位</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span> <span class="keyword">public</span> Buffer <span class="title function_">writeShort</span><span class="params">(<span class="type">int</span> s)</span> &#123;</span><br><span class="line">  <span class="type">Segment</span> <span class="variable">tail</span> <span class="operator">=</span> writableSegment(<span class="number">2</span>);</span><br><span class="line">  <span class="type">byte</span>[] data = tail.data;</span><br><span class="line">  <span class="type">int</span> <span class="variable">limit</span> <span class="operator">=</span> tail.limit;</span><br><span class="line">  data[limit++] = (<span class="type">byte</span>) ((s &gt;&gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xff</span>);</span><br><span class="line">  data[limit++] = (<span class="type">byte</span>)  (s        &amp; <span class="number">0xff</span>);</span><br><span class="line">  tail.limit = limit;</span><br><span class="line">  size += <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>readShort:如果short被segment分隔开  通过readByte来一个个字节读</p>
+<p>读的方法相对于写的方法就复杂一些，因为buffer是分块的，读数据的过程就有可能是跨segment的，比如前面一个字节，下一个segment一个字节，这种情况就转化为readbyte，读两个字节后合成一个short对象，对于连续的读可以直接通过pos索引自增达到目的，读完后Buffer的size减2。</p>
+<p>并且会有当前的segment会出现读完后数据为null的情况，此时头部索引pos和尾部索引limit就重合了，通过pop方法可以把这个segment分离出来，并且将下一个segment设置为Buffer的head，然后将分离出来的segment回收到对象池中。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/07/Android%20Application/Okio/" data-id="clhoa7k4v001ctlca4cokdixe" data-title="java-io / Okio" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/10/Android%20Application/Bitmap/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Bitmap
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/06/Android%20Application/Notification/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Notification</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

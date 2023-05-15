@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>JNI(2) | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="JNI是Android系统中Java与Native交互的桥梁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNI(2)">
+<meta property="og:url" content="https://stewforani.github.io/2022/07/16/Android%20Framework/JNI(2)/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="JNI是Android系统中Java与Native交互的桥梁">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-16T15:02:39.000Z">
+<meta property="article:modified_time" content="2023-03-18T10:44:45.467Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Framework/JNI(2)" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/16/Android%20Framework/JNI(2)/" class="article-date">
+  <time class="dt-published" datetime="2022-07-16T15:02:39.000Z" itemprop="datePublished">2022-07-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      JNI(2)
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="JNI是Android系统中Java与Native交互的桥梁"><a href="#JNI是Android系统中Java与Native交互的桥梁" class="headerlink" title="JNI是Android系统中Java与Native交互的桥梁"></a>JNI是Android系统中Java与Native交互的桥梁<br><span id="more"></span></h2><h3 id="数据类型的转换"><a href="#数据类型的转换" class="headerlink" title="数据类型的转换"></a>数据类型的转换</h3><table>
+<thead>
+<tr>
+<th>Java</th>
+<th>Native</th>
+<th>Signature</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>byte</td>
+<td>jbyte</td>
+<td>B</td>
+</tr>
+<tr>
+<td>char</td>
+<td>jchar</td>
+<td>C</td>
+</tr>
+<tr>
+<td>double</td>
+<td>jdouble</td>
+<td>D</td>
+</tr>
+<tr>
+<td>float</td>
+<td>jfloat</td>
+<td>F</td>
+</tr>
+<tr>
+<td>int</td>
+<td>jint</td>
+<td>I</td>
+</tr>
+<tr>
+<td>short</td>
+<td>jshort</td>
+<td>S</td>
+</tr>
+<tr>
+<td>long</td>
+<td>jlong</td>
+<td>J</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>jboolean</td>
+<td>Z</td>
+</tr>
+<tr>
+<td>void</td>
+<td>void</td>
+<td>V</td>
+</tr>
+<tr>
+<td>String</td>
+<td>jstring</td>
+<td>Ljava&#x2F;lang&#x2F;String;</td>
+</tr>
+</tbody></table>
+<hr>
+<p>Java具有重载方法，可以定义方法名相同，但参数不同的方法，所以通过方法签名和方法名就可以找到对应的Java方法。</p>
+<p>但是<code>方法签名</code>比较难写，可以使用如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">javac xxx.java</span><br><span class="line">javap -s -p xxx.class</span><br><span class="line"><span class="comment">//其中s 表示输出内部类型签名，p表示打印出所有的方法和成员</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="JNIEnv"><a href="#JNIEnv" class="headerlink" title="JNIEnv"></a>JNIEnv</h3><p>JNIEnv 是一个指向全部JNI方法的指针，该指针只在创建它的线程有效，不能跨线程传递，因此，不同线程的JNIEnv是彼此独立，可以调用Java的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//libnativehelper/include_jni/jni.h</span></span><br><span class="line">#<span class="keyword">if</span> <span class="title function_">defined</span><span class="params">(__cplusplus)</span></span><br><span class="line">typedef _JNIEnv JNIEnv;<span class="comment">//C++中JNIEnv的类型 </span></span><br><span class="line">typedef _JavaVM JavaVM; </span><br><span class="line">#<span class="keyword">else</span></span><br><span class="line">typedef const struct JNINativeInterface* JNIEnv;<span class="comment">//C中JNIEnv的类型  </span></span><br><span class="line">typedef const struct JNIInvokeInterface* JavaVM;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">jfieldID  <span class="title function_">GetFieldID</span><span class="params">(jclass clazz,const <span class="type">char</span> *name,const <span class="type">char</span> *sig)</span>;</span><br><span class="line">jmethodID  <span class="title function_">GetFieldID</span><span class="params">(jclass clazz,const <span class="type">char</span> *name,const <span class="type">char</span> *sig)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中GetFieldID方法的三个参数：</p>
+<ul>
+<li>jclass代表Java类</li>
+<li>name代表成员方法或者成员变量的名字</li>
+<li>sig为这个方法和变量的签名</li>
+</ul>
+<p>通过JavaVM的AttachCurrentThread函数可以获取这个线程的JNIEnv，可以在不同的线程中调用Java方法，在使用AttachCurrentThread函数的线程退出前，调用DetachCurrentThread函数来释放资源。</p>
+<h3 id="MediaRecorder-JNI层-举例"><a href="#MediaRecorder-JNI层-举例" class="headerlink" title="MediaRecorder JNI层 举例"></a>MediaRecorder JNI层 举例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/base/media/jni/android_media_MediaRecorder.cpp</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">android_media_MediaRecorder_native_init</span><span class="params">(JNIEnv *env)</span>&#123;</span><br><span class="line">    jclass clazz;</span><br><span class="line">    clazz = env-&gt;FindClass(<span class="string">&quot;android/media/MediaRecorder&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (clazz == NULL) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    fields.context = env-&gt;GetFieldID(clazz, <span class="string">&quot;mNativeContext&quot;</span>, <span class="string">&quot;J&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (fields.context == NULL) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    fields.surface = env-&gt;GetFieldID(clazz, <span class="string">&quot;mSurface&quot;</span>, <span class="string">&quot;Landroid/view/Surface;&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (fields.surface == NULL) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">jclass</span> <span class="variable">surface</span> <span class="operator">=</span> env-&gt;FindClass(<span class="string">&quot;android/view/Surface&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (surface == NULL) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    fields.post_event = env-&gt;GetStaticMethodID(clazz, <span class="string">&quot;postEventFromNative&quot;</span>,</span><br><span class="line">                                               <span class="string">&quot;(Ljava/lang/Object;IIILjava/lang/Object;)V&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (fields.post_event == NULL) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过fields_t结构体，保存这些变量，方便下次使用</span></span><br><span class="line">struct fields_t &#123;</span><br><span class="line">    jfieldID    context;</span><br><span class="line">    jfieldID    surface;</span><br><span class="line">    jmethodID   post_event;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">static</span> fields_t fields;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//可以看出，使用了fields.post_event</span></span><br><span class="line"><span class="keyword">void</span> JNIMediaRecorderListener::notify(<span class="type">int</span> msg, <span class="type">int</span> ext1, <span class="type">int</span> ext2)&#123;</span><br><span class="line">    ALOGV(<span class="string">&quot;JNIMediaRecorderListener::notify&quot;</span>);</span><br><span class="line">    JNIEnv *env = AndroidRuntime::getJNIEnv();</span><br><span class="line">    env-&gt;CallStaticVoidMethod(mClass, fields.post_event, mObject, msg, ext1, ext2, NULL);<span class="comment">//1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br>
+
+<hr>
+<h3 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h3><p><a target="_blank" rel="noopener" href="http://liuwangshu.cn/tags/Android%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JNI/">http://liuwangshu.cn/tags/Android%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JNI/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/07/16/Android%20Framework/JNI(2)/" data-id="clhoa7k54002atlca8oe04snm" data-title="JNI(2)" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/framework/" rel="tag">framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/18/Android%20Framework/Binder%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Binder知识点记录
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/16/Android%20Framework/JNI(1)/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JNI(1)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

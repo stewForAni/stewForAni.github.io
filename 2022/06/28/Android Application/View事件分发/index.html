@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>View事件分发 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="调用dispatchTouchEvent方法分发事件调用onInterceptTouchEvent拦截事件调用onTouchEvent来处理事件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="View事件分发">
+<meta property="og:url" content="https://stewforani.github.io/2022/06/28/Android%20Application/View%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="调用dispatchTouchEvent方法分发事件调用onInterceptTouchEvent拦截事件调用onTouchEvent来处理事件">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://stewforani.github.io/images/view1.png">
+<meta property="og:image" content="https://stewforani.github.io/images/view2.png">
+<meta property="og:image" content="https://stewforani.github.io/images/view3.png">
+<meta property="og:image" content="https://stewforani.github.io/images/view4.png">
+<meta property="article:published_time" content="2022-06-28T04:00:51.000Z">
+<meta property="article:modified_time" content="2023-03-27T12:57:53.425Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stewforani.github.io/images/view1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Application/View事件分发" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/06/28/Android%20Application/View%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" class="article-date">
+  <time class="dt-published" datetime="2022-06-28T04:00:51.000Z" itemprop="datePublished">2022-06-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      View事件分发
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="调用dispatchTouchEvent方法分发事件调用onInterceptTouchEvent拦截事件调用onTouchEvent来处理事件"><a href="#调用dispatchTouchEvent方法分发事件调用onInterceptTouchEvent拦截事件调用onTouchEvent来处理事件" class="headerlink" title="调用dispatchTouchEvent方法分发事件调用onInterceptTouchEvent拦截事件调用onTouchEvent来处理事件"></a>调用dispatchTouchEvent方法分发事件<br>调用onInterceptTouchEvent拦截事件<br>调用onTouchEvent来处理事件<br><span id="more"></span></h2><h3 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h3><p>关键方法和成员变量：</p>
+<ul>
+<li><p>dispatchTouchEvent( ) &#x2F; handled (boolean类型，作为dispatchTouchEvent内部变量和返回结果)</p>
+</li>
+<li><p>onInterceptTouchEvent( )</p>
+</li>
+<li><p>dispatchTransformedTouchEvent( ) &#x2F; mFirstTouchTarget</p>
+</li>
+<li><p>onTouchEvent( )</p>
+</li>
+</ul>
+<br/>
+
+<img src="/images/view1.png" width=1024 height=307>
+
+<br/>
+<br/>
+
+<img src="/images/view2.png" width=1024 height=679>
+
+<br/>
+
+<p><code>onTouchListener优先级比onTouchEvent要高，onTouchEvent内有onClick的逻辑，也可以说onTouchListener优先级比onClick要高</code></p>
+<p>不管有没有拦截事件，如果没有消费DOWN事件，则mFirstTarget &#x3D; null，则接下来的MOVE和UP，都会走<code>intercepter=true(由于intercepted = true;导致不会进入mFirstTouchTarget赋值逻辑，即mFirstTouchTarget=null，走super.dispatchTouchEvent，即自身onTouchEvent逻辑)</code>逻辑，所以走的是DecorView的onTouchEvent( )，即Activity的dispatchTouchEvent返回false，继续走Activity的onTouchEvent( )</p>
+<p><code>哪个view的onTouchEvent( )消费了事件，则接下来的MOVE和UP都会走到这个view</code></p>
+<hr>
+<h3 id="mFirstTouchTarget-有什么作用"><a href="#mFirstTouchTarget-有什么作用" class="headerlink" title="mFirstTouchTarget 有什么作用"></a>mFirstTouchTarget 有什么作用</h3><p><code>非多点触控：mFirstTouchTarget链表退化成单个TouchTarget对象。</code></p>
+<p><code>多点触控，目标相同：同样为单个TouchTarget对象，只是pointerIdBits保存多个pointerId信息。</code></p>
+<p><code>多点触控，目标不同：mFirstTouchTarget成为链表。</code></p>
+<ul>
+<li><p>1.为什么要把mFirstTouchTarget设计成链表<br>是用于记录多点触控情况下，多目标控件的派分逻辑。</p>
+</li>
+<li><p>2.记录目标的TouchTarget的pointerIdBits又起到什么作用。<br>配合mFirstTouchTarget，使多点触控时，同个目标可以对多个触控点进行合理的处理逻辑。</p>
+</li>
+<li><p>3.按下A，再按下A（多点触控），为什么释放后A的点击事件只会触发一次。<br>ACTION_DOWN被A消耗，ACTION_POINTER_DOWN也被A消耗，此时相当于A是2个触控点的目标元素。<br>当释放任意一个触控点时，对应的事件是ACTION_POINTER_UP而不是ACTION_UP，导致不产生点击事件。</p>
+</li>
+<li><p>4.按下A，按下VG（空白区域），为什么先释放A，却无法触发A的点击事件，继续释放VG，又会触发A的点击事件。<br>这里属于ACTION_POINTER_DOWN事件<br>ACTION_POINTER_DOWN无法找到目标时视为ACTION_DOWN目标接收派分</p>
+</li>
+<li><p>5.按下VG（空白区域），再点击A，B无响应。<br>这里属于ACTION_POINTER_DOWN事件<br>当点击VG空白位置时，由于不存在消耗ACTION_DOWN的子控件，导致mFirstTouchTarget为空。任何后续事件的派分，都会由于拦截标记intercepted &#x3D; true而被拦截，包括多点触控ACTION_POINTER_DOWN事件。</p>
+</li>
+</ul>
+<hr>
+<h3 id="FrameWork层"><a href="#FrameWork层" class="headerlink" title="FrameWork层"></a>FrameWork层</h3><h3 id="1-1-硬件与内核部分"><a href="#1-1-硬件与内核部分" class="headerlink" title="1.1 硬件与内核部分"></a>1.1 硬件与内核部分</h3><p>当屏幕被触摸，Linux内核会将硬件产生的触摸事件包装为Event存到&#x2F;dev&#x2F;input&#x2F;event[x]目录下。<br>这样做的目的是将输入事件封装为通用的Event，供后续处理。</p>
+<h3 id="1-2-SystemServer部分"><a href="#1-2-SystemServer部分" class="headerlink" title="1.2 SystemServer部分"></a>1.2 SystemServer部分</h3><p>当系统启动时，在SystemServer进程会启动一系列系统服务，如AMS,WMS等。<br>其中还有一个就是我们管理事件输入的InputManagerService。<br>在其内部，会启动一个读线程，也就是InputReader，它会从系统也就是&#x2F;dev&#x2F;input&#x2F;目录拿到任务，并且分发给InputDispatcher线程，然后进行统一的事件分发调度。</p>
+<h3 id="1-3-跨进程通信传递给App"><a href="#1-3-跨进程通信传递给App" class="headerlink" title="1.3 跨进程通信传递给App"></a>1.3 跨进程通信传递给App</h3><p>App中的Window与InputManagerService之间的通信实际上使用的InputChannel，InputChannel是一个pipe，底层实际是通过socket进行通信。<br>在Activity启动时会调用ViewRootImpl.setView()。在ViewRootImpl.setView()过程中，也会同时注册InputChannel</p>
+<p>最终在SystemServer进程中，WindowManagerService根据当前的Window创建了SocketPair用于跨进程通信，同时并对App进程中传过来的InputChannel进行了注册。这之后，ViewRootImpl里的InputChannel就指向了正确的InputChannel, 作为Client端，其fd与SystemServer进程中Server端的fd组成SocketPair, 它们就可以双向通信了。</p>
+<p>App进程的主线程就会监听socket客户端，当收到消息（输入事件）后，回调NativeInputEventReceiver.handleEvent()方法，最终会走到InputEventReceiver.dispachInputEvent方法。（终于拿到输入事件）</p>
+<h3 id="2-1-事件回传到ViewRootImpl"><a href="#2-1-事件回传到ViewRootImpl" class="headerlink" title="2.1 事件回传到ViewRootImpl"></a>2.1 事件回传到ViewRootImpl</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//InputEventReceiver.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">dispatchInputEvent</span><span class="params">(<span class="type">int</span> seq, InputEvent event)</span> &#123;</span><br><span class="line">    mSeqMap.put(event.getSequenceNumber(), seq);</span><br><span class="line">    onInputEvent(event); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//ViewRootImpl.java ::WindowInputEventReceiver</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">WindowInputEventReceiver</span> <span class="keyword">extends</span> <span class="title class_">InputEventReceiver</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onInputEvent</span><span class="params">(InputEvent event)</span> &#123;</span><br><span class="line">       enqueueInputEvent(event, <span class="built_in">this</span>, <span class="number">0</span>, <span class="literal">true</span>); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//ViewRootImpl.java</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">enqueueInputEvent</span><span class="params">(InputEvent event,</span></span><br><span class="line"><span class="params">        InputEventReceiver receiver, <span class="type">int</span> flags, <span class="type">boolean</span> processImmediately)</span> &#123;</span><br><span class="line">    adjustInputEventForCompatibility(event);</span><br><span class="line">    <span class="type">QueuedInputEvent</span> <span class="variable">q</span> <span class="operator">=</span> obtainQueuedInputEvent(event, receiver, flags);</span><br><span class="line"></span><br><span class="line">    <span class="type">QueuedInputEvent</span> <span class="variable">last</span> <span class="operator">=</span> mPendingInputEventTail;</span><br><span class="line">    <span class="keyword">if</span> (last == <span class="literal">null</span>) &#123;</span><br><span class="line">        mPendingInputEventHead = q;</span><br><span class="line">        mPendingInputEventTail = q;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        last.mNext = q;</span><br><span class="line">        mPendingInputEventTail = q;</span><br><span class="line">    &#125;</span><br><span class="line">    mPendingInputEventCount += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (processImmediately) &#123;</span><br><span class="line">        doProcessInputEvents(); </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        scheduleProcessInputEvents();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ViewRootImpl不仅负责界面的绘制，同时负责事件的传递。</p>
+<h3 id="2-2-第一次责任链分发"><a href="#2-2-第一次责任链分发" class="headerlink" title="2.2 第一次责任链分发"></a>2.2 第一次责任链分发</h3><p>接下来走到doProcessInputEvents中，其中涉及到事件分发中的第一次责任链分发。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">doProcessInputEvents</span><span class="params">()</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// Deliver all pending input events in the queue.</span></span><br><span class="line">    <span class="keyword">while</span> (mPendingInputEventHead != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">QueuedInputEvent</span> <span class="variable">q</span> <span class="operator">=</span> mPendingInputEventHead;</span><br><span class="line">        mPendingInputEventHead = q.mNext;</span><br><span class="line">        deliverInputEvent(q);</span><br><span class="line">    &#125;</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">deliverInputEvent</span><span class="params">(QueuedInputEvent q)</span> &#123;</span><br><span class="line">    InputStage stage;</span><br><span class="line">    ....</span><br><span class="line">    <span class="comment">//stage赋值操作</span></span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">if</span> (stage != <span class="literal">null</span>) &#123;</span><br><span class="line">        stage.deliver(q);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        finishInputEvent(q);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>1.QueuedInputEvent是一种输入事件，链表结构，遍历传递给InputStage。<br>2.InputStage是处理输入的责任链，在调用deliver时会遍历责任链传递事件。</p>
+<h3 id="2-3-组装责任链"><a href="#2-3-组装责任链" class="headerlink" title="2.3 组装责任链"></a>2.3 组装责任链</h3><p>回到ViewRootImpl.setView方法中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setView</span><span class="params">(View view, WindowManager.LayoutParams attrs, View panelParentView)</span> &#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="comment">// Set up the input pipeline.</span></span><br><span class="line">        mSyntheticInputStage = <span class="keyword">new</span> <span class="title class_">SyntheticInputStage</span>();</span><br><span class="line">        <span class="type">InputStage</span> <span class="variable">viewPostImeStage</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ViewPostImeInputStage</span>(mSyntheticInputStage);</span><br><span class="line">        <span class="type">InputStage</span> <span class="variable">nativePostImeStage</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NativePostImeInputStage</span>(viewPostImeStage,</span><br><span class="line">                 <span class="string">&quot;aq:native-post-ime:&quot;</span> + counterSuffix);</span><br><span class="line">        <span class="type">InputStage</span> <span class="variable">earlyPostImeStage</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">EarlyPostImeInputStage</span>(nativePostImeStage);</span><br><span class="line">        <span class="type">InputStage</span> <span class="variable">imeStage</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ImeInputStage</span>(earlyPostImeStage,</span><br><span class="line">                <span class="string">&quot;aq:ime:&quot;</span> + counterSuffix);</span><br><span class="line">        <span class="type">InputStage</span> <span class="variable">viewPreImeStage</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ViewPreImeInputStage</span>(imeStage);</span><br><span class="line">        <span class="type">InputStage</span> <span class="variable">nativePreImeStage</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NativePreImeInputStage</span>(viewPreImeStage,</span><br><span class="line">                        <span class="string">&quot;aq:native-pre-ime:&quot;</span> + counterSuffix);</span><br><span class="line"></span><br><span class="line">        mFirstInputStage = nativePreImeStage;</span><br><span class="line">        mFirstPostImeInputStage = earlyPostImeStage;</span><br><span class="line">        ....</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中ViewPostImeInputStage：视图输入处理阶段，比如按键、手指触摸等运动事件，我们熟知的view事件分发就发生在这个阶段。</p>
+<p>事件到达应用端的主线程，会通过ViewRootImpl进行一系列InputStage来处理事件。这个阶段其实是对事件进行一些简单的分类处理，比如视图输入事件，输入法事件，导航面板事件等等。</p>
+<p><code>我们的View触摸事件就发生在ViewPostImeInputStage阶段。ViewRootImpl中的mView就是DecorView。</code><br></br></p>
+<img src="/images/view3.png" width=512 height=447>
+
+</br>
+
+</br>
+
+<img src="/images/view4.png" width=2048 height=942>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/06/28/Android%20Application/View%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" data-id="clhoa7k4y001mtlcahh3jfp8l" data-title="View事件分发" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/01/Algorithm/BFS-DFS/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          BFS/DFS
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/06/27/Algorithm/Graph/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">图（Graph）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

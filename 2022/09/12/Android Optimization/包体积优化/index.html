@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>包体积优化 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Android App包体积优化知识点记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="包体积优化">
+<meta property="og:url" content="https://stewforani.github.io/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Android App包体积优化知识点记录">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-09-12T15:02:39.000Z">
+<meta property="article:modified_time" content="2023-05-05T08:09:09.694Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="Optimization">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Optimization/包体积优化" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/" class="article-date">
+  <time class="dt-published" datetime="2022-09-12T15:02:39.000Z" itemprop="datePublished">2022-09-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      包体积优化
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Android-App包体积优化知识点记录"><a href="#Android-App包体积优化知识点记录" class="headerlink" title="Android App包体积优化知识点记录"></a>Android App包体积优化知识点记录<br><span id="more"></span></h2><p><code>京东金融Android瘦身探索与实践文章知识点记录</code><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7214858677173518393">https://juejin.cn/post/7214858677173518393</a> </p>
+<h3 id="apk结构"><a href="#apk结构" class="headerlink" title="apk结构"></a>apk结构</h3><ol>
+<li>dex文件：应用程序内的 Java&#x2F;Kotlin 源码最终会以字节码的方式存在于 classes.dex 文件中</li>
+<li>resources.arsc  存储values类型的资源，和其他大型资源的路径</li>
+<li>res&#x2F; 源码工程中 res 目录下除了 values 外的资源文件，这些文件路径同时会记录在 resources.arsc 中</li>
+<li>lib  so文件</li>
+<li>assets&#x2F; 与 res&#x2F; 资源目录不同，assets&#x2F; 下的资源文件不会在 resources.arsc 中生成查询条目，且 assets&#x2F; 下的资源目录可完全自定义，在程序中通过 AssetManager 对象来获取。</li>
+<li>META-INF&#x2F;该文件夹下主要包含 CERT.SF 和 CERT.RSA 签名文件, 以及 MANIFEST.MF 清单文件。</li>
+<li>AndroidManifest.xml 应用清单文件，用于描述应用基本信息，主要包括应用包名、应用id、应用组件、所需权限、设备兼容性等。</li>
+</ol>
+<p><code>深入探索 Android 包体积优化上文章知识点记录</code><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904103131234311">https://juejin.cn/post/6844904103131234311</a></p>
+<ul>
+<li><p>dex 文件就将原来每个 class 文件中都有的共有信息合成了一体，这样做的目的是 保证其中的每个类都能够共享数据，这在一定程度上 降低了信息冗余，同时也使得 文件结构更加紧凑。与传统 jar 文件相比，Dex 文件的大小能够缩减 50% 左右</p>
+</li>
+<li><p>Proguard：在Android SDK里面集成的一个工具，它是一个免费的 Java 类文件 压缩、优化、混淆、预先校验 的工具，它的作用：瘦身+安全，优化包括 内联、修饰符、合并类和方法等 30 多种优化项，混淆之后生产mapping.txt文件就是 混淆规则</p>
+</li>
+</ul>
+<ol>
+<li>minifyEnabled true &#x2F;&#x2F;是否进行混淆 </li>
+<li>shrinkResources true&#x2F;&#x2F;移除无用的resource文件，资源压缩工具默认是采用安全压缩模式来运行，可以通过开启严格压缩模式来达到更好的瘦身效果。 </li>
+<li>zipAlignEnabled true &#x2F;&#x2F;开启zipAlign可以让安装包中的资源按4字节对齐，这样可以减少应用在运行时的内存消耗</li>
+</ol>
+<ul>
+<li><p>在 AndroidMainfest 中的类默认不会被混淆，所以四大组件和 Application 的子类和 Framework 层下所有的类默认不会进行混淆，并且自定义的 View 默认也不会被混淆。因此，我们不需要手动在 proguard-rules.pro 中去添加</p>
+</li>
+<li><p>D8 与 R8 <br><code>D8</code>Android Studio 3.1 或之后的版本 D8 将会被作为默认的 Dex 编译器，D8 的 优化效果 总的来说可以归结为如下 四点：</p>
+</li>
+</ul>
+<ol>
+<li>Dex的编译时间更短</li>
+<li>dex文件更小</li>
+<li>D8 编译的 .dex 文件拥有更好的运行时性能</li>
+<li>包含 Java 8 语言支持的处理</li>
+</ol>
+<p><code>R8</code>Proguard 压缩与优化部分的替代品，并且它仍然使用与 Proguard 一样的 keep 规则。如果我们仅仅想在 Android Studio 中使用 R8，当我们在 build.gradle 中打开混淆的时候，R8 就已经默认集成进 Android Gradle plugin 中了。</p>
+<p>Android Studio 3.4 或 Android Gradle 插件 3.4.0 及其更高版本，R8 会作为默认编译器。否则，我们 必须要在 gradle.properties 中配置如下代码让 App 的混淆去支持 R8，如下所示：<br><code>android.enableR8=true</code><br><code>android.enableR8.libraries=true</code></p>
+<ul>
+<li><p>R8与混淆<br><code>R8</code>：压缩比例大，kotlin友好<br><code>混淆</code>：处理枚举，算法强，能优化gson<br>有了 R8，可以在一个步骤中完成脱糖、压缩、混淆、优化和 dex 处理 (D8)，在之前混淆中，混淆和D8是分开的，产生两遍class文件，效率低</p>
+</li>
+<li><p>ASM统计使用的activity，可以确定无用的Activity（抖音的ByteX也可以统计）</p>
+</li>
+<li><p>Lint 来 扫描出重复的代码</p>
+</li>
+<li><p>避免产生 Java access 方法（感觉没必要，收益较小，几百K）（直接使用抖音的ByteX）</p>
+</li>
+</ul>
+<p><code>深入探索 Android 包体积优化下文章知识点记录</code><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6872920643797680136">https://juejin.cn/post/6872920643797680136</a></p>
+<ul>
+<li><p>点击项目右键，选中 Refactor，然后点击 Remove Unused Resource &#x3D;&gt; preview 可以预览找到的无用资源，点击 Do Refactor 可以去除冗余资源（也属于Lint）</p>
+</li>
+<li><p>Android Lint 不会分析 assets 文件夹下的资源，因为 assets 文件可以通过文件名直接访问，不需要通过具体的引用，Lint 无法判断资源是否被用到</p>
+</li>
+<li><p>通过 shrinkResources true 来 开启资源压缩，资源压缩工具只会把无用的资源替换成预定义的版本而不是移除，可以通过第一点来优化，也可以采用文章的自动删除方法，较复杂，推荐第一点</p>
+</li>
+<li><p>图片压缩<br><a target="_blank" rel="noopener" href="https://github.com/smallSohoSolo/McImage">https://github.com/smallSohoSolo/McImage</a><br><a target="_blank" rel="noopener" href="https://tinypng.com/">https://tinypng.com/</a><br>需要注意的是，在 Android 的构建流程中，AAPT 会使用内置的压缩算法来优化 res&#x2F;drawable&#x2F; 目录下的 PNG 图片，但这可能会导致本来已经优化过的图片体积变大，因此，可以通过在 build.gradle 中 设置 cruncherEnabled 来禁止 AAPT 来优化 PNG 图片，代码如下所示：<br>aaptOptions {<br>  cruncherEnabled &#x3D; false<br>}</p>
+</li>
+<li><p>VD（纯色icon）-&gt;WebP（非纯色icon）-&gt;Png（更好效果） -&gt;jpg（若无alpha通道）<br>第一个是矢量图，它 仅仅需100字节的文件即可以生成屏幕大小的清晰图像，但是，Android 系统渲染每个 VectorDrawable 对象需要大量的时间，而较大的图像需要更长的时间。 因此，建议 只有在显示纯色小 icon 时才考虑使用矢量图形</p>
+</li>
+<li><p>AndroidResGuard<br><a target="_blank" rel="noopener" href="https://github.com/shwenzhang/AndResGuard">https://github.com/shwenzhang/AndResGuard</a><br>单独起一篇文章分析</p>
+</li>
+<li><p>resConfigs<br>resConfigs “zh”, “zh-rCN”，通过 resConfig 来配置使用哪些语言，从而让构建工具移除指定语言之外的所有资源</p>
+</li>
+<li><p>So<br>defaultConfig {ndk {abiFilters ‘arm64-v8a’}}</p>
+</li>
+<li><p>插件化<br>单独讲解</p>
+</li>
+<li><p>包体积监控<br><a target="_blank" rel="noopener" href="https://github.com/Tencent/matrix">https://github.com/Tencent/matrix</a></p>
+</li>
+</ul>
+<hr>
+<h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><ul>
+<li><p>LibRadar——获取APK中第三方库信息的工具</p>
+</li>
+<li><p>使用zipinfo -l –t –h test.apk输出压缩包中每个文件的详细信息日志，包括文件名、原始大小、压缩后大小等指标</p>
+</li>
+</ul>
+<h3 id="dex文件优化，代码优化"><a href="#dex文件优化，代码优化" class="headerlink" title="dex文件优化，代码优化"></a>dex文件优化，代码优化</h3><ul>
+<li><p>R文件内联优化，用ID替换资源访问代码R.XXX.XXX，<a target="_blank" rel="noopener" href="https://github.com/meili/ThinRPlugin%EF%BC%88%E8%98%91%E8%8F%87%E8%A1%97%EF%BC%8C%E5%AD%97%E8%8A%82%E4%B9%9F%E6%9C%89%E7%B1%BB%E4%BC%BCByteX%EF%BC%89">https://github.com/meili/ThinRPlugin（蘑菇街，字节也有类似ByteX）</a></p>
+</li>
+<li><p>抖音系列文章的方案：</p>
+</li>
+</ul>
+<ol>
+<li>字节码优化：<br>去除冗余赋值，删除无副作用代码，短方法内联，R文件内联，<a target="_blank" rel="noopener" href="https://github.com/bytedance/ByteX">https://github.com/bytedance/ByteX</a></li>
+<li>资源优化：<br>字节在微信的AndResGuard的基础上进一步优化</li>
+<li>redex(facebook开源)<br>参考隔壁文章(包体积优化Redex分析)</li>
+</ol>
+<ul>
+<li><p>facebook使用Dex 压缩 的方式，而且它 将 Dex 压缩后的文件都放在了 assets 目录中（很复杂）</p>
+</li>
+<li><p>XZ Utils 压缩dex，原理暂时不清楚</p>
+</li>
+<li><p>7zip压缩，原理暂时不清楚</p>
+</li>
+<li><p>Lint 来 扫描出重复的代码</p>
+</li>
+</ul>
+<h3 id="资源优化"><a href="#资源优化" class="headerlink" title="资源优化"></a>资源优化</h3><ul>
+<li><p>AndResGuard是微信推出资源优化工具（目前不维护，gradle升级后有bug），它的基本思想类似于 ProGuard 中的混淆，通过解压APK后，将资源文件名进行短链处理比如res&#x2F;layout&#x2F;hello.xml转换为r&#x2F;l&#x2F;a.xml后，然后更改resources.arsc对应的value值，达到整体的瘦身效果。该项目优化目标为资源文件目录 res 内的文件，其优化点如下：<br>1）对重复的资源文件，以计算 md5 值的方式来判断是否重复并只保留一份；<br>2）对资源文件名称进行缩短，即名称混淆；<br>3）对 APK 中的内容采取 7zip 压缩优化；</p>
+</li>
+<li><p>7zip压缩，原理暂时不清楚</p>
+</li>
+<li><p>配置CPU架构，根据不同的CPU架构，构建不同的类型的安装包，目前主流设备都是64位机器，因此安卓市场上主要投放的是依据arm64-v8a编译构建的安装包<br>ndk {abiFilters arm64-v8a}</p>
+</li>
+<li><p>Android R+ 不在允许app压缩resource.asrc，对其进行压缩会影响启动速度和内存指标</p>
+</li>
+<li><p>在 Android 6.0 上开启了 android:extractNativeLibs&#x3D;”false” 的话，So 文件也不能被压缩</p>
+</li>
+<li><p>接入的大量SDK中加入了几十种语言一样，导致整个体积变大，经过评估可以通过配置 resConfigs 去除无用的语言资源。<br>defaultConfig {resConfigs “zh”,”en”}</p>
+</li>
+<li><p>shrinkResources：编译过程中用来检测并删除无用资源文件，也就是没有引用的资源，minifyEnabled：用来开启删除无用代码，比如没有引用到的代码，所以如果需要知道资源是否被引用就要配合minifyEnabled使用，只有两者都为true时才会起到真正的删除无效代码和无引用资源的目的。其作用是将未被引用的资源文件替换为一个体积很小的格式文件(仍存在占位体积，同时保留了该资源条目，所以 resources.arsc 体积并不会减少)</p>
+</li>
+<li><p>尽量少用枚举类型，因为枚举在编译成字节码后，会增加大量体积（22行代码编译后字节码是86行）</p>
+</li>
+<li><p>drawable 和 mipmap 文件夹，右键后选择 convert to webp，将图片转为 WebP 格式（不一定会减少）</p>
+</li>
+<li><p>Lottie代替帧动画</p>
+</li>
+<li><p>点击项目右键，选中 Refactor，然后点击 Remove Unused Resource &#x3D;&gt; preview 可以预览找到的无用资源，点击 Do Refactor 可以去除冗余资源（也属于Lint）</p>
+</li>
+</ul>
+<hr>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904103131234311">https://juejin.cn/post/6844904103131234311</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7104228637594877965">https://juejin.cn/post/7104228637594877965</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7214858677173518393">https://juejin.cn/post/7214858677173518393</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI1MzYzMjE0MQ==&action=getalbum&album_id=2385951151339913221&scene=173&from_msgid=2247491039&from_itemidx=1&count=3&nolastread=1#wechat_redirect">https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI1MzYzMjE0MQ==&amp;action=getalbum&amp;album_id=2385951151339913221&amp;scene=173&amp;from_msgid=2247491039&amp;from_itemidx=1&amp;count=3&amp;nolastread=1#wechat_redirect</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/" data-id="clhoa7k5h003ntlca6k7jc1w4" data-title="包体积优化" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          AndroidResGuard分析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ReDex分析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 16px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 14px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/09/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">ASM插桩(Java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/06/Android%20Optimization/ReDex%E5%88%86%E6%9E%90/">ReDex分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/05/Android%20Optimization/app%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">android启动优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
