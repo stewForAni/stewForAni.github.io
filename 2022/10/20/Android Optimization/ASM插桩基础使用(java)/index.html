@@ -14,7 +14,7 @@
 <meta property="og:description" content="ASM插桩基础使用(java)以及知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-10-20T15:02:39.000Z">
-<meta property="article:modified_time" content="2023-05-15T10:11:13.813Z">
+<meta property="article:modified_time" content="2023-05-16T11:50:02.307Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
@@ -145,6 +145,10 @@
 <p>在java文件夹内创建文件:</p>
 <p>&#x2F;&#x2F;处理class<br><code>public class AsmLifeClassVisitor extends ClassVisitor</code></p>
 <p>&#x2F;&#x2F;处理method<br><code>public class AsmLifeMethodVisitor extends MethodVisitor</code></p>
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">visitInsn(int)：访问一个零参数要求的字节码指令，如ACONST_NULL</span><br><span class="line"></span><br><span class="line">visitIntInsn(int, int)：访问一个需要零操作栈要求但需要有一个int参数的字节码指令，如BIPUSH</span><br><span class="line"></span><br><span class="line">visitVarInsn(int, int)：访问一个有关于局部变量的字节码指令，如ALOAD</span><br><span class="line"></span><br><span class="line">visitTypeInsn(int, String)：访问一个有关于类型的字节码指令，如CHECKCAST</span><br><span class="line"></span><br><span class="line">visitFieldInsn(int, String, String, String)：访问一个有关于字段的字节码，如PUTFIELD</span><br><span class="line"></span><br><span class="line">visitMethodInsn(int, String, String, String, boolean)：访问一个有关于方法调用的字节码，如INVOKESPECIAL</span><br><span class="line"></span><br><span class="line">visitJumpInsn(int, Label)：访问跳转字节码，如IFEQ</span><br><span class="line"></span><br><span class="line">之后，是一些被包装好的字节码访问方法，这些方法都基于最基本的字节码指令，但是不需要我们自己用上面提到的那些方法直接调用字节码。</span><br><span class="line"></span><br><span class="line">visitInvokeDynamicInsn(String, String, Handle, Object...)：基于INVOKEDYNAMIC，动态方法调用，会在lambda表达式和方法引用里面说到</span><br><span class="line"></span><br><span class="line">visitLdcInsn(Object)：基于LDC、LDC_W和LDC2_W，将一个常量加载到操作栈用（详细见下文）</span><br><span class="line"></span><br><span class="line">visitIincInsn(int, int)：基于IINC、IINC_W，自增/减表达式</span><br><span class="line"></span><br><span class="line">visitTableSwitchInsn(int, int, Label, Label...)：基于TABLESWITCH，用于进行table-switch操作</span><br><span class="line"></span><br><span class="line">visitLookupSwitchInsn(Label, int[], Label[])：基于LOOKUPSWITCH，用于进行lookup-switch操作</span><br><span class="line"></span><br><span class="line">visitMultiANewArrayInsn(String, int)：基于MULTIANEWARRAY，用于创建多重维度数组，如int[][]</span><br></pre></td></tr></table></figure>
+
+<hr>
 <p>详情可见：<a target="_blank" rel="noopener" href="https://github.com/stewForAni/AndroidTest">https://github.com/stewForAni/AndroidTest</a><br>参考文章：<a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1858">https://kaiwu.lagou.com/course/courseInfo.htm?courseId=67#/detail/pc?id=1858</a></p>
 
       
