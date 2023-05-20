@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Gradle知识点记录 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Gradle–Android默认的构建工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle知识点记录">
+<meta property="og:url" content="https://stewforani.github.io/2023/01/20/Android%20Gradle/Gradle%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Gradle–Android默认的构建工具">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-01-20T03:30:04.000Z">
+<meta property="article:modified_time" content="2023-05-20T12:35:17.048Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="gradle">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Gradle/Gradle知识点记录" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/01/20/Android%20Gradle/Gradle%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time class="dt-published" datetime="2023-01-20T03:30:04.000Z" itemprop="datePublished">2023-01-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Gradle知识点记录
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Gradle–Android默认的构建工具</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h3><ul>
+<li>Apache Ant<br>Ant支持自动化打包逻辑</li>
+<li>Apache Maven<br>Maven比它多了自动下jar包，规范了打包逻辑，反而不好定制</li>
+<li>Gradle<br>Gradle既能自动下jar包，又能自己写脚本，而且脚本写起来比Ant便捷</li>
+</ul>
+<p><code>添加依赖：app &gt; build.gradle &gt; dependencies</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation &#x27;com.xxx.xxx’</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><code>添加仓库：project &gt; build.gradle</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果不是google、maven仓库的话，需要自己手动在repositories{ }里配置仓库地址，新建项目这俩默认就有了</p>
+<p><code>添加仓库：project &gt; setting.gradle</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pluginManagement &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        mavenCentral()</span><br><span class="line">        gradlePluginPortal()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Gradle7.0之后，repositories{ }配置由build.gradle迁移到settings.gradle文件</p>
+<p><code>app &gt; build.gradle</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">  id &#x27;com.android.application&#x27;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    // Dependency on a local library module</span><br><span class="line">    implementation project(&#x27;:mylibrary&#x27;)</span><br><span class="line">    // Dependency on local binaries</span><br><span class="line">    implementation fileTree(dir: &#x27;libs&#x27;, include: [&#x27;*.jar&#x27;])</span><br><span class="line">    // Dependency on a remote binary</span><br><span class="line">    implementation &#x27;com.xxx.xxx’</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>本地模块：需要在settings.gradle中include声明</li>
+<li>本地二进制文件：需要在build.gradle声明路径</li>
+<li>远端二进制文件：上述示例，也是用的最多的一种</li>
+</ul>
+<p><code>Jcenter MavenCentral 区别</code></p>
+<ul>
+<li>jcenter停止新服务了</li>
+<li>MavenCentral：<a target="_blank" rel="noopener" href="https://mvnrepository.com/">https://mvnrepository.com/</a><br>GAV（坐标）： groupId + artifactId + version</li>
+</ul>
+<p><code>api implementation 区别</code></p>
+<ul>
+<li>implementation：模块内</li>
+<li>api：具有依赖传递性，容易造成依赖冲突</li>
+</ul>
+<p><code>./gradlew app:dependencies</code><br>可以查看依赖树<br>比如：androidx.annotation:annotation:1.1.0 -&gt; 1.3.0<br>-&gt;：表示冲突，比如这个1.1.0 -&gt; 1.3.0，-&gt; 后面的版本表示Gradle决议之后的版本，<br>这里表示1.1.0版本被拉高到1.3.0</p>
+<hr>
+<h3 id="依赖决策"><a href="#依赖决策" class="headerlink" title="依赖决策"></a>依赖决策</h3><ul>
+<li>同一个模块的多个相同依赖，优先选择最高版本</li>
+<li>多个模块的多个相同依赖，优先选择主模块(app)的版本，并默认有strictly关键字约束，<br>即使子模块的版本比app模块的版本高，也优先选择主模块(app)中依赖的版本</li>
+<li>force优先级高于strictly，如果二者同时显式声明，则会报错</li>
+<li>同时使用force强制依赖版本时，版本决议的结果跟依赖顺序有关，最早force的版本优先</li>
+<li>子级跟随父级：没有直接依赖okhttp的情况下，有多个retrofit依赖，okhttp的版本跟随高版本的retrofit</li>
+</ul>
+<p>分类示例决议结果说明</p>
+<ul>
+<li>全数字，段数不同1.2.3 vs 1.41.4段数依次比较，数字大的胜出</li>
+<li>全数字，段数相同，位数相同1.2.3 vs 1.2.41.2.4同上</li>
+<li>全数字，段数相同，位数不同1.2.3 vs 1.2.101.2.10同上</li>
+<li>全数字，段数不同1.2.3 vs 1.2.3.01.2.3.0段数多的胜出</li>
+<li>段数相同，字母比较1.2.a vs 1.2.b1.2.b字母大的胜出</li>
+<li>段数相同，数字与非数字1.2.3 vs 1.2.abc1.2.3数字优先字母</li>
+</ul>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7215579793261117501">https://juejin.cn/post/7215579793261117501</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/column/7123935861976072199">https://juejin.cn/column/7123935861976072199</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2023/01/20/Android%20Gradle/Gradle%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" data-id="clhvz252r00031qca6lxx10oo" data-title="Gradle知识点记录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gradle/" rel="tag">gradle</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/10/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(kotlin)/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ASM插桩(kotlin)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gradle/" rel="tag">gradle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 12.5px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 15px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 15px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 17.5px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 17.5px;">framework</a> <a href="/tags/gradle/" style="font-size: 10px;">gradle</a> <a href="/tags/kotlin/" style="font-size: 12.5px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/20/Android%20Gradle/Gradle%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/">Gradle知识点记录</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(kotlin)/">ASM插桩(kotlin)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/20/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(java)/">ASM插桩(java)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/15/Android%20Optimization/AndroidResGuard%E5%88%86%E6%9E%90/">AndroidResGuard分析</a>
+          </li>
+        
+          <li>
+            <a href="/2022/09/12/Android%20Optimization/%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">包体积优化</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
