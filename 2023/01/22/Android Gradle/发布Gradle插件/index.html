@@ -4,19 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>组件化知识点记录 | CoolStew</title>
+  <title>发布Gradle插件 | CoolStew</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="andorid项目组件化过程中需要了解的各项知识点记录">
+  <meta name="description" content="发布Gradle插件到远程maven仓库">
 <meta property="og:type" content="article">
-<meta property="og:title" content="组件化知识点记录">
-<meta property="og:url" content="https://stewforani.github.io/2023/01/21/Android%20Optimization/%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:title" content="发布Gradle插件">
+<meta property="og:url" content="https://stewforani.github.io/2023/01/22/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6/index.html">
 <meta property="og:site_name" content="CoolStew">
-<meta property="og:description" content="andorid项目组件化过程中需要了解的各项知识点记录">
+<meta property="og:description" content="发布Gradle插件到远程maven仓库">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2023-01-21T03:30:04.000Z">
-<meta property="article:modified_time" content="2023-05-24T07:18:02.601Z">
+<meta property="article:published_time" content="2023-01-22T03:30:04.000Z">
+<meta property="article:modified_time" content="2023-05-24T07:40:48.482Z">
 <meta property="article:author" content="Stew">
-<meta property="article:tag" content="Optimization">
+<meta property="article:tag" content="gradle">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
@@ -80,10 +80,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-Android Optimization/组件化知识点记录" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-Android Gradle/发布Gradle插件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2023/01/21/Android%20Optimization/%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" class="article-date">
-  <time class="dt-published" datetime="2023-01-21T03:30:04.000Z" itemprop="datePublished">2023-01-21</time>
+    <a href="/2023/01/22/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6/" class="article-date">
+  <time class="dt-published" datetime="2023-01-22T03:30:04.000Z" itemprop="datePublished">2023-01-22</time>
 </a>
     
   </div>
@@ -94,7 +94,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      组件化知识点记录
+      发布Gradle插件
     </h1>
   
 
@@ -102,70 +102,32 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>andorid项目组件化过程中需要了解的各项知识点记录</p>
+        <p>发布Gradle插件到远程maven仓库</p>
 <span id="more"></span>
 
 <hr>
-<h3 id="maven仓库"><a href="#maven仓库" class="headerlink" title="maven仓库"></a>maven仓库</h3><ul>
-<li>maven仓库：本地仓库+远程仓库</li>
-<li>远程仓库：中央仓库+私服+其他</li>
-<li>中央仓库：jcenter+mavencenter</li>
-<li>私服：公司内部局域网</li>
+<p>使用的Gradle版本是6.7.1，可以查看如下链接：<br><a target="_blank" rel="noopener" href="https://docs.gradle.org/6.7.1/userguide/publishing_maven.html#publishing_maven:complete_example">https://docs.gradle.org/6.7.1/userguide/publishing_maven.html#publishing_maven:complete_example</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/huhx/p/16556548.html">https://www.cnblogs.com/huhx/p/16556548.html</a></p>
+<ul>
+<li><p>第一步：点击Close按钮，它会触发对发布包的检验<br>可能出现<code>signature validation</code>问题<br>失败原因：No public key in <a target="_blank" rel="noopener" href="http://keyserver.ubuntu.com:11371/">http://keyserver.ubuntu.com:11371</a><br>是因为同步key可能会花些时间。手动发布key到服务器即可<br>gpg –keyserver <a target="_blank" rel="noopener" href="http://keyserver.ubuntu.com:11371/">http://keyserver.ubuntu.com:11371</a> –send-keys [signing.keyId替换]</p>
+</li>
+<li><p>第二步：点击Refresh按钮</p>
+</li>
+<li><p>第三步：点击Release按钮</p>
+</li>
 </ul>
-<p>maven私服搭建可参考：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7118646272323485709">https://juejin.cn/post/7118646272323485709</a><br><a target="_blank" rel="noopener" href="https://central.sonatype.com/">https://central.sonatype.com/</a></p>
-<h3 id="POM"><a href="#POM" class="headerlink" title="POM"></a>POM</h3><p>全名Project Object Model 项目对象模型，用来描述当前maven项目发布模块的基础信息</p>
-<p>举例（’com.android.tools.build:gradle:4.1.1’）</p>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>解释</th>
-<th>举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>groupId</td>
-<td>组织</td>
-<td>com.android.tools.build</td>
-</tr>
-<tr>
-<td>artifactId</td>
-<td>名称</td>
-<td>gradle</td>
-</tr>
-<tr>
-<td>version</td>
-<td>版本</td>
-<td>4.1.1</td>
-</tr>
-<tr>
-<td>packaging</td>
-<td>格式</td>
-<td>aar</td>
-</tr>
-</tbody></table>
-<h3 id="project-build-gradle"><a href="#project-build-gradle" class="headerlink" title="project build.gradle"></a>project build.gradle</h3><p>buildscript {<br>    repositories {<br>        [Gradle 插件的仓库]<br>    }<br>}<br>allprojects {<br>    repositories {<br>        [项目中所有模块依赖的仓库]<br>    }<br>}</p>
-<h3 id="module-build-gradle"><a href="#module-build-gradle" class="headerlink" title="module build.gradle"></a>module build.gradle</h3><p>repositories{<br>    [当前模块依赖的仓库]<br>}</p>
-<h3 id="gradle支持的仓库类型"><a href="#gradle支持的仓库类型" class="headerlink" title="gradle支持的仓库类型"></a>gradle支持的仓库类型</h3><p>repositories{<br>    maven { url ‘…’ }<br>    ivy { url ‘…’ }<br>    flatDir { dirs ‘…’ }<br>}</p>
-<h3 id="常用的中央仓库："><a href="#常用的中央仓库：" class="headerlink" title="常用的中央仓库："></a>常用的中央仓库：</h3><p>google()<br>mavenCentral()<br>jCenter() </p>
-<h3 id="国内镜像-阿里云"><a href="#国内镜像-阿里云" class="headerlink" title="国内镜像 阿里云"></a>国内镜像 阿里云</h3><p>maven { url ‘<a target="_blank" rel="noopener" href="http://maven.aliyun.com/nexus/content/repositories/google">http://maven.aliyun.com/nexus/content/repositories/google</a>‘ }<br>maven { url ‘<a target="_blank" rel="noopener" href="http://maven.aliyun.com/nexus/content/groups/public/">http://maven.aliyun.com/nexus/content/groups/public/</a>‘ }<br>maven { url ‘<a target="_blank" rel="noopener" href="http://maven.aliyun.com/nexus/content/repositories/jcenter'%7D">http://maven.aliyun.com/nexus/content/repositories/jcenter&#39;}</a></p>
-<h3 id="Release和SNAPSHOT"><a href="#Release和SNAPSHOT" class="headerlink" title="Release和SNAPSHOT"></a>Release和SNAPSHOT</h3><p>版本名：Release版本：1.0.0，SNAPSHOT版本：1.0.0-SNAPSHOT<br>Release版本如果版本没有更新不需要每次都去下载，除非本地仓库被清除，<br>而SNAPSHOT版本每次编译都需要去中央仓库更新版本信息</p>
-<p>1、snapshot打版-SNAPSHOT是必需含有的，deploy会发布到snapshot库，不含有-SNAPSHOT则为release版本，会发布到release库。<br>2、maven更新依赖时-SNAPSHOT是实时拉取，release 则不会。<br>3、同一版本号上传到nexus仓库时，snapshot可以上传成功，release会上传失败</p>
-<hr>
-<h3 id="maven私服搭建"><a href="#maven私服搭建" class="headerlink" title="maven私服搭建"></a>maven私服搭建</h3><p>去官网下载 maven私服启动器nexus<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7118646272323485709">https://juejin.cn/post/7118646272323485709</a><br><a target="_blank" rel="noopener" href="https://central.sonatype.com/">https://central.sonatype.com</a></p>
-<h3 id="发布github仓库"><a href="#发布github仓库" class="headerlink" title="发布github仓库"></a>发布github仓库</h3><p><a target="_blank" rel="noopener" href="https://jitpack.io/">https://jitpack.io/</a><br>github需配合jitpack使用<br>项目级build.gradle<br>allprojects {<br>    repositories {<br>        google()<br>        mavenCentral()<br>        maven { url ‘<a target="_blank" rel="noopener" href="https://www.jitpack.io/">https://www.jitpack.io</a>‘ }<br>    }<br>}</p>
-<h3 id="发布mavencentral"><a href="#发布mavencentral" class="headerlink" title="发布mavencentral"></a>发布mavencentral</h3><p>我使用的Gradle版本是6.7.1，可以查看如下链接：<br><a target="_blank" rel="noopener" href="https://docs.gradle.org/6.7.1/userguide/publishing_maven.html#publishing_maven:complete_example">https://docs.gradle.org/6.7.1/userguide/publishing_maven.html#publishing_maven:complete_example</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/huhx/p/16556548.html">https://www.cnblogs.com/huhx/p/16556548.html</a></p>
-<p><code>signature validation</code><br>问题:No public key in <a target="_blank" rel="noopener" href="http://keyserver.ubuntu.com:11371/">http://keyserver.ubuntu.com:11371</a><br>是因为同步key可能会花些时间。手动发布key到服务器即可<br><code>gpg --keyserver http://keyserver.ubuntu.com:11371 --send-keys [signing.keyId替换]</code></p>
-<p>可以查看项目：<a target="_blank" rel="noopener" href="https://github.com/stewForAni/lifemonitor">https://github.com/stewForAni/lifemonitor</a></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id &#x27;groovy&#x27;</span><br><span class="line">    id &#x27;java-library&#x27;</span><br><span class="line">    id &#x27;maven-publish&#x27;</span><br><span class="line">    id &#x27;signing&#x27;</span><br><span class="line">&#125;</span><br><span class="line">version &quot;1.0.1&quot;</span><br><span class="line">group &quot;io.github.stewforani&quot;</span><br><span class="line">java &#123;</span><br><span class="line">    withJavadocJar()</span><br><span class="line">    withSourcesJar()</span><br><span class="line">&#125;</span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        mavenJava(MavenPublication) &#123;</span><br><span class="line">            artifactId &quot;lifemonitor&quot;</span><br><span class="line">            from components.java</span><br><span class="line">            versionMapping &#123;</span><br><span class="line">                usage(&#x27;java-api&#x27;) &#123;</span><br><span class="line">                    fromResolutionOf(&#x27;runtimeClasspath&#x27;)</span><br><span class="line">                &#125;</span><br><span class="line">                usage(&#x27;java-runtime&#x27;) &#123;</span><br><span class="line">                    fromResolutionResult()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            pom &#123;</span><br><span class="line">                name = &#x27;Activity Life Log&#x27;</span><br><span class="line">                description = &#x27;get log from activity execute oncreate&#x27;</span><br><span class="line">                url = &#x27;https://github.com/stewForAni/lifemonitor&#x27;</span><br><span class="line"></span><br><span class="line">                licenses &#123;</span><br><span class="line">                    license &#123;</span><br><span class="line">                        name = &#x27;The Apache License, Version 2.0&#x27;</span><br><span class="line">                        url = &#x27;http://www.apache.org/licenses/LICENSE-2.0.txt&#x27;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                developers &#123;</span><br><span class="line">                    developer &#123;</span><br><span class="line">                        id = &#x27;stewForAni&#x27;</span><br><span class="line">                        name = &#x27;stew&#x27;</span><br><span class="line">                        email = &#x27;stewForAni@gmail.com&#x27;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                scm &#123;</span><br><span class="line">                    connection = &#x27;https://github.com/stewForAni/lifemonitor.git&#x27;</span><br><span class="line">                    developerConnection = &#x27;https://github.com/stewForAni/lifemonitor.git&#x27;</span><br><span class="line">                    url = &#x27;https://github.com/stewForAni/lifemonitor&#x27;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line"></span><br><span class="line">            //url &quot;../myrepo&quot;</span><br><span class="line">            url &quot;https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/&quot;</span><br><span class="line">            credentials &#123;</span><br><span class="line">                username ossrhUsername // ossrhUsername is your sonatype username</span><br><span class="line">                password ossrhPassword // ossrhUsername is your sonatype password</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">signing &#123;</span><br><span class="line">    sign publishing.publications.mavenJava</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(dir: &#x27;libs&#x27;, include: [&#x27;*.jar&#x27;])</span><br><span class="line">    implementation gradleApi()</span><br><span class="line">    implementation localGroovy()</span><br><span class="line">    implementation &#x27;com.android.tools.build:gradle:4.2.2&#x27;</span><br><span class="line">    implementation &#x27;org.ow2.asm:asm:7.1&#x27;</span><br><span class="line">    implementation &#x27;org.ow2.asm:asm-commons:7.1&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>查看项目：<a target="_blank" rel="noopener" href="https://github.com/stewForAni/lifemonitor">https://github.com/stewForAni/lifemonitor</a><br>参考文章：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/huhx/p/16556548.html">https://www.cnblogs.com/huhx/p/16556548.html</a></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://stewforani.github.io/2023/01/21/Android%20Optimization/%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" data-id="clhwxg6ci0000yacaas3727dr" data-title="组件化知识点记录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://stewforani.github.io/2023/01/22/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6/" data-id="cli1e9ont0000n1cafai6agb3" data-title="发布Gradle插件" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gradle/" rel="tag">gradle</a></li></ul>
 
     </footer>
   </div>
@@ -173,19 +135,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2023/01/22/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          发布Gradle插件
-        
-      </div>
-    </a>
   
-  
-    <a href="/2023/01/20/Android%20Gradle/Gradle%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2023/01/21/Android%20Optimization/%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Gradle知识点记录</div>
+      <div class="article-nav-title">组件化知识点记录</div>
     </a>
   
 </nav>
