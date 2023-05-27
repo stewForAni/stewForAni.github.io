@@ -14,7 +14,7 @@
 <meta property="og:description" content="andorid项目组件化过程中需要了解的各项知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-01-21T03:30:04.000Z">
-<meta property="article:modified_time" content="2023-05-27T02:25:04.000Z">
+<meta property="article:modified_time" content="2023-05-27T05:35:09.449Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
@@ -106,7 +106,15 @@
 <span id="more"></span>
 
 <hr>
-<h3 id="application和library之间的动态切换"><a href="#application和library之间的动态切换" class="headerlink" title="application和library之间的动态切换"></a>application和library之间的动态切换</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">if(is_Module.toBoolean())&#123;</span><br><span class="line">    apply plugin: &#x27;com.android.application&#x27;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    apply plugin: &#x27;com.android.library&#x27;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if(is_Module.toBoolean())&#123;</span><br><span class="line">    applicationId &quot;com.abner.test&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        if (is_Module.toBoolean()) &#123;</span><br><span class="line">            manifest.srcFile &#x27;src/main/AndroidManifest.xml&#x27;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            manifest.srcFile &#x27;src/main/mainfest/AndroidManifest.xml&#x27;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="期望的组件架构-基础款"><a href="#期望的组件架构-基础款" class="headerlink" title="期望的组件架构(基础款)"></a>期望的组件架构(基础款)</h3><ul>
+<li>第一层：App Module（壳工程，用来集成所有业务组件）</li>
+<li>第二层：所有业务Module</li>
+<li>第三层：Common Module</li>
+<li>第四层：基础Module（image&#x2F;network&#x2F;log&#x2F;util…）</li>
+</ul>
+<p>组件依赖关系是上层依赖下层，修改频率是上层高于下层</p>
+<h3 id="application和library之间的动态切换"><a href="#application和library之间的动态切换" class="headerlink" title="application和library之间的动态切换"></a>application和library之间的动态切换</h3><p>可以打成aar集中调试，发布组件的arr包 到公司的maven仓库，然后在壳工程中就使用implemention依赖就可以了，或打成apk独立调试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">//build.gradle</span><br><span class="line">if(is_Module.toBoolean())&#123;</span><br><span class="line">    apply plugin: &#x27;com.android.application&#x27;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    apply plugin: &#x27;com.android.library&#x27;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//build.gradle (某个业务module)</span><br><span class="line">android &#123;</span><br><span class="line">...</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">...</span><br><span class="line">        if (s_Module.toBoolean()) &#123;</span><br><span class="line">            applicationId &quot;com.hfy.componentlearning.cart&quot;</span><br><span class="line">        &#125;</span><br><span class="line">...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sourceSets &#123;</span><br><span class="line">        main &#123;</span><br><span class="line">            if (s_Module.toBoolean()) &#123;</span><br><span class="line">                manifest.srcFile &#x27;src/main/moduleManifest/AndroidManifest.xml&#x27;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                manifest.srcFile &#x27;src/main/AndroidManifest.xml&#x27;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 <h3 id="各模块统一依赖"><a href="#各模块统一依赖" class="headerlink" title="各模块统一依赖"></a>各模块统一依赖</h3><p>最直接的处理方式是，统一gradle文件，也就是所有的组件统一使用一个，除了一些特殊的依赖之外，其他的都放在统一的文件之中</p>
@@ -115,13 +123,13 @@
 <ul>
 <li>可以跳转</li>
 <li>跳转拦截（登录检查）</li>
-<li>依赖注入IProvider，暴露服务，具体查看github（组件之间数据共享或者功能调用，逻辑可以写在一个中间层）</li>
+<li>依赖注入IProvider，暴露服务，具体查看github（组件之间数据共享或者功能调用，逻辑可以写在一个中间层），也可参考：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6881116198889586701#heading-18">https://juejin.cn/post/6881116198889586701#heading-18</a></li>
 <li>获取Fragment</li>
 <li>等等……</li>
 </ul>
 <h3 id="组件之间资源命名"><a href="#组件之间资源命名" class="headerlink" title="组件之间资源命名"></a>组件之间资源命名</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  ....</span><br><span class="line">  resourcePrefix &quot;module_xxx&quot;</span><br><span class="line">  ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
+<h3 id="组件监听Application-onCreate回调"><a href="#组件监听Application-onCreate回调" class="headerlink" title="组件监听Application onCreate回调"></a>组件监听Application onCreate回调</h3><p>使用AppLifeCycle插件<br><a target="_blank" rel="noopener" href="https://github.com/hufeiyang/Android-AppLifecycleMgr">https://github.com/hufeiyang/Android-AppLifecycleMgr</a></p>
 <p>参考文章：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7142297951023415332">https://juejin.cn/post/7142297951023415332</a><br><a target="_blank" rel="noopener" href="https://github.com/AbnerMing888/AndroidAssembly">https://github.com/AbnerMing888/AndroidAssembly</a></p>
 
       
