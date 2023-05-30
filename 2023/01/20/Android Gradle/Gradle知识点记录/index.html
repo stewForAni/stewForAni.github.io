@@ -14,7 +14,7 @@
 <meta property="og:description" content="Gradle是Android Studio默认的构建工具，它提高了Android的开发效率，它的作用就是管理项目中的依赖、打包、编译">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-01-20T03:30:04.000Z">
-<meta property="article:modified_time" content="2023-05-26T11:34:26.686Z">
+<meta property="article:modified_time" content="2023-05-30T09:18:48.139Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="gradle">
 <meta name="twitter:card" content="summary">
@@ -106,7 +106,7 @@
 <span id="more"></span>
 
 <hr>
-<ul>
+<h3 id="构建历史"><a href="#构建历史" class="headerlink" title="构建历史"></a>构建历史</h3><ul>
 <li>Apache Ant<br>Ant支持自动化打包逻辑</li>
 <li>Apache Maven<br>Maven比它多了自动下jar包，规范了打包逻辑，反而不好定制</li>
 <li>Gradle<br>Gradle既能自动下jar包，又能自己写脚本，而且脚本写起来比Ant便捷</li>
@@ -155,6 +155,8 @@
 <p><code>allprojects</code><br>buildscript下面的是gradle自身构建所需要的一些依赖；而allprojects下方的仓库则是给项目中的其他module去使用的，像app模块或者其他你自己新建的一些模块它们所需的依赖就是到allprojects下面所给的仓库里去找</p>
 <h3 id="gradle-properties和local-properties"><a href="#gradle-properties和local-properties" class="headerlink" title="gradle.properties和local.properties"></a>gradle.properties和local.properties</h3><p><code>local.properties</code><br>放的是一些系统配置（比如sdk路径）<br><code>gradle.properties</code><br>这里放的是一些全局的配置文件，比如【android.useAndroidX&#x3D;true】就是当前项目启用AndroidX</p>
 <h3 id="settings-gradle"><a href="#settings-gradle" class="headerlink" title="settings.gradle"></a>settings.gradle</h3><p>这里面包含了你的子项目，也就是你项目中的module，假如刚新建好的项目那么就只包含一个’app’ module；如果你新建了其他module，它也会包含在这里面。在构建的初始化阶段，settings.gradle会提供这次构建项目所要包含的哪些module。</p>
+<p><code>settings.gradle 对应一个 Settings 对象</code><br><code>build.gradle 对应一个 Project 对象</code></p>
+<hr>
 <h3 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h3><p><code>添加依赖：app &gt; build.gradle &gt; dependencies</code></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation &#x27;com.xxx.xxx’</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -201,6 +203,13 @@
 <li>段数相同，字母比较1.2.a vs 1.2.b1.2.b字母大的胜出</li>
 <li>段数相同，数字与非数字1.2.3 vs 1.2.abc1.2.3数字优先字母</li>
 </ul>
+<hr>
+<h3 id="Gradle插件"><a href="#Gradle插件" class="headerlink" title="Gradle插件"></a>Gradle插件</h3><ul>
+<li>脚本插件：.gradle为后缀的文件，通过 apply from去引用</li>
+<li>对象插件：实现org.gradle.api.plugins 接口的插件</li>
+<li>自定义对象插件：<br>1、在 build.gradle 文件中直接编写<br>2、在 buildSrc 默认插件目录下编写<br>3、在自定义项目下编写<br>然后通过 apply plugin 的方式去引用这个插件</li>
+</ul>
+<p>详情可查看【发布Gradle插件java】和【发布Gradle插件kotlin】</p>
 <hr>
 <p>参考文章：<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7215579793261117501">https://juejin.cn/post/7215579793261117501</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/column/7123935861976072199">https://juejin.cn/column/7123935861976072199</a></p>
 
@@ -261,7 +270,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Expansion/" style="font-size: 13.33px;">Expansion</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 15px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 16.67px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18.33px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18.33px;">framework</a> <a href="/tags/gradle/" style="font-size: 11.67px;">gradle</a> <a href="/tags/kotlin/" style="font-size: 13.33px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+      <a href="/tags/Expansion/" style="font-size: 12px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 14px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 16px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 18px;">framework</a> <a href="/tags/gradle/" style="font-size: 12px;">gradle</a> <a href="/tags/kotlin/" style="font-size: 12px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
     </div>
   </div>
 
@@ -283,7 +292,11 @@
       <ul>
         
           <li>
-            <a href="/2023/01/22/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6/">发布Gradle插件</a>
+            <a href="/2023/01/23/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6(kotlin)/">发布Gradle插件(kotlin)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/22/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6(java)/">发布Gradle插件(java)</a>
           </li>
         
           <li>
@@ -296,10 +309,6 @@
         
           <li>
             <a href="/2022/10/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(kotlin)/">ASM插桩(kotlin)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/10/20/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(java)/">ASM插桩(java)</a>
           </li>
         
       </ul>
