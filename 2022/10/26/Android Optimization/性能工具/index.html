@@ -4,15 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>Archives | CoolStew</title>
+  <title>性能工具 | CoolStew</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="CoolStew">
-<meta property="og:url" content="https://stewforani.github.io/archives/page/8/index.html">
+  <meta name="description" content="Traceview &#x2F; Systrace 的基础操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能工具">
+<meta property="og:url" content="https://stewforani.github.io/2022/10/26/Android%20Optimization/%E6%80%A7%E8%83%BD%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="Traceview &#x2F; Systrace 的基础操作">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-10-26T15:02:39.000Z">
+<meta property="article:modified_time" content="2023-06-12T08:18:47.183Z">
 <meta property="article:author" content="Stew">
-<meta property="article:tag" content="android,github,hexo">
+<meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
@@ -76,64 +80,93 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2019/09/10/Android%20Expansion/File%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  <time class="dt-published" datetime="2019-09-10T15:25:53.000Z" itemprop="datePublished">Sep 10</time>
+        <section id="main"><article id="post-Android Optimization/性能工具" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/10/26/Android%20Optimization/%E6%80%A7%E8%83%BD%E5%B7%A5%E5%85%B7/" class="article-date">
+  <time class="dt-published" datetime="2022-10-26T15:02:39.000Z" itemprop="datePublished">2022-10-26</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/09/10/Android%20Expansion/File%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/">File知识点记录</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      性能工具
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2019/08/10/Android%20Expansion/libs%E5%92%8CjniLibs/" class="archive-article-date">
-  <time class="dt-published" datetime="2019-08-10T15:25:53.000Z" itemprop="datePublished">Aug 10</time>
-</a>
+    <div class="e-content article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/08/10/Android%20Expansion/libs%E5%92%8CjniLibs/">libs和jniLibs</a>
-    </h1>
-  
+        <p>Traceview &#x2F; Systrace 的基础操作</p>
+<span id="more"></span>
 
-    </header>
+<hr>
+<h3 id="Traceview"><a href="#Traceview" class="headerlink" title="Traceview"></a>Traceview</h3><p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/studio/profile/generate-trace-logs?hl=zh-cn#java">https://developer.android.google.cn/studio/profile/generate-trace-logs?hl=zh-cn#java</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Debug.startMethodTracing(&quot;sample&quot;);</span><br><span class="line">……</span><br><span class="line">Debug.stopMethodTracing();</span><br></pre></td></tr></table></figure>
+<p>Device File Explorer中可以找到trace文件，直接打开，可以看到火焰图</p>
+<p>Traceview 已弃用。如果您使用的是 Android Studio 3.2 或更高版本，应改为使用 CPU 性能分析器来执行</p>
+<ol>
+<li>事件时间轴<br>显示应用中的 activity 在其生命周期内不断转换经历各种不同状态的过程，并指示用户与设备的交互，包括屏幕旋转事件。</li>
+<li>CPU 时间轴<br>显示应用的实时 CPU 使用率（以占总可用 CPU 时间的百分比表示）以及应用当前使用的线程总数。此时间轴还会显示其他进程（如系统进程或其他应用）的 CPU 使用率，以便您可以将其与您应用的 CPU 使用率进行对比。您可以通过沿时间轴的横轴方向移动鼠标来检查历史 CPU 使用率数据。</li>
+<li>线程活动时间轴<br>列出属于应用进程的每个线程，并使用下面列出的颜色在时间轴上指示它们的活动。记录轨迹后，您可以从此时间轴上选择一个线程，以在轨迹窗格中检查其数据。</li>
+</ol>
+<ul>
+<li>绿色：表示线程处于活动状态或准备使用 CPU。也就是说，线程处于正在运行或可运行状态。</li>
+<li>黄色：表示线程处于活动状态，但它正在等待一项 I&#x2F;O 操作（如磁盘或网络 I&#x2F;O），然后才能完成它的工作。</li>
+<li>灰色：表示线程正在休眠且没有消耗任何 CPU 时间。 当线程需要访问尚不可用的资源时，就会出现这种情况。在这种情况下，要么线程主动进入休眠状态，要么内核将线程置于休眠状态，直到所需的资源可用。</li>
+</ul>
+<p>TraceView试图收集某个阶段所有函数的运行信息，开销过大</p>
+<p>Systrace的思路是反过来的，在不清楚问题的情况下，通过假设－分析－验证 的过程找出问题</p>
+<hr>
+<h3 id="Systrace"><a href="#Systrace" class="headerlink" title="Systrace"></a>Systrace</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/27331842">https://zhuanlan.zhihu.com/p/27331842</a></p>
+<ol>
+<li>进入systrace目录：<br>cd &#x2F;Users&#x2F;stew&#x2F;Library&#x2F;Android&#x2F;sdk&#x2F;platform-tools&#x2F;systrace</li>
+<li>执行命令：<br>.&#x2F;systrace.py -t 10 sched gfx view wm am app webview -a <package-name></li>
+<li>生成trace.html目录：<br>&#x2F;Users&#x2F;stew&#x2F;Library&#x2F;Android&#x2F;sdk&#x2F;platform-tools&#x2F;systrace</li>
+<li>在chrome中查看trace.html<br>chrome:&#x2F;&#x2F;tracing&#x2F;trace.html</li>
+<li>操作：<br>WASD</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2022/10/26/Android%20Optimization/%E6%80%A7%E8%83%BD%E5%B7%A5%E5%85%B7/" data-id="clisl33t20000z0ca77pyb3sb" data-title="性能工具" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li></ul>
+
+    </footer>
   </div>
-</article>
   
-  
-    </div></section>
-  
-
-
-  <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/archives/page/7/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/6/">6</a><a class="page-number" href="/archives/page/7/">7</a><span class="page-number current">8</span>
-  </nav>
+<nav id="article-nav">
+  
+    <a href="/2023/01/20/Android%20Gradle/Gradle%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Gradle知识点记录
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/10/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(kotlin)/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ASM插桩(kotlin)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
 
 </section>
         
