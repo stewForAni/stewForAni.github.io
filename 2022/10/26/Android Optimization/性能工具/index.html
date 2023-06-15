@@ -14,7 +14,7 @@
 <meta property="og:description" content="Traceview &#x2F; Systrace 的基础操作">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-10-26T15:02:39.000Z">
-<meta property="article:modified_time" content="2023-06-12T08:18:47.183Z">
+<meta property="article:modified_time" content="2023-06-15T13:04:47.969Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
@@ -129,8 +129,41 @@
 <li>执行命令：<br>.&#x2F;systrace.py -t 10 sched gfx view wm am app webview -a <package-name></li>
 <li>生成trace.html目录：<br>&#x2F;Users&#x2F;stew&#x2F;Library&#x2F;Android&#x2F;sdk&#x2F;platform-tools&#x2F;systrace</li>
 <li>在chrome中查看trace.html<br>chrome:&#x2F;&#x2F;tracing&#x2F;trace.html</li>
-<li>操作：<br>WASD</li>
+<li>操作：<br>W : 放大 Systrace , 放大可以更好地看清局部细节<br>S : 缩小 Systrace, 缩小以查看整体<br>A : 左移<br>D : 右移<br>M : 高亮选中当前鼠标点击的段</li>
 </ol>
+<p>Systrace 是对 Linux Kernel中 ftrace 的封装</p>
+<p>内核部分：Systrace 利用了 Linux Kernel 中的 ftrace 功能</p>
+<p>数据采集部分：Android 定义了一个 Trace 类。应用程序可利用该类把统计信息输出给ftrace。同时，Android 还有一个 atrace 程序，它可以从 ftrace 中读取统计信息然后交给数据分析工具来处理</p>
+<p>数据分析工具：Android 提供一个 systrace.py</p>
+<p>线程状态主要有下面几个</p>
+<ul>
+<li>绿色 : 运行中（Running）<br>只有在该状态的线程才可能在 cpu 上运行</li>
+<li>蓝色 : 可运行（Runnable）<br>线程可以运行但当前没有安排，在等待 cpu 调度<br>作用：Runnable 状态的线程状态持续时间越长，则表示 cpu 的调度越忙，没有及时处理到这个任务</li>
+<li>白色 : 休眠中（Sleep）<br>线程没有工作要做，可能是因为线程在互斥锁上被阻塞。<br>作用 ： 这里一般是在等事件驱动</li>
+<li>橘色 : 不可中断的睡眠态 （Uninterruptible Sleep - IO Block）<br>线程在I &#x2F; O上被阻塞或等待磁盘操作完成</li>
+<li>紫色 : 不可中断的睡眠态（Uninterruptible Sleep）<br>一般是陷入了内核态，有些情况下是正常的，有些情况下是不正常的，需要按照具体的情况去分析</li>
+</ul>
+<p>应用的启动动画由 Launcher 和应用自己的第一帧组成，点击图标启动应用的时候，由于 App 还在启动，Launcher 首先启动一个 StartingWindow，等 App 的第一帧绘制好了之后，再切换到 App 的窗口动画</p>
+<p>与 AMS 相关的 Trace 一般会用 TRACE_TAG_ACTIVITY_MANAGER 这个 TAG，在 Systrace 中的名字是 ActivityManager</p>
+<p>与 WMS 相关的 Trace 一般会用 TRACE_TAG_WINDOW_MANAGER 这个 TAG，在 Systrace 中 WindowManagerService 在 SystemServer 中多在对应的 Binder 中出现，在 Window 的各种场景一般都会有对应的 Trace 点来记录，比如大家熟悉的 relayoutWIndow、performLayout、prepareToDisplay 等</p>
+<p>Input 是 SystemServer 线程里面非常重要的一部分，主要是由 InputReader 和 InputDispatcher 这两个 Native 线程组成</p>
+<p>android.bg,BackgroundThread 在系统中使用比较多，许多对性能没有要求的任务，一般都会放到 BackgroundThread 中去执行</p>
+<p><code>App 部分 -&gt; BufferQueue 部分 -&gt; SurfaceFlinger 部分 -&gt; HWComposer 部分</code></p>
+<ol>
+<li><p>App 部分<br>1)Vsync 信号的接收和处理<br>2)RenderThread 的 dequeueBuffer<br>dequeue 有出队的意思，dequeueBuffer 顾名思义，就是从队列中拿出一个 Buffer，这个队列就是 SurfaceFlinger 中的 BufferQueue。<br>3)RenderThread 的 queueBuffer<br>queue 有入队的意思，queueBuffer 顾名思义就是讲 Buffer 放回到 BufferQueue，App 处理完 Buffer 后（写入具体的 drawcall），会把这个 Buffer 通过 eglSwapBuffersWithDamageKHR -&gt; queueBuffer 这个流程，将 Buffer 放回 BufferQueue</p>
+</li>
+<li><p>BufferQueue 部分<br>dequeue、queue、acquire、release</p>
+</li>
+<li><p>SurfaceFlinger 部分<br>收到 Vsync 信号后开始工作，MessageQueue::INVALIDATE主要是执行 handleMessageTransaction 和 handleMessageInvalidate 这两个方法，MessageQueue::REFRESH — 主要是执行 handleMessageRefresh 方法</p>
+</li>
+<li><p>HWComposer 部分<br>1）SurfaceFlinger 向 HWC 提供一个完整的层列表，并询问“您希望如何处理这些层？”<br>2）HWC 的响应方式是将每个层标记为叠加层或 GLES 合成。<br>3）SurfaceFlinger 会处理所有 GLES 合成，将输出缓冲区传送到 HWC，并让 HWC 处理其余部分。</p>
+</li>
+</ol>
+<p><code>Input</code><br>InputReader 和 InputDispatcher 是跑在 SystemServer 里面的两个 Native 线程，负责读取和分发 Input 事件</p>
+<p><code>Vsync</code><br>Vsync Offset 我们指的是 VSYNC_APP 和 VSYNC_SF 之间有一个 Offset，即上图中 phase-sf - phase-app 的值，这个 Offset 是厂商可以配置的。如果 Offset 不为 0，那么意味着 App 和 SurfaceFlinger 主进程不是同时收到 Vsync 信号，而是间隔 Offset (通常在 0 - 16.6ms 之间)<br>目前大部分厂商都没有配置这个 Offset，所以 App 和 SurfaceFlinger 是同时收到 Vsync 信号的.</p>
+<p>android studio terminal中执行：adb shell dumpsys SurfaceFlinger<br>结果截取：可见offset&#x3D;0<br>           app phase:   1000000 ns               SF phase:   1000000 ns<br>     early app phase:   1000000 ns         early SF phase:   1000000 ns<br>  GL early app phase:   1000000 ns      GL early SF phase:   1000000 ns<br>next VSYNC threshold: 9223372036854775807 ns<br>      present offset:         0 ns           VSYNC period:  16666666 ns</p>
+<p>不是每次申请 Vsync 都会由硬件产生 Vsync，只有此次请求 vsync 的时间距离上次合成时间大于 500ms，才会通知 hwc，请求 HW_VSYNC</p>
+<p>HW_VSYNC 主要是利用最近的硬件 VSYNC 来做预测,最少要 3 个,最多是 32 个,实际上要用几个则不一定, DispSync 拿到 6 个 VSYNC 后就会计算出 SW_VSYNC,只要收到的 Present Fence 没有超过误差,硬件 VSYNC 就会关掉,不然会继续接收硬件 VSYNC 计算 SW_VSYNC 的值,直到误差小于 threshold.</p>
 
       
     </div>
