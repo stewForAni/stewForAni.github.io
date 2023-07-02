@@ -14,7 +14,7 @@
 <meta property="og:description" content="RecyclerView知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-07-03T03:15:50.000Z">
-<meta property="article:modified_time" content="2023-05-15T07:36:15.224Z">
+<meta property="article:modified_time" content="2023-06-29T11:10:39.690Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
@@ -115,6 +115,12 @@
 <li>ViewCacheExtension mViewCacheExtension</li>
 <li>RecycledViewPool mRecyclerPool</li>
 </ul>
+<p>补充：</p>
+<p>第一次：<br>尝试从 mChangedScrap 中获取（条件：mState.isPreLayout() 为 true 时，即预布局）</p>
+<p>第二次：<br>尝试从 1. mAttachedScrap 2.mHiddenViews 3.mCachedViews 中查找 ViewHolder</p>
+<p>第三次：<br>第三次，如果给 Adapter 设置了 stableId，调用 getScrapOrCachedViewForId 尝试获取 ViewHolder<br>跟第二次的区别在于，之前是根据 position 查找，现在是根据 id 查找</p>
+<p>第四次：<br>ViewCacheExtension，暂时忽略</p>
+<p>第五次：<br>尝试从 RecyclerViewPool 中获取</p>
 <p>如果四层缓存都未命中，则重新创建并绑定 ViewHolder 对象。</p>
 <hr>
 <h3 id="RecycledViewPool"><a href="#RecycledViewPool" class="headerlink" title="RecycledViewPool"></a>RecycledViewPool</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SparseArray&lt;ScrapData&gt; mScrap = <span class="keyword">new</span> <span class="title class_">SparseArray</span>&lt;&gt;();</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ScrapData</span> &#123;</span><br><span class="line">    <span class="comment">//同类ViewHolder存储在ArrayList中</span></span><br><span class="line">    ArrayList&lt;ViewHolder&gt; mScrapHeap = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="comment">//每种类型的ViewHolder最多存5个</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">mMaxScrap</span> <span class="operator">=</span> DEFAULT_MAX_SCRAP;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -137,10 +143,18 @@
 <h3 id="fling"><a href="#fling" class="headerlink" title="fling"></a>fling</h3><p>RecyclerView 的脱手滚动不是立刻执行的，触发脱手滚动时，一个叫ViewFlinger的Runnable会被抛到Choreographer中，它被包装成一个动画任务。等待下一个垂直同步信号到来时，这个任务就在主线程被执行。</p>
 <p>OverScroller来计算每一段的滑动距离</p>
 <hr>
-<h3 id="mAttachedScrap"><a href="#mAttachedScrap" class="headerlink" title="mAttachedScrap"></a>mAttachedScrap</h3><p>在将表项一个个填充到列表之前会先将其先回收到mAttachedScrap中</p>
+<h3 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h3><p>dispatchLayoutStep1 预布局（真正开启预布局，必须有ItemAnimator）<br>dispatchLayoutStep2 真正布局<br>dispatchLayoutStep3 post布局（对 mAttachedScrap 和 mChangedScrap 进行了清空）</p>
+<hr>
+<h3 id="mAttachedScrap和mChangedScrap"><a href="#mAttachedScrap和mChangedScrap" class="headerlink" title="mAttachedScrap和mChangedScrap"></a>mAttachedScrap和mChangedScrap</h3><p>在将表项一个个填充到列表之前会先将其先回收到mAttachedScrap中</p>
 <p>mAttachedScrap生命周期起始于RecyclerView布局开始(dispatchLayoutStep2)，终止于RecyclerView布局结束(dispatchLayoutStep3)。</p>
 <p>mAttachedScrap用于屏幕中可见表项的回收和复用</p>
 <p><code>举个简单的例子，列表有1-4个表项，现删除了第3个表项，这会触发layout过程，RecyclerView的layout有好多个阶段，第一阶段列表的4个表项对应的ViewHolder都会被存入scrap列表，layout的最后阶段会去取用于用于展示的表项（1，2，4，5），此时1，2，4表项就可以从scap中获取，而5从recycler pool中获取</code></p>
+<hr>
+<p>mAttachedScrap：是从屏幕上分离出来的ViewHolder，但是又即将添加到屏幕上去的ViewHolder（涉及到onLayoutChildren，先清空再填充）</p>
+<p>mChangedScrap：mChangedScrap主要是为列表项数据发生变化时的动画效果服务的。<br>mChangedScrap保存的holder信息只有预布局时才会被复用</p>
+<p>使用场景：<br>1.开启了列表项动画(itemAnimator)，并且列表项动画的canReuseUpdatedViewHolder(ViewHolder viewHolder)方法返回false的前提下；<br>2.调用了notifyItemChanged、notifyItemRangeChanged这一类方法，通知列表项数据发生变化；</p>
+<p>mChangedScrap 和 mAttachedScrap 只在布局阶段使用。其他时候它们是空的。布局完成之后，这两个缓存中的 viewHolder，会移到 mCacheView 或者 RecyclerViewPool 中。</p>
+<hr>
 <hr>
 <h3 id="RV预加载"><a href="#RV预加载" class="headerlink" title="RV预加载"></a>RV预加载</h3><h5 id="监听列表滚动状态"><a href="#监听列表滚动状态" class="headerlink" title="监听列表滚动状态"></a>监听列表滚动状态</h5> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(layoutManager.findLastVisibleItemPosition() &gt; 某个值)&#123;</span><br><span class="line">    loaddata();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>容易出现bug，不准确，而且和LayoutManager类型耦合</p>
