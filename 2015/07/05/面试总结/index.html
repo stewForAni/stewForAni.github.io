@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-02T13:38:52.206Z">
+<meta property="article:modified_time" content="2023-07-05T11:16:29.137Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -142,7 +142,8 @@
 <ol start="10">
 <li></li>
 </ol>
-<p>11.notidyDataSetChanged() 会将屏幕中和离屏缓存 mCachedViews 中的 ViewHolder 全部标记为无效（RecyclerPool 中的 ViewHolder 本身已标记为无效）。在真正执行 RecyclerView#requestLayout() 刷新列表时，所有的 Item 都需要重新绑定数据，因此性能差。无效化体现在代码上即是为 ViewHolder 添加 FLAG_UPDATE 和 FLAG_INVALID 标志位<br>12.不管脱手还是跟手，真正滑动的地方：循环遍历子view，执行offsetTopAndBottom<br>RecyclerView 的脱手滚动（fling）是一段一段进行的，每一小段的滚动都被包裹在一个叫ViewFlinger的 Runnable 中。它会被抛到Choreographer中，作为动画任务暂存起来。待一下个垂直同步信号到来之时，被抛到主线程的消息队列中执行。</p>
+<p>11.notidyDataSetChanged() 会将屏幕中和离屏缓存 mCachedViews 中的 ViewHolder 全部标记为无效（RecyclerPool 中的 ViewHolder 本身已标记为无效）。在真正执行 RecyclerView#requestLayout() 刷新列表时，所有的 Item 都需要重新绑定数据，因此性能差。无效化体现在代码上即是为 ViewHolder 添加 FLAG_UPDATE 和 FLAG_INVALID 标志位</p>
+<p>12.不管脱手还是跟手，真正滑动的地方：循环遍历子view，执行offsetTopAndBottom<br>RecyclerView 的脱手滚动（fling）是一段一段进行的，每一小段的滚动都被包裹在一个叫ViewFlinger的 Runnable 中。它会被抛到Choreographer中，作为动画任务暂存起来。待一下个垂直同步信号到来之时，被抛到主线程的消息队列中执行。</p>
 <h3 id="bitmap"><a href="#bitmap" class="headerlink" title="bitmap"></a>bitmap</h3><p>1.bitmap内存 &#x3D; 宽 x scale x 高 x scale x 每个像素字节大小<br>其中scale &#x3D; 设备dpi &#x2F; 对应文件夹dpi（scale针对图片）</p>
 <p>2.px &#x3D; dp x (dpi &#x2F; 160)（此公式针对普通 dp px 转换）</p>
 <p>3.bitmap内存优化：<br>options.inPreferredConfig &#x3D; Bitmap.Config.RGB_565;&#x2F;&#x2F;图片格式，一个像素占2字节<br>options.inSampleSize &#x3D; i;&#x2F;&#x2F;采样率，i不能小于1，隔i个像素采集一次数据<br>op.inMutable &#x3D; true;op.inBitmap &#x3D; reuseBitmap;&#x2F;&#x2F;复用<br>匿名共享内存，5.0以上已经禁止<br>bitmap.compress(Bitmap.CompressFormat.JPEG, 20, <br>new FileOutputStream(“sdcard&#x2F;result.jpg”));&#x2F;&#x2F;这种方式不好，容易失真</p>
@@ -152,10 +153,18 @@
 <p>2.webChromeClient可以处理网页加载进度</p>
 <p>3.web.settings可以设置网页各项参数</p>
 <p>4.想让当前webview加载通过，正确写法就是返回false：<br>public boolean shouldOverrideUrlLoading(final WebView view, final String url) {<br>    return false;<br>}<br>实测：android11，页面打开时不会调用shouldOverrideUrlLoading，但是点击当前页面内的超链接，会调用shouldOverrideUrlLoading</p>
-<ol start="5">
-<li></li>
-</ol>
-<h3 id="io"><a href="#io" class="headerlink" title="io"></a>io</h3><h3 id="okhttp"><a href="#okhttp" class="headerlink" title="okhttp"></a>okhttp</h3><h3 id="activity-amp-fragment"><a href="#activity-amp-fragment" class="headerlink" title="activity&amp;fragment"></a>activity&amp;fragment</h3><h3 id="view绘制-amp-view事件分发"><a href="#view绘制-amp-view事件分发" class="headerlink" title="view绘制&amp;view事件分发"></a>view绘制&amp;view事件分发</h3>
+<h3 id="io-amp-okio"><a href="#io-amp-okio" class="headerlink" title="io&amp;okio"></a>io&amp;okio</h3><p>传统io采用装饰者模式，写法繁琐，其中有个 FilterInputStream 类涉及到 装饰者和继承的问题<br>如果没有FilterInputStream，靠继承，那么会出现数不清的子类，造成类爆炸<br>所以这里采用继承不是好方法，而是采用组合的方法</p>
+<p>关键点：不是通过继承，容易造成爆炸，而是通过组合，每个字类对应一个功能，然后多个功能组合起来使用</p>
+<hr>
+<p>source对应inputstream<br>sink对应outputstream</p>
+<p>1.okio很方便是因为不需要嵌套很多装饰类，BufferedSink和BufferedSource已经满足大部分功能</p>
+<p>2.Segment字面翻译就是片段，大小8k，Okio将数据也就是Buffer分割成一块块的片段，同时segment拥有前置节点和后置节点，构成一个双向循环链表，而Segment内部的数据是数组，兼具读写和插入</p>
+<p>3.SegmentPool ，segment的对象池，池子的上限是64k，相当于8个segment，其中有next和bytecount两个内部变量，next这个节点可以看出SegmentPool是按照单链表的方式进行存储的，byteCount则是目前已有的大小。<br>回收和取对象都是加锁的，SegmentPool无论是回收和取对象都是在表头操作。</p>
+<p>4.ByteString，内部有两变量，byte和string，所有转换无压力，空间换时间</p>
+<p>5.Buffer是okio整个读和写的核心，RealBufferedSource 和 RealBufferedSink 实际上都只是一个代理，里面的操作全部都是通过Buffer来完成的</p>
+<p>6.日志系统涉及到的写入问题，可以用mmap技术，比io性能高，在Android中可以将文件通过Java提供的MappedByteBuffer映射到内存，然后进行读写。微信的xlog模块mmap实现是基于C++代码实现<br>MappedByteBuffer 位于 Java NIO 包下，用于将文件内容映射到缓冲区，使用的即是 mmap 技术</p>
+<p>也可以通过JNI调用C++方法</p>
+<h3 id="okhttp"><a href="#okhttp" class="headerlink" title="okhttp"></a>okhttp</h3><h3 id="activity-amp-fragment"><a href="#activity-amp-fragment" class="headerlink" title="activity&amp;fragment"></a>activity&amp;fragment</h3><h3 id="view绘制-amp-view事件分发"><a href="#view绘制-amp-view事件分发" class="headerlink" title="view绘制&amp;view事件分发"></a>view绘制&amp;view事件分发</h3>
       
     </div>
     <footer class="article-footer">
