@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-05T11:16:29.137Z">
+<meta property="article:modified_time" content="2023-07-07T13:40:42.159Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -130,7 +130,17 @@
 <p>6.DiskCacheStrategy.DATA&#x2F;&#x2F; 表示只缓存原始图片，DiskCacheStrategy.RESOURCE&#x2F;&#x2F; 表示只缓存转换过后的图片(缩放等操作)</p>
 <p>7.图片压缩：inSampleSize进行尺寸优化，inpreferredconfig进行RGB优化，inBitmap进行bitmap复用</p>
 <p>8.BitmapRegionDecoder可用于加载大图，滑动时内存抖动，卡顿现象比较明显</p>
-<h3 id="RecyclerView"><a href="#RecyclerView" class="headerlink" title="RecyclerView"></a>RecyclerView</h3><p>1.notifyItemRemoved之后，pre-layout预布局，提前加载未显示底部item，便于整体的上移动画</p>
+<h3 id="RecyclerView"><a href="#RecyclerView" class="headerlink" title="RecyclerView"></a>RecyclerView</h3><p>setAdapter中会注册观察者，notifyxxx中被观察者会通知注册的观察者，执行相应的方法</p>
+<p>viewholder主要是为了hold view来复用，避免大量findViewById操作</p>
+<p>ViewHolder中使用SparseArray替代HashMap存储viewId，数据量小的时候SparseArray性能略好，没有装箱</p>
+<p>SnapHelper帮助RV实现类似viewpager的效果，横向效果</p>
+<p>建议在onCreateViewHolder中使用listener.onItemClick(view, holder.getLayoutPosition())来实现点击事件</p>
+<p>如果 Item 高度是固定的话，可以使用 RecyclerView.setHasFixedSize(true); 来避免 requestLayout 浪费资源</p>
+<p>可以通过 ((SimpleItemAnimator) rv.getItemAnimator()).setSupportsChangeAnimations(false); 把默认动画关闭提升效率。</p>
+<p>tryGetViewHolderForPositionByDeadline  获取缓存的方法</p>
+<p>dispatchLayoutStep1()预布局<br>dispatchLayoutStep2()真正布局<br>dispatchLayoutStep3()保存和触发有关动画的信息，相关清理等工作</p>
+<p>RecyclerView滚动时先填充后缓存</p>
+<p>1.notifyItemRemoved之后，pre-layout预布局，提前加载未显示底部item，便于整体的上移动画</p>
 <p>2.CachedView的默认大小为2，可以通过 setItemViewCacheSize 方法修改它的值，RecycledViewPool默认大小为5，可以通过<br>RecyclerView.getRecycledViewPool().setMaxRecycledViews(int viewType, int max)来修改</p>
 <p>3.RecycledViewPool取出后需要bindViewHolder，CachedView不需要</p>
 <p>4.数据尽量异步处理，尽量将最优质的数据格式返回给UI线程</p>
@@ -139,11 +149,10 @@
 <p>7.manager.setSpanSizeLookup可以设置item列数</p>
 <p>8.上拉加载更多数据，可以直接用notifyItemRangeInserted方法，不要用notifyDataSetChanged方法</p>
 <p>9.在Layout的过程会通过LayoutManager.fill去将RecyclerView填满<br>fill会调用LayoutManager.layoutChunk去生成一个具体的ViewHolder<br>然后LayoutManager就会调用Recycler.getViewForPosition向Recycler去要ViewHolder，然后调用tryGetViewHolderForPositionByDeadline，里面涉及到各个缓存，如果还是没找到，则直接创建</p>
-<ol start="10">
-<li></li>
-</ol>
+<p>10.mAttachedScrap &#x2F; mChangedScrap</p>
 <p>11.notidyDataSetChanged() 会将屏幕中和离屏缓存 mCachedViews 中的 ViewHolder 全部标记为无效（RecyclerPool 中的 ViewHolder 本身已标记为无效）。在真正执行 RecyclerView#requestLayout() 刷新列表时，所有的 Item 都需要重新绑定数据，因此性能差。无效化体现在代码上即是为 ViewHolder 添加 FLAG_UPDATE 和 FLAG_INVALID 标志位</p>
 <p>12.不管脱手还是跟手，真正滑动的地方：循环遍历子view，执行offsetTopAndBottom<br>RecyclerView 的脱手滚动（fling）是一段一段进行的，每一小段的滚动都被包裹在一个叫ViewFlinger的 Runnable 中。它会被抛到Choreographer中，作为动画任务暂存起来。待一下个垂直同步信号到来之时，被抛到主线程的消息队列中执行。</p>
+<p>13.RecyclerView也把预拉取的实际工作委托给了一个名为GapWorker的类<br>UI线程空闲时才会执行，且必须在下一个Vsync信号到来之前<br>预加载的vh会缓存到cacheview中<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7181979065488769083">https://juejin.cn/post/7181979065488769083</a></p>
 <h3 id="bitmap"><a href="#bitmap" class="headerlink" title="bitmap"></a>bitmap</h3><p>1.bitmap内存 &#x3D; 宽 x scale x 高 x scale x 每个像素字节大小<br>其中scale &#x3D; 设备dpi &#x2F; 对应文件夹dpi（scale针对图片）</p>
 <p>2.px &#x3D; dp x (dpi &#x2F; 160)（此公式针对普通 dp px 转换）</p>
 <p>3.bitmap内存优化：<br>options.inPreferredConfig &#x3D; Bitmap.Config.RGB_565;&#x2F;&#x2F;图片格式，一个像素占2字节<br>options.inSampleSize &#x3D; i;&#x2F;&#x2F;采样率，i不能小于1，隔i个像素采集一次数据<br>op.inMutable &#x3D; true;op.inBitmap &#x3D; reuseBitmap;&#x2F;&#x2F;复用<br>匿名共享内存，5.0以上已经禁止<br>bitmap.compress(Bitmap.CompressFormat.JPEG, 20, <br>new FileOutputStream(“sdcard&#x2F;result.jpg”));&#x2F;&#x2F;这种方式不好，容易失真</p>
