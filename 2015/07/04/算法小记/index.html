@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-07-04T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-10T10:58:28.070Z">
+<meta property="article:modified_time" content="2023-07-11T04:06:47.843Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -123,7 +123,11 @@
 <p>也可以用递归法</p>
 <p>3.删除链表倒数第N个节点<br>快慢指针：如果要删除倒数第n个节点，让fast移动n步，然后让fast和slow同时移动，直到fast指向链表末尾</p>
 <p>4.环形链表<br>快慢指针，慢指针每次走1步，快指针每次走2步</p>
-<h5 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h5>
+<h5 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h5><p>满二叉树: 如果一棵二叉树只有度为0的结点和度为2的结点，并且度为0的结点在同一层上，则这棵二叉树为满二叉树。</p>
+<p>完全二叉树: 除了最底层节点可能没填满外，其余每层节点数都达到最大值，并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2^(h-1) 个节点。</p>
+<p>BFS(广度优先遍历) 一层层的遍历，结合队列<br>DFS(深度优先遍历) 先往深走，遇到叶子节点再往回走，递归或者结合栈</p>
+<p>前序遍历 中左右<br>中序遍历 左中右<br>后序遍历 左右中</p>
+
       
     </div>
     <footer class="article-footer">
