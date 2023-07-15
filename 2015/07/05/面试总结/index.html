@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-07T13:40:42.159Z">
+<meta property="article:modified_time" content="2023-07-15T06:51:44.706Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -173,7 +173,13 @@
 <p>5.Buffer是okio整个读和写的核心，RealBufferedSource 和 RealBufferedSink 实际上都只是一个代理，里面的操作全部都是通过Buffer来完成的</p>
 <p>6.日志系统涉及到的写入问题，可以用mmap技术，比io性能高，在Android中可以将文件通过Java提供的MappedByteBuffer映射到内存，然后进行读写。微信的xlog模块mmap实现是基于C++代码实现<br>MappedByteBuffer 位于 Java NIO 包下，用于将文件内容映射到缓冲区，使用的即是 mmap 技术</p>
 <p>也可以通过JNI调用C++方法</p>
-<h3 id="okhttp"><a href="#okhttp" class="headerlink" title="okhttp"></a>okhttp</h3><h3 id="activity-amp-fragment"><a href="#activity-amp-fragment" class="headerlink" title="activity&amp;fragment"></a>activity&amp;fragment</h3><h3 id="view绘制-amp-view事件分发"><a href="#view绘制-amp-view事件分发" class="headerlink" title="view绘制&amp;view事件分发"></a>view绘制&amp;view事件分发</h3>
+<h3 id="okhttp"><a href="#okhttp" class="headerlink" title="okhttp"></a>okhttp</h3><p>1.设计模式<br>1）责任链模式<br>2）建造者模式 Builder<br>3）工厂模式 Factory<br>工厂模式和建造者模式类似，区别就在于工厂模式侧重点在于对象的生成过程，而建造者模式主要是侧重对象的各个参数配置。<br>4）观察者模式 Okhttp中websocket的使用<br>5）单例模式</p>
+<p>2.责任链：主要是RealInterceptorChain这个类，RealInterceptorChain中有个proceed方法，会不断取下一个拦截器进行处理，并且传入当前的RealInterceptorChain，进入拦截器处理后，<br>又会执行RealInterceptorChain的proceed方法，如此循环。。。可见proceed方法前后，是第一次拦截和第二次拦截，第二次拦截是递归回来了</p>
+<p>3.OkHttp中使用ConectionPool实现连接池，默认支持5个并发KeepAlive，默认链路生命为5分钟。</p>
+<p>4.ConnectInterceptor拦截器负责从ConectionPool中找可用连接，没有则会创建，还有个线程会定期清理</p>
+<p>5.当正在执行的任务未超过最大限制64，同时同一 Host 的请求不超过5个，则会添加到正在执行队列，同时提交给线程池。否则先加入等待队列。每个任务完成后，都会调用分发器的 finished 方法,这里面会取出等待队列中的任务继续执行</p>
+<p>if (。。。)    {<br>  runningAsyncCalls.add(call);<br>  executorService().execute(call);<br> } else {<br>  readyAsyncCalls.add(call);<br> } </p>
+<h3 id="activity-amp-fragment"><a href="#activity-amp-fragment" class="headerlink" title="activity&amp;fragment"></a>activity&amp;fragment</h3><h3 id="view绘制-amp-view事件分发"><a href="#view绘制-amp-view事件分发" class="headerlink" title="view绘制&amp;view事件分发"></a>view绘制&amp;view事件分发</h3>
       
     </div>
     <footer class="article-footer">
