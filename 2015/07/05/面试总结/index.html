@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-17T13:30:44.114Z">
+<meta property="article:modified_time" content="2023-07-18T13:59:27.098Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -180,7 +180,12 @@
 <p>5.当正在执行的任务未超过最大限制64，同时同一 Host 的请求不超过5个，则会添加到正在执行队列，同时提交给线程池。否则先加入等待队列。每个任务完成后，都会调用分发器的 finished 方法,这里面会取出等待队列中的任务继续执行</p>
 <p>if (。。。)    {<br>  runningAsyncCalls.add(call);<br>  executorService().execute(call);<br> } else {<br>  readyAsyncCalls.add(call);<br> } </p>
 <h3 id="activity-amp-fragment"><a href="#activity-amp-fragment" class="headerlink" title="activity&amp;fragment"></a>activity&amp;fragment</h3><p>1.FragmentPagerAdapter 和FragmentStatePagerAdapter<br>FragmentPagerAdapter 中每一个Fragment都长存在与内存中，适用于比较固定的少量的Fragment。FragmentPagerAdapter 在我们切换Fragment过程中不会销毁Fragment，只是调用事务中的detach方法。而在detach方法中只会销毁Fragment中的View，而不会销毁Fragment对象。<br>FragmentStatePagerAdapter中实现将只保留当前页面，当页面离开视线后，就会被消除，释放其资源。而在页面需要显示时，生成新的页面。在较多的Fragment的时候为了减少内存可适用。FragmentStatePagerAdapter在我们切换Fragment，会把前面的Fragment直接销毁掉。</p>
-<h3 id="view绘制-amp-view事件分发"><a href="#view绘制-amp-view事件分发" class="headerlink" title="view绘制&amp;view事件分发"></a>view绘制&amp;view事件分发</h3>
+<h3 id="view绘制-amp-view事件分发"><a href="#view绘制-amp-view事件分发" class="headerlink" title="view绘制&amp;view事件分发"></a>view绘制&amp;view事件分发</h3><p>ViewRootImpl：<br>performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);<br>mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);<br>（mView就是DecorView）</p>
+<p>DecorView：<br>(DecorView继承 FrameLayout 继承ViewGroup继承View)<br>这里直接看View的measure方法,里面执行onMeasure<br>因为FrameLayout重写了onMeasure,所以进入查看</p>
+<p>测量：<br>1.measure ——&gt;<br>2.onMeasure ——&gt;<br>3.在相应的实现类中的onMeasure方法内<br>执行for循环child.measure(wSpec,hSpec)<br>Spec &#x3D; 自身Spec + child lp（这是对于当前View来说的）<br>如果对于child来说，那就是parentSpec + 自身lp ——&gt;<br>4.setMeasuredDimension<br>（上述第三部是递归，递归结束才会回到第四部，正好由子View到父View）</p>
+<p>布局：<br>layout过程和上述类似，从view出发，在相应的实现类中的onlayout方法内执行for循环</p>
+<p>绘制：<br>1）绘制背景<br>2）如果需要，保存图层<br>3）绘制View内容(容器没有onDraw方法)<br>4）绘制子控件<br>5）如果需要，恢复图层<br>6）画装饰（滚动条等）</p>
+
       
     </div>
     <footer class="article-footer">
