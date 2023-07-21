@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-19T13:53:56.749Z">
+<meta property="article:modified_time" content="2023-07-21T12:02:39.121Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -190,6 +190,27 @@
 <p>3.dispatchTransformedTouchEvent：<br>1）传child&#x3D;null时，调用自身消费<br>2）不为null时，分发给子view</p>
 <p>4.onTouchListener 优先于 onClickListener<br>onTouch 优先于 onClick</p>
 <p>5.确定down事件的消费对象mFirstTouchTarget后，<br>可以避免move和up事件【进行for循环查找子View的位置】这一步</p>
+<h3 id="hook-api-简单记录"><a href="#hook-api-简单记录" class="headerlink" title="hook api 简单记录"></a>hook api 简单记录</h3><p>比如hook Activity的Instrumentation变量</p>
+<p>步骤类似：<br>1.获取变量A<br>2.讲A放入ProxyA中（其中ProxyA继承A，不影响A执行原生方法）<br>3.将A替换成ProxyA</p>
+<p>public static void hook(Activity activity) {</p>
+<pre><code>try &#123;
+
+    Field mInstrumentation = Activity.class.getDeclaredField(&quot;mInstrumentation&quot;);
+    mInstrumentation.setAccessible(true);
+    Instrumentation instrumentation = (Instrumentation) mInstrumentation.get(activity);
+    //上述三步可以拿到Instrumentation变量
+
+    ProxyInstrumentation proxy = new ProxyInstrumentation(instrumentation);
+    //将变量放入代理中
+
+    mInstrumentation.set(activity, proxy);
+    //替换变量
+
+&#125; catch (Exception e) &#123;
+    e.printStackTrace();
+&#125;
+</code></pre>
+<p>}</p>
 
       
     </div>
