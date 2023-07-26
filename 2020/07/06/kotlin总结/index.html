@@ -14,7 +14,7 @@
 <meta property="og:description" content="kotlin知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-06T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-23T09:38:21.379Z">
+<meta property="article:modified_time" content="2023-07-26T10:51:36.562Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -119,8 +119,14 @@
 <h3 id="lateinit-lazy"><a href="#lateinit-lazy" class="headerlink" title="lateinit  lazy()"></a>lateinit  lazy()</h3><p>lateinit 只用于变量 var，而 lazy 只用于常量 val</p>
 <p>lazy：当且仅当变量被第一次调用的时候，委托方法才会执行。</p>
 <p>在定义变量A时，加上 by lazy 操作符，当A变量第一次使用时会执行 lambda 方法块里的代码为变量初始化值，再次使用 A 变量时，则会使用上一次赋的值。</p>
-<p>比如：<br>val A by lazy { view!!.findViewById<TextView>(R.id.A) }</p>
+<p>比如：val A by lazy { view!!.findViewById<TextView>(R.id.A) }</p>
 <p>lateinit var只是让编译期忽略对属性未初始化的检查，后续在哪里以及何时初始化还需要开发者自己决定。<br>而by lazy真正做到了声明的同时也指定了延迟初始化时的行为，在属性被第一次被使用的时候能自动初始化</p>
+<h3 id="理解T-gt-Unit-、-gt-Unit与-T-gt-Unit"><a href="#理解T-gt-Unit-、-gt-Unit与-T-gt-Unit" class="headerlink" title="理解T.()-&gt;Unit 、 ()-&gt;Unit与(T) -&gt; Unit"></a>理解T.()-&gt;Unit 、 ()-&gt;Unit与(T) -&gt; Unit</h3><p>T.()-&gt;Unit<br>T.()-&gt;Unit 等同于为T定义了一个参数为T对象的扩展函数，所以在函数体内可以直接通过this或省略来访问T代表的对象</p>
+<p>()-&gt;Unit &#x2F; (T) -&gt; Unit<br>(T) -&gt; Unit与 ()-&gt;Unit只是一个普通的函数</p>
+<h3 id="泛型函数"><a href="#泛型函数" class="headerlink" title="泛型函数"></a>泛型函数</h3><p>fun <T> a(b : T):T{<br>  ……<br>}</p>
+<h3 id="函数式接口（SAM）"><a href="#函数式接口（SAM）" class="headerlink" title="函数式接口（SAM）"></a>函数式接口（SAM）</h3><p>只有一个抽象方法的接口称为函数式接口或 SAM（单一抽象方法）接口</p>
+<p>fun interface a{<br>  fun b()<br>}</p>
+<p>在使用时，可以简化<br>比如：val c &#x3D; a{ 内部处理逻辑 }</p>
 
       
     </div>
