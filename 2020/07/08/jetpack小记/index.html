@@ -14,7 +14,7 @@
 <meta property="og:description" content="jetpack知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-08T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-30T13:24:55.870Z">
+<meta property="article:modified_time" content="2023-07-31T14:42:06.356Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -123,7 +123,18 @@
 <p>MyLiveData.get().observe(this, {<br>    Log.d(TAG, “MyLiveData onChanged : $it”)<br>})</p>
 <p>owner.getLifecycle().addObserver(wrapper);<br>owner就是this，wrapper是用LifecycleBoundObserver包装的Observer<br>内部就是用了lifecycle</p>
 <p>LivaData数据更新可以使用setValue(value)、postValue(value)<br>区别在于postValue(value)用于子线程，使用setValue()、postValue()更新数据时会通知回调所有的观察者。</p>
-<h3 id="viewmodel"><a href="#viewmodel" class="headerlink" title="viewmodel"></a>viewmodel</h3><h3 id="databing"><a href="#databing" class="headerlink" title="databing"></a>databing</h3>
+<h3 id="viewmodel"><a href="#viewmodel" class="headerlink" title="viewmodel"></a>viewmodel</h3><p>ViewModel生命周期长于Activity，因系统配置变更Activity销毁重建，ViewModel对象会保留并关联到新的Activity。<br>而Activity的正常销毁（系统不会重建Activity）时，ViewModel对象是会清除的。</p>
+<p>和lifecycle一样，ComponentActivity实现了ViewModelStoreOwner接口<br>ComponentActivity拥有变量ViewModelStore，它将viewModel作为Value存储在HashMap中。</p>
+<p>kotlin采用 val homeViewModel: HomeViewModel by viewModel() 委托模式创建<br>内部：先尝试从ViewModelStore获取ViewModel实例，如果没有获取到，就使用Factory创建，然后存入ViewModelStore。</p>
+<p>配置改变时 系统把viewModelStore存在了NonConfigurationInstances中</p>
+<ol>
+<li><p>其中NonConfigurationInstances是ComponentActivity静态内部类，非配置实例<br>static final class NonConfigurationInstances {<br> Object custom;<br> ViewModelStore viewModelStore;<br>}</p>
+</li>
+<li><p>ActivityThread 中的 ActivityClientRecord 是不受 activity 重建的影响，那么ActivityClientRecord中lastNonConfigurationInstances也不受影响，那么其中的Object activity也不受影响，那么ComponentActivity中的NonConfigurationInstances的viewModelStore不受影响，那么viewModel也就不受影响了</p>
+</li>
+</ol>
+<p>上述两点说明 viewmodel 生命周期大于activity<br>条件：在配置发生变化而销毁activity时<br>正常销毁 ActivityClientRecord 也会回收的，vm自然也没了</p>
+<h3 id="databing"><a href="#databing" class="headerlink" title="databing"></a>databing</h3>
       
     </div>
     <footer class="article-footer">
