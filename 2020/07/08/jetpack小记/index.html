@@ -14,7 +14,7 @@
 <meta property="og:description" content="jetpack知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-08T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-08-01T04:28:14.080Z">
+<meta property="article:modified_time" content="2023-08-01T15:00:22.474Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -137,6 +137,12 @@
 <p>ViewModel是存在内存中，读写速度快，而通过onSaveInstanceState是在 序列化到磁盘中。</p>
 <p>ViewModel，可以存复杂数据，大小限制就是App的可用内存。而 onSaveInstanceState只能存可序列化和反序列化的对象，且大小有限制（一般Bundle限制大小1M）。</p>
 <h3 id="databing"><a href="#databing" class="headerlink" title="databing"></a>databing</h3><p>目前只用来 不写 findviewbyid</p>
+<h3 id="flow"><a href="#flow" class="headerlink" title="flow"></a>flow</h3><p>1.Flow通过flowOn改变数据发射的线程，数据消费线程则由协程所在线程决定<br>2.Flow没有提供取消方法，可以通过取消Flow所在协程的方式来取消</p>
+<p>LiveData仍然可以作为响应式编程的架构组件，只是更复杂的场景（数据处理，多个请求合并等等）使用 Flow 来实现更合适</p>
+<p>背压：当下游的消费者的速率小于上游生产者的速率时，生产者就会收到来自消费者的背压。</p>
+<p>runBlocking {<br>    flow {<br>        (1..5).forEach {<br>            delay(200)<br>            println(“emit$it,${System.currentTimeMillis()},${Thread.currentThread().name}”)<br>            emit(it)<br>        }<br>    }.buffer().collect {<br>        delay(500)<br>        println(“collect$it,${System.currentTimeMillis()},${Thread.currentThread().name}”)<br>    }<br>}</p>
+<p>解决背压：<br>1.buffer（flowon切换线程效果也一样）<br>数据的生成和收集变成了异步的，跟缓冲没太大关系<br>2.conflate<br>消费完一个数据，conflate才会发送此时的新数据<br>不会打断消费者消费过程<br>3.collectLatest<br>在最新值来的时候，将当前消费者的消费过程取消，然后令消费者处理最新值。</p>
+<p>实操：<br>flow {<br>    &#x2F;&#x2F; 进行网络或者数据库操作<br>    emit(model)<br>}.flowOn(Dispatchers.IO) &#x2F;&#x2F; 通过 flowOn 切换到 IO 线程</p>
 
       
     </div>

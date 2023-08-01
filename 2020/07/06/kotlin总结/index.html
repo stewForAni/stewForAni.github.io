@@ -14,7 +14,7 @@
 <meta property="og:description" content="kotlin知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-06T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-28T12:00:29.609Z">
+<meta property="article:modified_time" content="2023-08-01T07:31:45.411Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -132,7 +132,6 @@
 <p>2.伴生对象（companion object）<br>类似 java class 中的静态属性及方法</p>
 <p>3.对象表达式（object expression）<br>对象表达式常用来作为匿名内部类的实现<br>private val callBack &#x3D; object : CallBack {<br>    override fun onSuccess() {}<br>    override fun onFailure() {}<br>}</p>
 <p>&#x2F;&#x2F; 通过对象表达式实现点击事件回调<br>btn.setOnClickListener(object : View.OnClickListener {<br>    override fun onClick(v: View) {<br>        TODO(“Not yet implemented”)<br>    }<br>})</p>
-<h3 id="flow"><a href="#flow" class="headerlink" title="flow"></a>flow</h3><p>1.Flow通过flowOn改变数据发射的线程，数据消费线程则由协程所在线程决定<br>2.Flow没有提供取消方法，可以通过取消Flow所在协程的方式来取消</p>
 
       
     </div>
