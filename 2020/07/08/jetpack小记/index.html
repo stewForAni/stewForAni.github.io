@@ -14,7 +14,7 @@
 <meta property="og:description" content="jetpack知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-08T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-07-31T14:42:06.356Z">
+<meta property="article:modified_time" content="2023-08-01T04:28:14.080Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -134,7 +134,10 @@
 </li>
 </ol>
 <p>上述两点说明 viewmodel 生命周期大于activity<br>条件：在配置发生变化而销毁activity时<br>正常销毁 ActivityClientRecord 也会回收的，vm自然也没了</p>
-<h3 id="databing"><a href="#databing" class="headerlink" title="databing"></a>databing</h3>
+<p>ViewModel是存在内存中，读写速度快，而通过onSaveInstanceState是在 序列化到磁盘中。</p>
+<p>ViewModel，可以存复杂数据，大小限制就是App的可用内存。而 onSaveInstanceState只能存可序列化和反序列化的对象，且大小有限制（一般Bundle限制大小1M）。</p>
+<h3 id="databing"><a href="#databing" class="headerlink" title="databing"></a>databing</h3><p>目前只用来 不写 findviewbyid</p>
+
       
     </div>
     <footer class="article-footer">
