@@ -14,7 +14,7 @@
 <meta property="og:description" content="android启动优化知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-09-05T15:02:39.000Z">
-<meta property="article:modified_time" content="2023-08-04T12:21:49.103Z">
+<meta property="article:modified_time" content="2023-08-04T12:57:50.599Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
@@ -130,12 +130,9 @@
 <p>9.WebView启动优化<br>1）WebView首次创建比较耗时，需要预先创建WebView提前将其内核初始化。<br>2）使用WebView缓存池，用到WebView的时候都从缓存池中拿，注意内存泄漏问题。</p>
 <p>10.页面数据预加载</p>
 <hr>
-<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>Application阶段：</p>
-<p>异步启动器 初始化第三方SDK等</p>
-<p>Acticity阶段：</p>
-<p>利用IdleHandler，进行延迟启动第三方SDK等</p>
-<p>其他：</p>
-<p>1.采用facebook的redex：类重排，方法内敛<br>2.webview缓存<br>3.统一内部线程池，区别 IO密集型任务 和 CPU密集型任务<br>4.设置线程优先级</p>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><h5 id="Application阶段："><a href="#Application阶段：" class="headerlink" title="Application阶段："></a>Application阶段：</h5><p>异步启动器 初始化第三方SDK等</p>
+<h5 id="Acticity阶段："><a href="#Acticity阶段：" class="headerlink" title="Acticity阶段："></a>Acticity阶段：</h5><p>利用IdleHandler，进行延迟启动第三方SDK等</p>
+<h5 id="通用："><a href="#通用：" class="headerlink" title="通用："></a>通用：</h5><p>1.采用facebook的redex：类重排，方法内敛（和byreX一同考虑）<br>2.webview缓存<br>3.统一内部线程池，区别 IO密集型任务 和 CPU密集型任务<br>4.设置线程优先级<br>5.xml转view</p>
 
       
     </div>
