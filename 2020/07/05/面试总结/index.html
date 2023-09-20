@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-09-19T10:11:47.110Z">
+<meta property="article:modified_time" content="2023-09-20T15:39:17.895Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -222,7 +222,13 @@
 <h3 id="app架构"><a href="#app架构" class="headerlink" title="app架构"></a>app架构</h3><p>mvc：mvc三方互相耦合，代码混乱</p>
 <p>mvp：vp耦合，pm耦合，但代码职责比mvc清晰</p>
 <p>mvvm： viewModel不持有view ，view和vm通过livedata观察者模式联系</p>
-<h3 id=""><a href="#" class="headerlink" title=""></a></h3><h3 id="-1"><a href="#-1" class="headerlink" title=""></a></h3>
+<h3 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h3><p>需结合记事本学习</p>
+<p>mmap技术：<br>1.Server端在启动之后，对&#x2F;dev&#x2F;binder设备调用mmap。<br>2.内核中的binder_mmap函数进行对应的处理：申请一块物理内存A，然后在Server端的用户空间B和内核空间C同时进行映射<br>3.所以相当于BC相互映射，可以互相直接访问<br>【发消息需要拷贝数据，收消息使用mmap】</p>
+<p>binder驱动负责远程引用和本地实体服务的转换</p>
+<h3 id="ServiceManager"><a href="#ServiceManager" class="headerlink" title="ServiceManager"></a>ServiceManager</h3><p>1.binder_open打开binder设备文件&#x2F;dev&#x2F;binder，执行mmap</p>
+<p>2.binder_become_context_manager将自己注册为servicemanager，<br>引用为0，其他的Client可以通过这个0号引用</p>
+<p>3.binder_loop循环等待+处理 Client 请求(Service注册请求+代理对象获取请求)</p>
+
       
     </div>
     <footer class="article-footer">
