@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-09-21T10:18:40.420Z">
+<meta property="article:modified_time" content="2023-09-24T16:33:08.011Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -235,7 +235,11 @@
 <p>服务之间是存在依赖关系的，所以服务的启动划分了8个阶段：0-100-480-500-520-550-600-1000</p>
 <p>一部分Service由startService启动</p>
 <p>一部分Service由通过ServiceManager.addService注册服务，可以供其他地方调用</p>
-<h3 id="AMS启动"><a href="#AMS启动" class="headerlink" title="AMS启动"></a>AMS启动</h3><p>主要是通过在System Server中使用ServiceManager.addService</p>
+<h3 id="AMS"><a href="#AMS" class="headerlink" title="AMS"></a>AMS</h3><p>主要是通过在System Server中使用ServiceManager.addService</p>
+<p>AMS主要负责系统中四大组件的启动，进程管理</p>
+<p>8.0以及之前：<br>handleLaunchActivity-performLaunchActivity（Activity#onCreate和Activity#onStart）<br>handleResumeActivity-performResumeActivity (Activity#onResume)</p>
+<p>9.0开始使用事务模式：</p>
+<p>TransactionExecutor#executeCallbacks<br>LaunchActivityItem<br>StartActivityItem<br>ResumeActivityItem</p>
 
       
     </div>
