@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-09-25T12:03:09.164Z">
+<meta property="article:modified_time" content="2023-09-25T14:13:21.661Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -241,9 +241,13 @@
 <p>9.0开始使用事务模式：</p>
 <p>TransactionExecutor#executeCallbacks<br>LaunchActivityItem<br>StartActivityItem<br>ResumeActivityItem</p>
 <h3 id="Instrumentation是什么，和ActivityThread是什么关系？"><a href="#Instrumentation是什么，和ActivityThread是什么关系？" class="headerlink" title="Instrumentation是什么，和ActivityThread是什么关系？"></a>Instrumentation是什么，和ActivityThread是什么关系？</h3><p>监控系统和应用之间的交互，一个进程对应一个Instrumentation<br>ActivityThread通过Instrumentation执行activity的生命周期<br>activity通过Instrumentation（转到AMS）跳转activity</p>
-<h3 id="Window-WMS"><a href="#Window-WMS" class="headerlink" title="Window WMS"></a>Window WMS</h3><p>Window是窗口的抽象概念，PhoneWindow是其唯一实现，PhoneWindow中有一个顶级View , DecorView<br>Window是View的管理者（即使用WM操作View，最后是通过ViewRootImpl实现的）<br>View是Window的呈现</p>
+<h3 id="Window"><a href="#Window" class="headerlink" title="Window"></a>Window</h3><p>Window是窗口的抽象概念，PhoneWindow是其唯一实现，PhoneWindow中有一个顶级View , DecorView<br>Window是View的管理者（即使用WM操作View，最后是通过ViewRootImpl实现的）<br>View是Window的呈现</p>
 <p>WindowManager是个接口，继承自ViewManager<br>#addView<br>#updateViewLayout<br>#removeView</p>
-<p>WindowManager的实现类是WindowManagerImpl<br>WindowManagerImpl又交给了WindowManagerGlobal<br>WindowManagerGlobal内部使用了ViewRootImpl</p>
+<p>WindowManager的实现类是WindowManagerImpl<br>WindowManagerImpl又交给了WindowManagerGlobal<br>WindowManagerGlobal内部使用了ViewRootImpl<br>ViewRootImpl#setView{<br>……<br>&#x2F;&#x2F;1.绘制view<br>&#x2F;&#x2F;requestLayout内部主要使用垂直同步信号VSync的方式，在收到GPU提供的VSync信号后，会触发View的三大绘制layout，mesure，draw流程<br>requestLayout();<br>……<br>&#x2F;&#x2F;2.通过session与WMS建立通信：完成window的添加<br>&#x2F;&#x2F;WindowManagerService的openSession可以获得session<br>mWindowSession.addToDisplay(mWindow……);<br>……<br>……<br>}</p>
+<h3 id="WMS"><a href="#WMS" class="headerlink" title="WMS"></a>WMS</h3><p>窗口管理：<br>1.窗口权限检查<br>2.窗口信息校对<br>3.获取对应WindowToken<br>4.窗口有效性检查<br>5.如果前面满足，则创建一个WindowState对象<br>6.通过WindowState的attach方法与SurfaceFlinger通信<br>7.SurfaceFlinger进行渲染输出</p>
+<p>输入事件的中转站：<br>1.启动InputManagerService，同时会创建InputManager<br>2.创建InputManager同时创建InputReader和InputDispatcher<br>3.InputReader读取事件<br>4.InputDispatcher将事件分发给合适的Window<br>5.WMS会把所有窗口的信息更新到InputDispatcher中<br>6.Window传到DecorView，然后是android传统事件分发</p>
+<p>Activity的Window创建<br>Dialog的window创建<br>Toast的window创建</p>
+<p>都是通过wm.addView的方式来添加window的</p>
 
       
     </div>
