@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-09-25T14:13:21.661Z">
+<meta property="article:modified_time" content="2023-09-26T13:42:11.217Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -248,6 +248,21 @@
 <p>输入事件的中转站：<br>1.启动InputManagerService，同时会创建InputManager<br>2.创建InputManager同时创建InputReader和InputDispatcher<br>3.InputReader读取事件<br>4.InputDispatcher将事件分发给合适的Window<br>5.WMS会把所有窗口的信息更新到InputDispatcher中<br>6.Window传到DecorView，然后是android传统事件分发</p>
 <p>Activity的Window创建<br>Dialog的window创建<br>Toast的window创建</p>
 <p>都是通过wm.addView的方式来添加window的</p>
+<h3 id="IMS"><a href="#IMS" class="headerlink" title="IMS"></a>IMS</h3><p>物理触摸事件 经过 CPU处理  保存在 &#x2F;dev&#x2F;input&#x2F;eventX  中</p>
+<p>InputReader（内部有eventhub，监听内核中保存的事件，将事件放入InputDispatcher内部的eventqueue中）<br>InputDispatcher（内部有eventqueue）<br>InputDispatcher通过channel通道和应用层跨进程通信（双端socket通信）</p>
+<p>每一次视图创建或者activity拉起，WMS都会通过InputMonitor将窗口集合同步到IMS的InputDispatcher中<br>所以InputDispatcher可以找到具体哪一个window来分发事件</p>
+<h3 id="PMS"><a href="#PMS" class="headerlink" title="PMS"></a>PMS</h3><p>1.加载管理应用程序<br>2.提供包和组件的信息<br>3.检查app权限<br>4.提供安装卸载的接口</p>
+<p>管理包信息通过以下两个文件：<br>&#x2F;system&#x2F;etc&#x2F;permissions.xml 和&#x2F;data&#x2F;system&#x2F;packages.xml </p>
+<p>所有系统程序的文件处于&#x2F;system&#x2F;app&#x2F;目录下，<br>第三方程序文件处于&#x2F;data&#x2F;app&#x2F; 目录下，<br>在程序安装过程中PMS会将要安装的apk文件复制到&#x2F;data&#x2F;app&#x2F;目录下 </p>
+<p>系统启动创建PMS<br>PMS读取配置文件<br>PMS扫描所有app<br>PMS更新配置文件</p>
+<p>PackageInstaller 提供了 应用安装、更新、移除的能力，<br>当然具体实现是 IPC 到了 PackageInstallerService中。</p>
+<h5 id="安装方式"><a href="#安装方式" class="headerlink" title="安装方式"></a>安装方式</h5><p>1.系统app和预置app（没有安装界面）<br>PackageManagerService的构造中会扫描对应目录下的apk,完成安装</p>
+<p>2.官方市场app内安装（没有安装界面）<br>调用PackageManager的installPackage方法执行安装</p>
+<p>3.PC 上 ADB安装（没有安装界面）<br>通过内置的pm脚本来执行PM.java</p>
+<p>4.第三方应用安装（有安装界面）</p>
+<h5 id="安装流程"><a href="#安装流程" class="headerlink" title="安装流程"></a>安装流程</h5><p>1.复制apk到&#x2F;data&#x2F;app，解压，PackageParser扫描<br>2.dex文件放入&#x2F;data&#x2F;dalvik-cache<br>3.&#x2F;data&#x2F;data中创建包名文件夹，用来存放应用的数据库、xml文件、cache、二进制的so动态库等<br>4.PMS:解析apk的AndroidManifest.xml文件，注册四大组件，将apk各种信息保存在&#x2F;data&#x2F;system&#x2F;packages.xml文件中<br>5.资源管理器解析APK里的资源文件。<br>6.dex2oat<br>7.发送安装完成广播</p>
+<p>ActivityIntentResolver mActivities:<br>遍历所有程序的目录，并解析所有的注册清单文件，将提取 所有的Intent-filter数据保存在对应的集合中;<br>ActivityIntentResolver mReceivers:同上<br>ServiceIntentResolver mServices:同上<br>ProviderIntentResolver mProviders:同上 </p>
+<p>activity跳转时，会调用PMS获取对应activity的信息</p>
 
       
     </div>
