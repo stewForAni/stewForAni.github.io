@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-09-26T13:42:11.217Z">
+<meta property="article:modified_time" content="2023-10-07T12:14:45.492Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -263,6 +263,8 @@
 <h5 id="安装流程"><a href="#安装流程" class="headerlink" title="安装流程"></a>安装流程</h5><p>1.复制apk到&#x2F;data&#x2F;app，解压，PackageParser扫描<br>2.dex文件放入&#x2F;data&#x2F;dalvik-cache<br>3.&#x2F;data&#x2F;data中创建包名文件夹，用来存放应用的数据库、xml文件、cache、二进制的so动态库等<br>4.PMS:解析apk的AndroidManifest.xml文件，注册四大组件，将apk各种信息保存在&#x2F;data&#x2F;system&#x2F;packages.xml文件中<br>5.资源管理器解析APK里的资源文件。<br>6.dex2oat<br>7.发送安装完成广播</p>
 <p>ActivityIntentResolver mActivities:<br>遍历所有程序的目录，并解析所有的注册清单文件，将提取 所有的Intent-filter数据保存在对应的集合中;<br>ActivityIntentResolver mReceivers:同上<br>ServiceIntentResolver mServices:同上<br>ProviderIntentResolver mProviders:同上 </p>
 <p>activity跳转时，会调用PMS获取对应activity的信息</p>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>1.UI<br>x2c，asynclayoutinflater</p>
+<p>2.启动</p>
 
       
     </div>
