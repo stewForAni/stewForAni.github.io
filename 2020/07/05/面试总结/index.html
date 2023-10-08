@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-10-07T13:25:23.600Z">
+<meta property="article:modified_time" content="2023-10-08T13:35:19.211Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -274,6 +274,10 @@
 <p>设置线程优先级</p>
 <p>xml转view，x2c</p>
 <p>方法内敛，类重排：facebook的Redex或者byteX</p>
+<p>redex：1.通用字节码优化+dex优化</p>
+<p>3.包体积</p>
+<p>R8与混淆<br><code>R8</code>：压缩比例大，kotlin友好<br><code>混淆</code>：处理枚举，算法强，能优化gson<br>有了 R8，可以在一个步骤中完成脱糖、压缩、混淆、优化和 dex 处理 (D8)，<br>在之前混淆中，混淆和D8是分开的，产生两遍class文件，效率低</p>
+<p>AndroidResGuard：主要是通过 短路径的优化，以达到 减少 resources.arsc、metadata 签名文件以及 ZIP 文件大小 的效果<br>其实效果一般</p>
 
       
     </div>
