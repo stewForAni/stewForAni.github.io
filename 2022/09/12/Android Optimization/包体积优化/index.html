@@ -14,7 +14,7 @@
 <meta property="og:description" content="Android App包体积优化知识点记录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-09-12T15:02:39.000Z">
-<meta property="article:modified_time" content="2023-05-15T07:33:05.008Z">
+<meta property="article:modified_time" content="2023-10-09T12:19:54.372Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
@@ -175,6 +175,12 @@
 <li><p>包体积监控<br><a target="_blank" rel="noopener" href="https://github.com/Tencent/matrix">https://github.com/Tencent/matrix</a></p>
 </li>
 </ul>
+<p><code>得物篇</code><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/mVauS73sNcejzMR9nmrFPg">https://mp.weixin.qq.com/s/mVauS73sNcejzMR9nmrFPg</a></p>
+<p>1.图片压缩<br>使用 cwebp 对图片进行webp转换，<br>使用 guetzli 对JPEG进行压缩，<br>使用pngquant对PNG 进行压缩，<br>使用 gifsicle 对gif进行压缩。<br>在实施对过程中，对于 res 目录下的文件优先使用 webp 处理，对assets 目录下的文件则进行同格式压缩</p>
+<p>2.资源去重</p>
+<p>3.资源混淆<br>用长路径替换短路径</p>
+<p>4.ARSC压缩<br>Arsc 压缩降低的体积非常可观，但是 Target Sdk 在30以上 arsc 压缩被禁了。压缩 resources.arsc 虽然能带来包体上的收益，但也有弊端，它将带来内存和运行速度上的劣势。不压缩的resources.arsc系统可以使用mmap来节约内存的使用（一个app的资源至少被3个进程所持有：自己, launcher, system），而压缩的resources.arsc会存在于每个进程中。</p>
+<p>5.动态加载so</p>
 <hr>
 <h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><ul>
 <li><p>LibRadar——获取APK中第三方库信息的工具</p>
