@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-10-11T12:11:08.416Z">
+<meta property="article:modified_time" content="2023-10-13T14:39:17.998Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -278,6 +278,11 @@
 <p>3.包体积</p>
 <p>R8与混淆<br><code>R8</code>：压缩比例大，kotlin友好<br><code>混淆</code>：处理枚举，算法强，能优化gson<br>有了 R8，可以在一个步骤中完成脱糖、压缩、混淆、优化和 dex 处理 (D8)，<br>在之前混淆中，混淆和D8是分开的，产生两遍class文件，效率低</p>
 <p>AndroidResGuard：主要是通过 短路径的优化，以达到 减少 resources.arsc、metadata 签名文件以及 ZIP 文件大小 的效果<br>其实效果一般</p>
+<h3 id="开发流程注意点"><a href="#开发流程注意点" class="headerlink" title="开发流程注意点"></a>开发流程注意点</h3><h5 id="研发方面："><a href="#研发方面：" class="headerlink" title="研发方面："></a>研发方面：</h5><p>1.技术方案：技术方案评审<br>2.SDK：多方面对 SDK 进行评估，同时要求三方提供稳定性报告。<br>3.架构优化：对基础功能进行封装，在基础库里做好统一容错等稳定性防护。</p>
+<h5 id="灰度阶段："><a href="#灰度阶段：" class="headerlink" title="灰度阶段："></a>灰度阶段：</h5><p>新版本上线采用多轮灰度 → 全量 的发布模式，在新版本全量发布前，充分灰度暴露问题，将影响范围降至最低<br>改动严格审核<br>Crash&amp;ANR 及时监控和修复<br>收集用户反馈</p>
+<h5 id="运维阶段："><a href="#运维阶段：" class="headerlink" title="运维阶段："></a>运维阶段：</h5><p>稳定性监控主要是通过 Bugly，可以自研一个监控bugly的脚本，第一时间通报钉钉<br>可以获取bugly数据，自己分析，归因</p>
+<h5 id="容灾："><a href="#容灾：" class="headerlink" title="容灾："></a>容灾：</h5><p>服务端控制 是否 启用新功能，即服务端控制开关<br>有问题的页面 可以通过路由 拦截 （页面的跳转可以通过服务端配置来开关）</p>
+<h5 id="日志："><a href="#日志：" class="headerlink" title="日志："></a>日志：</h5><p>写入日志，高性能mmap<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904118088105991">https://juejin.cn/post/6844904118088105991</a><br>上传日志<br>按策略上传，可以先存在用户本地，或者抽样上传</p>
 <h3 id="随记"><a href="#随记" class="headerlink" title="随记"></a>随记</h3><p>1.跨进程大数据传输可以使用 imagewrite&#x2F;reader<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7146148906059956232#comment">https://juejin.cn/post/7146148906059956232#comment</a></p>
 <p>2.webview<br>shouldOverrideUrlLoading()方法不是每次加载都会调用，WebView的前进、后退等不会调用shouldOverrideUrlLoading方法；<br>非loadUrl方式加载 或者 是重定向的，才会调用shouldOverrideUrlLoading方法。</p>
 
