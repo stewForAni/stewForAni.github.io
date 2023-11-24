@@ -14,7 +14,7 @@
 <meta property="og:description" content="面试知识点记录整理">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-05T09:21:33.000Z">
-<meta property="article:modified_time" content="2023-10-13T14:39:17.998Z">
+<meta property="article:modified_time" content="2023-10-16T09:27:37.415Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
@@ -105,7 +105,11 @@
         <p>面试知识点记录整理</p>
 <span id="more"></span>
 
+
 <hr>
+<p><code>Java</code></p>
+<hr>
+<p><code>Android</code></p>
 <h3 id="context"><a href="#context" class="headerlink" title="context"></a>context</h3><p>1.可以理解为一个环境中切换的不同场景，可以获取一些公共资源，例如资源文件如：Resources、AssetManager、Package应用包信息等；<br>可以启动 Activities&#x2F;Service, 注册广播监听器，发送广播等。</p>
 <p>2.四大组件中只有 Activity，Service 继承了 Context，所以如果要算应用里的 Context 的实例数量，应该是 Activity 的实例个数 + Service 的实例个数 + Application 的实例个数。</p>
 <p>3.BroadcastReceiver是没有Context的，onReceiver传进来的Context是注册该广播的Context ，而ContentProvider的Context是Application的Context。</p>
