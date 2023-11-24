@@ -4,19 +4,15 @@
   <meta charset="utf-8">
   
   
-  <title>Jetpack 之 Paging3 RemoteMediator | CoolStew</title>
+  <title>Archives: 2023/9 | CoolStew</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Jetpack 之 Paging3 RemoteMediator">
-<meta property="og:url" content="https://stewforani.github.io/2022/05/24/Android%20Kotlin%20Jetpack/Paging3-with-RemoteMediator/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="CoolStew">
+<meta property="og:url" content="https://stewforani.github.io/archives/2023/09/index.html">
 <meta property="og:site_name" content="CoolStew">
-<meta property="og:description" content="实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-05-24T15:46:15.000Z">
-<meta property="article:modified_time" content="2023-05-15T07:33:21.022Z">
 <meta property="article:author" content="Stew">
-<meta property="article:tag" content="Jetpack">
+<meta property="article:tag" content="android,github,hexo">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
@@ -80,72 +76,39 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-Android Kotlin Jetpack/Paging3-with-RemoteMediator" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/05/24/Android%20Kotlin%20Jetpack/Paging3-with-RemoteMediator/" class="article-date">
-  <time class="dt-published" datetime="2022-05-24T15:46:15.000Z" itemprop="datePublished">2022-05-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="p-name article-title" itemprop="headline name">
-      Jetpack 之 Paging3 RemoteMediator
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2023" class="archive-year">2023</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2023/09/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%90%AF%E5%8A%A8%E6%9C%AA%E6%B3%A8%E5%86%8CActivity/" class="archive-article-date">
+  <time class="dt-published" datetime="2023-09-05T15:02:39.000Z" itemprop="datePublished">Sep 5</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2023/09/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%90%AF%E5%8A%A8%E6%9C%AA%E6%B3%A8%E5%86%8CActivity/">插件化之启动未注册Activity</a>
     </h1>
   
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上</p>
-<span id="more"></span>
-
-<hr>
-<p>RemoteMediator 和 PagingSource 相似，都需要覆盖 load() 方法，但是不同的是 RemoteMediator 不是加载分页数据到 RecyclerView 列表上，而是获取网络分页数据并更新到数据库中。</p>
-<h3 id="区别："><a href="#区别：" class="headerlink" title="区别："></a>区别：</h3><p>PagingSource：实现单一数据源以及如何从该数据源中查找数据，例如 Room，数据源的变动会直接映射到 UI 上<br>RemoteMediator：实现加载网络分页数据并更新到数据库中，但是数据源的变动不能直接映射到 UI 上<br>在项目中如何进行选择？</p>
-<p>PagingSource：用于加载有限的数据集（本地数据库）例如手机通讯录等等。<br>RemoteMediator：主要用来加载网络分页数据并更新到数据库中，当我们没有更多的数据时，我们向网络请求更多的数据，结合 PagingSource 当保存更多数据时会直接映射到 UI 上</p>
-<h3 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h3><p>RemoteMediator 目前是实验性的 API ，所有实现 RemoteMediator 的类都需要添加 @OptIn(ExperimentalPagingApi::class) 注解。</p>
-<p>具体代码移步github：<br><a target="_blank" rel="noopener" href="https://github.com/stewForAni/Kotlin-Jetpack/tree/main/app/src/main/java/com/stew/kotlinjetpack/paging3RemoteMediator">https://github.com/stewForAni/Kotlin-Jetpack/tree/main/app/src/main/java/com/stew/kotlinjetpack/paging3RemoteMediator</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://stewforani.github.io/2022/05/24/Android%20Kotlin%20Jetpack/Paging3-with-RemoteMediator/" data-id="clmqfik3y0048stca35xzbl4k" data-title="Jetpack 之 Paging3 RemoteMediator" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/05/25/Android%20Kotlin%20Jetpack/Flow/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          kotlin之Flow
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/05/24/Android%20Kotlin%20Jetpack/Paging3/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Jetpack 之 Paging3使用</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
 
 
 </section>
