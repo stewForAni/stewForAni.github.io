@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>反射与动态代理 | CoolStew</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="记录反射与动态代理相关的知识点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反射与动态代理">
+<meta property="og:url" content="https://stewforani.github.io/2023/06/15/Android%20Optimization/%E5%8F%8D%E5%B0%84%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/index.html">
+<meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="记录反射与动态代理相关的知识点">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-06-15T15:02:39.000Z">
+<meta property="article:modified_time" content="2023-11-25T08:15:33.224Z">
+<meta property="article:author" content="Stew">
+<meta property="article:tag" content="Optimization">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CoolStew</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Android Blog &amp; Find Me Github@stewforani</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://stewforani.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Android Optimization/反射与动态代理" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/06/15/Android%20Optimization/%E5%8F%8D%E5%B0%84%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" class="article-date">
+  <time class="dt-published" datetime="2023-06-15T15:02:39.000Z" itemprop="datePublished">2023-06-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      反射与动态代理
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>记录反射与动态代理相关的知识点</p>
+<span id="more"></span>
+
+<hr>
+<h3 id="反射api记录："><a href="#反射api记录：" class="headerlink" title="反射api记录："></a>反射api记录：</h3><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e55770dd48d3">https://www.jianshu.com/p/e55770dd48d3</a></p>
+<p>setAccessible(boolean flag) &#x2F;&#x2F;true表示取消访问权限检查<br>含有Declared的，可以获取所有权限<br>非Declared的，只能获取public</p>
+<h4 id="Class对象"><a href="#Class对象" class="headerlink" title="Class对象"></a>Class对象</h4><p>&#x2F;&#x2F;第一种方式 通过Class类的静态方法——forName()来实现<br>class1 &#x3D; Class.forName(“com.lvr.reflection.Person”);<br>&#x2F;&#x2F;第二种方式 通过类的class属性<br>class1 &#x3D; Person.class;<br>&#x2F;&#x2F;第三种方式 通过对象getClass方法<br>Person person &#x3D; new Person();<br>Class&lt;?&gt; class1 &#x3D; person.getClass();</p>
+<h4 id="获取-Class-对应类的成员变量"><a href="#获取-Class-对应类的成员变量" class="headerlink" title="获取 Class 对应类的成员变量"></a>获取 Class 对应类的成员变量</h4><p>Field[] getDeclaredFields(); <br>&#x2F;&#x2F; 获取 Class 对象对应类的所有属性，与成员变量的访问权限无关。<br>Field getDeclaredField(String name);<br>&#x2F;&#x2F; 获取 Class 对象对应类的指定名称的属性，与成员变量的访问权限无关。<br>Field[] getFields(); <br>&#x2F;&#x2F; 获取 Class 对象对应类的所有 public 属性<br>Field getField(String name);<br>&#x2F;&#x2F; 获取 Class 对象对应类的指定名称的 public 属性。</p>
+<h4 id="获取-Class-对应类的方法"><a href="#获取-Class-对应类的方法" class="headerlink" title="获取 Class 对应类的方法"></a>获取 Class 对应类的方法</h4><p>Method[] getDeclaredMethods();<br>&#x2F;&#x2F; 获取 Class 对象对应类的所有声明方法，于方法的访问权限无关。<br>Method getDeclaredMethod(String name, Class<?>...parameterTypes); 
+// 返回此 Class 对象对应类的、带指定形参列表的方法，与方法的访问权限无关。
+Method[] getMethods(); 
+// 获取 Class 对象对应类的所有 public 方法，包括父类的方法。
+Method getMethod(String name, Class<?>…parameterTypes);<br>&#x2F;&#x2F; 返回此 Class 对象对应类的、带指定形参列表的 public 方法。</p>
+<h4 id="创建对象"><a href="#创建对象" class="headerlink" title="创建对象"></a>创建对象</h4><p>1.使用 Class 对象的 newInstance() 方法（要求：Class 对象的对应类要有默认构造器）<br>2.先使用 Class 对象获取指定的 Constructor 对象，再调用 Constructor 对象的 newInstance() 方法（这种方式可以选择使用指定的构造器来创建实例。）</p>
+<h4 id="调用方法"><a href="#调用方法" class="headerlink" title="调用方法"></a>调用方法</h4><p>method.invoke(Object obj, Object… args)<br>obj是method的调用者，args是method的参数</p>
+<h4 id="获取对象xxx"><a href="#获取对象xxx" class="headerlink" title="获取对象xxx"></a>获取对象xxx</h4><p>field.get(A)&#x2F;&#x2F;field是A的普通变量<br>field.get(null)&#x2F;&#x2F;field是A的静态变量</p>
+<h4 id="替换对象"><a href="#替换对象" class="headerlink" title="替换对象"></a>替换对象</h4><p>field.set(obj,newValue)&#x2F;&#x2F;field是obj对象的属性&#x2F;变量</p>
+<hr>
+<h3 id="动态代理："><a href="#动态代理：" class="headerlink" title="动态代理："></a>动态代理：</h3><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7275185537815183360">https://juejin.cn/post/7275185537815183360</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903978342301709">https://juejin.cn/post/6844903978342301709</a></p>
+<p>动态代理是一种通过创建代理对象来代替原始对象的技术，以便在方法调用前后执行额外的操作。代理对象通常实现与原始对象相同的接口，但可以添加自定义行为。动态代理是在运行时生成的，因此它不需要在编译时知道原始对象的类型。</p>
+<p>通过反射机制动态生成代理者对象的一种设计模式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Proxy.newProxyInstance(ClassLoader loader, Class&lt;?&gt;[] interfaces, InvocationHandler h); </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//回调h的invoke方法</span></span><br><span class="line">invoke(thisObject proxy, Method method, Object[] args);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在上述方法中</span></span><br><span class="line"><span class="keyword">return</span> method.invoke(Object obj, Object... args);</span><br></pre></td></tr></table></figure>
+
+<p>可以在上述第三步的前后分别执行自定义的逻辑</p>
+<p>详细代码可以查看 kotlinbox</p>
+<hr>
+<h3 id="如何区分静态代理和动态代理？"><a href="#如何区分静态代理和动态代理？" class="headerlink" title="如何区分静态代理和动态代理？"></a>如何区分静态代理和动态代理？</h3><ul>
+<li>静态代理：程序运行前，代理类已经存在。</li>
+<li>动态代理：程序运行前，代理类不存在，运行过程中，动态生成代理类。</li>
+</ul>
+<hr>
+<h3 id="动态代理的好处"><a href="#动态代理的好处" class="headerlink" title="动态代理的好处"></a>动态代理的好处</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口 </span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">MyInterface</span> &#123; </span><br><span class="line">	fun <span class="title function_">doSomething</span><span class="params">()</span> </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现类 </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyImplementation</span> : MyInterface &#123; </span><br><span class="line">	override fun <span class="title function_">doSomething</span><span class="params">()</span> &#123; </span><br><span class="line">		println(<span class="string">&quot;Original method is called.&quot;</span>) </span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>静态代理类实现一样的接口，持有被代理类的实例A，再用A去调方法<br>如果接口发生变化，则静态代理类实现就要修改或者新增代理类</p>
+<p>动态代理不需要修改，运行时生成代理类</p>
+<p>只需要1个动态代理类就可以解决创建多个静态代理的问题，避免重复、多余代码</p>
+<hr>
+<h3 id="动态代理和反射"><a href="#动态代理和反射" class="headerlink" title="动态代理和反射"></a>动态代理和反射</h3><p>反射和动态代理都是在运行时处理类和对象的技术，但它们的应用场景不同。反射主要用于在运行时检查和操作类的信息，而动态代理主要用于在方法调用前后执行额外的逻辑。选择使用哪种技术取决于你的具体需求和设计目标。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2023/06/15/Android%20Optimization/%E5%8F%8D%E5%B0%84%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" data-id="clpds11q100005dcaf1ua12k8" data-title="反射与动态代理" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%90%AF%E5%8A%A8%E6%9C%AA%E6%B3%A8%E5%86%8CActivity/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          插件化之启动未注册Activity
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/01/23/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6(kotlin)/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">发布Gradle插件(kotlin)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expansion/" rel="tag">Expansion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetpack/" rel="tag">Jetpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gradle/" rel="tag">gradle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/interview/" rel="tag">interview</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rxjava/" rel="tag">rxjava</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Expansion/" style="font-size: 11.43px;">Expansion</a> <a href="/tags/Java/" style="font-size: 12.86px;">Java</a> <a href="/tags/Jetpack/" style="font-size: 14.29px;">Jetpack</a> <a href="/tags/Optimization/" style="font-size: 15.71px;">Optimization</a> <a href="/tags/algorithm/" style="font-size: 18.57px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/framework/" style="font-size: 17.14px;">framework</a> <a href="/tags/gradle/" style="font-size: 11.43px;">gradle</a> <a href="/tags/interview/" style="font-size: 12.86px;">interview</a> <a href="/tags/kotlin/" style="font-size: 11.43px;">kotlin</a> <a href="/tags/rxjava/" style="font-size: 10px;">rxjava</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%90%AF%E5%8A%A8%E6%9C%AA%E6%B3%A8%E5%86%8CActivity/">插件化之启动未注册Activity</a>
+          </li>
+        
+          <li>
+            <a href="/2023/06/15/Android%20Optimization/%E5%8F%8D%E5%B0%84%E4%B8%8E%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">反射与动态代理</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/23/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6(kotlin)/">发布Gradle插件(kotlin)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/22/Android%20Gradle/%E5%8F%91%E5%B8%83Gradle%E6%8F%92%E4%BB%B6(java)/">发布Gradle插件(java)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/21/Android%20Optimization/%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AE%B0%E5%BD%95/">组件化知识点记录</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Stew<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
