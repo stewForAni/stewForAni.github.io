@@ -14,7 +14,7 @@
 <meta property="og:description" content="Flow — cold asynchronous stream with flow builder and comprehensive operator set (filter, map, etc);流 - 冷的异步流，具有流生成器和全面的操作符集（过滤器、map等）。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-25T05:06:39.000Z">
-<meta property="article:modified_time" content="2023-12-19T12:39:53.358Z">
+<meta property="article:modified_time" content="2023-12-19T12:59:00.935Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="kotlin">
 <meta name="twitter:card" content="summary">
@@ -165,12 +165,12 @@
 <hr>
 <p>Flow<br>Flow 是在消费者消费时才会生产数据，且冷流和消费者是一对一的关系，即当有多个消费者消费时，生产者是重新生产发送数据的。</p>
 <p>StateFlow 和 SharedFlow 是热流，生产数据不依赖消费者消费，热流与消费者是一对多的关系，当有多个消费者时，它们之间的数据都是同一份。</p>
-<h3 id="SharedFlow（侧重事件）"><a href="#SharedFlow（侧重事件）" class="headerlink" title="SharedFlow（侧重事件）"></a>SharedFlow（侧重事件）</h3><ol>
+<h3 id="SharedFlow（侧重事件，自定义粘性数量）"><a href="#SharedFlow（侧重事件，自定义粘性数量）" class="headerlink" title="SharedFlow（侧重事件，自定义粘性数量）"></a>SharedFlow（侧重事件，自定义粘性数量）</h3><ol>
 <li>没有初始值</li>
 <li>保留历史数据</li>
 <li>可以传入一个 replay 参数，它表示可以对新订阅者重新发送 replay 个历史数据，默认值为 0, 即非粘性</li>
 </ol>
-<h3 id="StateFlow（侧重状态）"><a href="#StateFlow（侧重状态）" class="headerlink" title="StateFlow（侧重状态）"></a>StateFlow（侧重状态）</h3><ol>
+<h3 id="StateFlow（侧重状态，粘性数量默认1）"><a href="#StateFlow（侧重状态，粘性数量默认1）" class="headerlink" title="StateFlow（侧重状态，粘性数量默认1）"></a>StateFlow（侧重状态，粘性数量默认1）</h3><ol>
 <li>必须有初始值</li>
 <li>只保留最新数据</li>
 <li>可以看成是一个 replay &#x3D; 1 且没有缓冲区的 SharedFlow </li>
