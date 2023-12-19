@@ -14,7 +14,7 @@
 <meta property="og:description" content="LiveData 是一种可观察的数据存储器类。与常规的可观察类不同，LiveData 具有生命周期感知能力，意指它遵循其他应用组件（如 Activity&#x2F;Fragment）的生命周期。这种感知能力可确保 LiveData 仅更新处于活跃生命周期状态的应用组件观察者。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-13T12:39:19.000Z">
-<meta property="article:modified_time" content="2023-05-15T07:33:26.465Z">
+<meta property="article:modified_time" content="2023-12-19T06:00:55.838Z">
 <meta property="article:author" content="Stew">
 <meta property="article:tag" content="Jetpack">
 <meta name="twitter:card" content="summary">
@@ -132,8 +132,12 @@
 
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dispatchingValue</span><br><span class="line">considerNotify</span><br><span class="line">observer.mObserver.onChanged((T) mData);</span><br></pre></td></tr></table></figure>
 
+<hr>
 <p>LivaData数据更新可以使用setValue(value)、postValue(value)，postValue(value)用于子线程</p>
 <p>使用setValue()、postValue()更新数据时会通知回调所有的观察者，<br>因为内部调用dispatchingValue(null)，传入null时，会遍历所有观察者</p>
+<p>值唯一，会把最新值重现给订阅者，即粘性。</p>
+<p>可被多个订阅者订阅(共享数据流)。</p>
+<p>生产大于消费时，会丢失数据</p>
 
       
     </div>
