@@ -4,15 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>Archives: 2022/10 | CoolStew</title>
+  <title>插件化之动态加载so | CoolStew</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="CoolStew">
-<meta property="og:url" content="https://stewforani.github.io/archives/2022/10/index.html">
+  <meta name="description" content="记录动态加载需要解决的问题和涉及的技术原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插件化之动态加载so">
+<meta property="og:url" content="https://stewforani.github.io/2023/10/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BDso/index.html">
 <meta property="og:site_name" content="CoolStew">
+<meta property="og:description" content="记录动态加载需要解决的问题和涉及的技术原理">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-10-05T15:02:39.000Z">
+<meta property="article:modified_time" content="2023-12-31T14:32:49.817Z">
 <meta property="article:author" content="Stew">
-<meta property="article:tag" content="android,github,hexo">
+<meta property="article:tag" content="Optimization">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="CoolStew" type="application/atom+xml">
@@ -76,77 +80,80 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/10/26/Android%20Optimization/%E6%80%A7%E8%83%BD%E5%B7%A5%E5%85%B7/" class="archive-article-date">
-  <time class="dt-published" datetime="2022-10-26T15:02:39.000Z" itemprop="datePublished">Oct 26</time>
+        <section id="main"><article id="post-Android Optimization/插件化之动态加载so" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BDso/" class="article-date">
+  <time class="dt-published" datetime="2023-10-05T15:02:39.000Z" itemprop="datePublished">2023-10-05</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/10/26/Android%20Optimization/%E6%80%A7%E8%83%BD%E5%B7%A5%E5%85%B7/">性能工具</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      插件化之动态加载so
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/10/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(kotlin)/" class="archive-article-date">
-  <time class="dt-published" datetime="2022-10-25T15:02:39.000Z" itemprop="datePublished">Oct 25</time>
-</a>
+    <div class="e-content article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/10/25/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(kotlin)/">ASM插桩(kotlin)</a>
-    </h1>
-  
+        <p>记录动态加载需要解决的问题和涉及的技术原理</p>
+<span id="more"></span>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/10/20/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(java)/" class="archive-article-date">
-  <time class="dt-published" datetime="2022-10-20T15:02:39.000Z" itemprop="datePublished">Oct 20</time>
-</a>
+<hr>
+<h3 id="学要解决的问题"><a href="#学要解决的问题" class="headerlink" title="学要解决的问题"></a>学要解决的问题</h3><ol>
+<li><p>安全性问题<br>MD5校验so文件完整性</p>
+</li>
+<li><p>版本控制问题<br>1）宿主API兼容<br>2）可规避有bug的so文件</p>
+</li>
+<li><p>abi兼容问题<br>根据设备架构识别不同的so文件</p>
+</li>
+<li><p>代码侵入问题<br>自身和第三方sdk的load方法无法统一<br>1）采用ASM全部修改成system.load(“ ”)<br>2）so路径注入nativeLibraryDirectories数组（classloader内部字段），然后采用system.loadlibrary(“ ”)</p>
+</li>
+</ol>
+<h3 id="涉及的技术原理"><a href="#涉及的技术原理" class="headerlink" title="涉及的技术原理"></a>涉及的技术原理</h3><ol>
+<li><p>so加载流程<br>1）安装时，pms根据设备abi拷贝对应的so文件<br>2）启动时，so文件路径注入nativeLibraryDirectories数组<br>3）从classloader内字段nativeLibraryDirectories查找并加载对应so文件（最后涉及到dlopen）</p>
+</li>
+<li><p>JNI独立模块<br>插件apk内创建新的classloader，成本较大，但收益高</p>
+</li>
+<li><p>JNI内置宿主<br>插件使用宿主的classloader，成本较小，但有明显缺点：nativeLibraryDirectories数组并发问题</p>
+</li>
+<li><p>dlopen问题<br>so内部依赖问题（涉及Linker相关改动），解决方案：<br>1）分析so依赖，然后递归加载依赖（Soloader）<br>2）自定义Linker检索逻辑（Relinker）<br>3）直接替换classloader，规避linker改动</p>
+</li>
+</ol>
+<hr>
+<h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7107958280097366030">https://juejin.cn/post/7107958280097366030</a> （字节pika文章）<br><a target="_blank" rel="noopener" href="https://github.com/TestPlanB/dyso">https://github.com/TestPlanB/dyso</a> （字节pika github）<br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1592672">https://cloud.tencent.com/developer/article/1592672</a> （bugly官方干货）<br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1643819">https://cloud.tencent.com/developer/article/1643819</a> （作者已经删除相关代码，原因不详）<br><a target="_blank" rel="noopener" href="https://github.com/facebook/SoLoader">https://github.com/facebook/SoLoader</a> （递归加载依赖的 so 文件）<br><a target="_blank" rel="noopener" href="https://github.com/google/android-classyshark">https://github.com/google/android-classyshark</a> （so 依赖分析工具）</p>
+
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/10/20/Android%20Optimization/ASM%E6%8F%92%E6%A1%A9%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8(java)/">ASM插桩(java)</a>
-    </h1>
-  
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://stewforani.github.io/2023/10/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BDso/" data-id="clqtl5fj800000eca1vpofwb7" data-title="插件化之动态加载so" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Optimization/" rel="tag">Optimization</a></li></ul>
 
-    </header>
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/09/05/Android%20Optimization/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%90%AF%E5%8A%A8%E6%9C%AA%E6%B3%A8%E5%86%8CActivity/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">插件化之启动未注册Activity</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
 
 
 </section>
